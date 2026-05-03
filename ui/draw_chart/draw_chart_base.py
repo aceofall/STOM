@@ -214,6 +214,9 @@ class DrawChartBase:
                 else:
                     self.ymax, self.ymin = 0, 0
 
+            if not (np.isfinite(self.ymin) and np.isfinite(self.ymax)):
+                self.ymax, self.ymin = 0, 0
+
             self.draw_legend(i)
             if i == self.chart_cnt - 1: break
 
@@ -396,6 +399,11 @@ class DrawChartBase:
             fidx_tuple: 요소 인덱스 튜플
         """
         cached_ymax, cached_ymin = self.cached_min_max[fidx_tuple]
+
+        if not (np.isfinite(cached_ymax) and np.isfinite(cached_ymin)):
+            self._full_min_max_calculation(fidx_tuple)
+            return
+
         new_values = []
         for fidx in fidx_tuple:
             if fidx in self.ui.ctpg_data and len(self.ui.ctpg_data[fidx]) > 0:
