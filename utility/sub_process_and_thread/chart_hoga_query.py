@@ -17,7 +17,7 @@ from strategy.analyzer_microstructure import AnalyzerMicrostructure
 from strategy.manager_formula import ManagerFormula, get_formula_data
 from strategy.analyzer_volatility_pattern import AnalyzerVolatilityPattern
 from strategy.analyzer_volatility_stop_take import AnalyzerVolatilityStopTake
-from utility.static_method.static_datetime import timedelta_sec, str_ymdhms, dt_ymdhms, dt_ymdhm, str_ymdhm
+from utility.static_method.static_datetime import timedelta_sec, str_ymdhms, dt_ymdhms, dt_ymdhm, str_ymdhm, now
 from utility.settings.setting_base import UI_NUM, DB_TRADELIST, DB_PATH, DB_BACKTEST, DB_CODE_INFO, DB_SETTING, \
     DB_STRATEGY, COLUMNS_HJ, CODE_INFO_TABLES
 
@@ -428,7 +428,9 @@ class ChartHogaQuery:
                 if table in table_list:
                     table_list.remove(table)
             cur = con.cursor()
+            start = now()
             last = len(table_list)
+            self.windowQ.put((UI_NUM['DB관리'], (start, last)))
             for i, code in enumerate(table_list):
                 query_del = f"DELETE FROM '{code}' WHERE `index` LIKE '{data[1]}%'"
                 cur.execute(query_del)
@@ -460,7 +462,9 @@ class ChartHogaQuery:
         file_list = os.listdir(DB_PATH)
         file_list = [x for x in file_list if first_name in x and '.db' in x and 'back' not in x]
         if file_list:
+            start = now()
             last = len(file_list)
+            self.windowQ.put((UI_NUM['DB관리'], (start, last)))
             for i, db_name in enumerate(file_list):
                 con = sqlite3.connect(f'{DB_PATH}/{db_name}')
                 cur = con.cursor()
@@ -513,7 +517,9 @@ class ChartHogaQuery:
             df = pd.read_sql("SELECT name FROM sqlite_master WHERE TYPE = 'table'", con)
             table_list = df['name'].to_list()
             if table_list:
+                start = now()
                 last = len(table_list)
+                self.windowQ.put((UI_NUM['DB관리'], (start, last)))
                 for i, code in enumerate(table_list):
                     if code in mtlist:
                         df = pd.read_sql(f'SELECT * FROM "{code}"', con)
@@ -544,7 +550,9 @@ class ChartHogaQuery:
         table_list = df['name'].to_list()
         if table_list:
             cur = con.cursor()
+            start = now()
             last = len(table_list)
+            self.windowQ.put((UI_NUM['DB관리'], (start, last)))
             for i, code in enumerate(table_list):
                 df = pd.read_sql(f'SELECT * FROM "{code}" WHERE "index" LIKE "{data[1]}%"', con)
                 cur.execute(f'DELETE FROM "{code}" WHERE "index" LIKE "{data[1]}%"')
@@ -581,7 +589,9 @@ class ChartHogaQuery:
 
             file_list = [x for x in file_list if int(data[1]) <= int(x.split(first_name)[1].replace('.db', '')) <= int(data[2])]
             if file_list:
+                start = now()
                 last = len(file_list)
+                self.windowQ.put((UI_NUM['DB관리'], (start, last)))
                 for i, db_name in enumerate(file_list):
                     con2 = sqlite3.connect(f'{DB_PATH}/{db_name}')
                     df = pd.read_sql("SELECT name FROM sqlite_master WHERE TYPE = 'table'", con2)
@@ -616,7 +626,9 @@ class ChartHogaQuery:
 
             file_list = [x for x in file_list if int(data[1]) <= int(x.split(first_name)[1].replace('.db', '')) <= int(data[2])]
             if file_list:
+                start = now()
                 last = len(file_list)
+                self.windowQ.put((UI_NUM['DB관리'], (start, last)))
                 for i, db_name in enumerate(file_list):
                     con2 = sqlite3.connect(f'{DB_PATH}/{db_name}')
                     df = pd.read_sql("SELECT name FROM sqlite_master WHERE TYPE = 'table'", con2)
@@ -665,7 +677,9 @@ class ChartHogaQuery:
 
                 df = pd.read_sql("SELECT name FROM sqlite_master WHERE TYPE = 'table'", con)
                 table_list = df['name'].to_list()
+                start = now()
                 last = len(table_list)
+                self.windowQ.put((UI_NUM['DB관리'], (start, last)))
                 for i, code in enumerate(table_list):
                     df = pd.read_sql(f'SELECT * FROM "{code}"', con)
                     if len(df) > 0:
@@ -694,7 +708,9 @@ class ChartHogaQuery:
             df = pd.read_sql("SELECT name FROM sqlite_master WHERE TYPE = 'table'", con)
             table_list = df['name'].to_list()
             if table_list:
+                start = now()
                 last = len(table_list)
+                self.windowQ.put((UI_NUM['DB관리'], (start, last)))
                 first_name = f"{self.market_info['일자디비경로'][self.is_tick].split('/')[2]}_"
                 for i, code in enumerate(table_list):
                     for day in day_list:
