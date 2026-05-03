@@ -166,12 +166,12 @@ def _simulate_stop_take(prices: np.ndarray, dates: np.ndarray, stop_loss_pct: fl
 class AnalyzerVolatilityStopTake:
     """변손익분석 분석 통합 클래스"""
     def __init__(self, market_gubun: int, market_info: dict, is_tick: bool,
-                 backtest: bool = False, min_samples: int = 20):
+                 realtime: bool = False, min_samples: int = 20):
         """초기화
         market_gubun: 마켓 구분 번호
         market_info: 마켓 정보 딕셔너리
         is_tick: 틱 데이터 여부
-        backtest: 백테스트 모드 여부
+        realtime: 실시간 모드 여부
         min_samples: 최소 샘플 수 (기본값 20)
         """
         self.volatility_database = VolatilityStopTakeDatabase(market_info['전략구분'], is_tick)
@@ -183,7 +183,7 @@ class AnalyzerVolatilityStopTake:
         self.idx_close   = self.factor_list.index('현재가')
         self.volatility_data: dict[str, dict[int, dict[str, float]]] = {}
 
-        if not backtest:
+        if realtime:
             self._load_volatility_all_data()
 
     def _load_volatility_all_data(self):

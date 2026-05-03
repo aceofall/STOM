@@ -133,11 +133,11 @@ class BaseStrategy(StgGlobalsFunc):
     def _set_analyzer(self):
         self.ms_analyzer = AnalyzerMicrostructure(self.market_info['마켓구분'], self.dict_findex)
         self.rk_analyzer = AnalyzerRisk(self.market_info['마켓구분'], self.dict_findex)
-        self.pt_analyzer = AnalyzerCandlePattern(self.market_gubun, self.market_info)
-        self.vs_analyzer = AnalyzerVolumeSpike(self.market_gubun, self.market_info, self.is_tick)
-        self.vf_analyzer = AnalyzerVolumeProfile(self.market_gubun, self.market_info, self.is_tick)
-        self.vp_analyzer = AnalyzerVolatilityPattern(self.market_gubun, self.market_info, self.is_tick)
-        self.vt_analyzer = AnalyzerVolatilityStopTake(self.market_gubun, self.market_info, self.is_tick)
+        self.pt_analyzer = AnalyzerCandlePattern(self.market_gubun, self.market_info, realtime=True)
+        self.vs_analyzer = AnalyzerVolumeSpike(self.market_gubun, self.market_info, self.is_tick, realtime=True)
+        self.vf_analyzer = AnalyzerVolumeProfile(self.market_gubun, self.market_info, self.is_tick, realtime=True)
+        self.vp_analyzer = AnalyzerVolatilityPattern(self.market_gubun, self.market_info, self.is_tick, realtime=True)
+        self.vt_analyzer = AnalyzerVolatilityStopTake(self.market_gubun, self.market_info, self.is_tick, realtime=True)
 
     def _set_formula_data(self):
         """공식 데이터를 설정합니다."""

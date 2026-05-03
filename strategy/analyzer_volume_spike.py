@@ -67,13 +67,13 @@ def _calculate_spike_score_array(close_price: np.ndarray, dates: np.ndarray, ind
 class AnalyzerVolumeSpike:
     """메인 거래량 급증 패턴 분석 통합 클래스"""
     def __init__(self, market_gubun: int, market_info: dict, is_tick: bool,
-                 backtest: bool = False, min_samples: int = 20):
+                 realtime: bool = False, min_samples: int = 20):
         """
         초기화
         market_gubun: 마켓 구분 번호
         market_info: 마켓 정보 딕셔너리
         is_tick: 틱 데이터 여부
-        backtest: 백테스트 모드 여부
+        realtime: 실시간 모드 여부
         min_samples: 최소 샘플 수 (기본값 20)
         """
         self.spike_database = VolumeSpikeDatabase(market_info['전략구분'], is_tick)
@@ -87,7 +87,7 @@ class AnalyzerVolumeSpike:
         self.idx_volume  = self.factor_list.index('초당거래대금') if is_tick else self.factor_list.index('분당거래대금')
         self.spike_scores: dict[str, dict[float, dict[str, float]]] = {}
 
-        if not backtest:
+        if realtime:
             self._load_spike_all_scores()
 
     def _load_spike_all_scores(self):
