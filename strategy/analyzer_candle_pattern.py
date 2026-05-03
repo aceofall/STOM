@@ -73,11 +73,13 @@ def _calculate_pattern_scores(close_price: np.ndarray, dates: np.ndarray, detect
 
 class AnalyzerCandlePattern:
     """메인 패턴 분석 통합 클래스"""
-    def __init__(self, market_gubun: int, market_info: dict, backtest: bool = False, min_samples: int = 20):
+    def __init__(self, market_gubun: int, market_info: dict, backtest: bool = False,
+                 min_candle: int = 15, min_samples: int = 20):
         """
         초기화
         market_gubun: 마켓 구분 번호
         market_info: 마켓 정보 딕셔너리
+        min_candle: 최소 캔들 수 (기본값 15)
         min_samples: 최소 샘플 수 (기본값 20)
         """
         self.pattern_database = CandlePatternDatabase(market_info['전략구분'])
@@ -85,6 +87,7 @@ class AnalyzerCandlePattern:
 
         self.backtest_db = market_info['백테디비'][0]
         self.factor_list = market_info['팩터목록'][0]
+        self.min_candle  = min_candle
         self.min_samples = min_samples
         self.idx_open    = self.factor_list.index('분봉시가')
         self.idx_high    = self.factor_list.index('분봉고가')
@@ -116,8 +119,8 @@ class AnalyzerCandlePattern:
         pattern_score = confidence_score = 0.0
 
         pattern_scores = self.pattern_scores.get(code)
-        if pattern_scores and len(code_data) >= 5:
-            code_data   = code_data[-5:]
+        if pattern_scores and len(code_data) >= self.min_candle:
+            code_data   = code_data[-self.min_candle:]
             open_price  = code_data[:, self.idx_open]
             high_price  = code_data[:, self.idx_high]
             low_price   = code_data[:, self.idx_low]
