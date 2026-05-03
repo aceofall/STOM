@@ -1,3 +1,4 @@
+
 import re
 from ui.event_activate import activated_stg
 from utility.settings.setting_base import UI_NUM
@@ -22,6 +23,9 @@ class UpdateTextedit:
         self.learn_start = 0
         self.learn_last  = 0
         self.learn_cnt   = 0
+        self.db_up_start = 0
+        self.db_up_last  = 0
+        self.db_up_cnt   = 0
         self.data_save   = False
 
     @error_decorator
@@ -48,6 +52,13 @@ class UpdateTextedit:
             self.ui.ptn_progresBar_01.setFormat('%p%')
             self.ui.ptn_progresBar_01.setRange(0, self.learn_last)
             self.ui.ptn_progresBar_01.setValue(0)
+
+        elif gubun == UI_NUM['DB관리'] and data[1].__class__ == tuple:
+            self.db_up_start, self.db_up_last = data[1]
+            self.db_up_cnt = 0
+            self.ui.db_progresBarrr_01.setFormat('%p%')
+            self.ui.db_progresBarrr_01.setRange(0, self.db_up_last)
+            self.ui.db_progresBarrr_01.setValue(0)
 
         else:
             time_ = str(now())[:-3]
@@ -86,20 +97,9 @@ class UpdateTextedit:
                 text = re.sub(r'\x1B\[[0-?]*[ -/]*[@-~]', '', text)
                 self.ui.log_system_textedit.append(text)
 
-            elif gubun == UI_NUM['DB관리']:
-                if 'DB업데이트완료' in text:
-                    self.ui.database_control = False
-                else:
-                    self.ui.db_textEdittttt_01.append(text)
-
-                if self.ui.auto_mode:
-                    if '당일DB 데이터, 일자DB로 분리 완료' in text:
-                        self._auto_database_control(2)
-                    elif '당일DB 데이터, 백테DB로 추가 완료' in text:
-                        self._auto_database_control(3)
-
             elif gubun == UI_NUM['학습로그']:
                 self.ui.ptn_textEdittt_01.append(text)
+
                 if '학습 중 ...' in text:
                     self.learn_cnt += 1
                     curr_time = now()
@@ -133,6 +133,29 @@ class UpdateTextedit:
                     self.ui.teleQ.put('모든 분석 학습 완료')
                     self.ui.windowQ.put((UI_NUM['기본로그'], '시스템 명령 실행 알림 - 모든 분석 학습 완료'))
                     self._shut_down_check()
+
+            elif gubun == UI_NUM['DB관리']:
+                if 'DB업데이트완료' in text:
+                    self.ui.database_control = False
+                else:
+                    self.ui.db_textEdittttt_01.append(text)
+
+                if '중 ...' in text:
+                    self.db_up_cnt += 1
+                    curr_time = now()
+                    left_time = curr_time - self.db_up_start
+                    left_secs = left_time.total_seconds()
+                    remn_time = timedelta_sec(left_secs / self.db_up_cnt * (self.db_up_last - self.db_up_cnt)) - curr_time
+                    self.ui.db_progresBarrr_01.setFormat(
+                        f'%p% | 경과 시간 {str(left_time)[:-3]} | 남은 시간 {str(remn_time)[:-3]}'
+                    )
+                    self.ui.db_progresBarrr_01.setValue(self.db_up_cnt)
+
+                if self.ui.auto_mode:
+                    if '당일DB 데이터, 일자DB로 분리 완료' in text:
+                        self._auto_database_control(2)
+                    elif '당일DB 데이터, 백테DB로 추가 완료' in text:
+                        self._auto_database_control(3)
 
             elif gubun == UI_NUM['백테엔진']:
                 self.ui.be_textEditxxxx_01.append(text)
