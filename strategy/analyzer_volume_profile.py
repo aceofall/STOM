@@ -40,9 +40,9 @@ def _calculate_volume_by_bin(close_price: np.ndarray, volume_data: np.ndarray, p
     min_price = price_bins[0]
     max_price = price_bins[-1]
     bin_width = (max_price - min_price) / bin_count
-    for idx in range(len(close_price)):
-        price  = close_price[idx]
-        volume = volume_data[idx]
+    for i in range(len(close_price)):
+        price  = close_price[i]
+        volume = volume_data[i]
         if price < max_price:
             bin_idx = int((price - min_price) / bin_width)
         else:
@@ -61,11 +61,11 @@ def _calculate_node_scores(close_price: np.ndarray, dates: np.ndarray, node_pric
     bounce_down = 0
     total_count = 0
     threshold = node_price * rate_threshold / 100
-    for idx in range(len(close_price) - analysis_period):
-        price = close_price[idx]
-        if abs(price - node_price) / node_price * 100 <= rate_threshold and dates[idx] == dates[idx + analysis_period]:
+    for i in range(len(close_price) - analysis_period):
+        price = close_price[i]
+        if abs(price - node_price) / node_price * 100 <= rate_threshold and dates[i] == dates[i + analysis_period]:
             total_count += 1
-            future_prices = close_price[idx+1:idx+1+analysis_period]
+            future_prices = close_price[i + 1:i + 1 + analysis_period]
             if future_prices.max() >= node_price + threshold:
                 upward_penetration += 1
             elif future_prices.min() <= node_price - threshold:

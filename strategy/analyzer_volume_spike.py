@@ -37,21 +37,9 @@ def _calculate_ma_volume(volume_data: np.ndarray, analysis_period: int) -> np.nd
     """이동평균 거래량 계산 (numba 최적화)"""
     n = len(volume_data)
     ma_volume = np.zeros(n, dtype=np.float64)
-    for idx in prange(analysis_period, n):
-        ma_volume[idx] = np.mean(volume_data[idx-analysis_period:idx])
+    for i in prange(analysis_period - 1, n):
+        ma_volume[i] = np.mean(volume_data[i + 1 - analysis_period:i + 1])
     return ma_volume
-
-
-@njit(cache=True, fastmath=True, parallel=True)
-def _calculate_spike_indices(volume_data: np.ndarray, ma_volume: np.ndarray, analysis_period: int) -> np.ndarray:
-    """거래량 급증 인덱스 계산 (numba 최적화)"""
-    n = len(volume_data)
-    max_indices = n - analysis_period
-    spike_indices = np.zeros(max_indices, dtype=np.int64)
-    for idx in prange(analysis_period, n):
-        if ma_volume[idx] > 0:
-            spike_indices[idx - analysis_period] = idx
-    return spike_indices[spike_indices != 0]
 
 
 @njit(cache=True, fastmath=True, parallel=True)
@@ -60,12 +48,12 @@ def _calculate_spike_score_array(close_price: np.ndarray, dates: np.ndarray, ind
     """거래량 급증 점수 배열 계산 (numba 최적화)"""
     max_scores = len(indices)
     scores = np.zeros(max_scores, dtype=np.float64)
-    for k in prange(max_scores):
-        idx = indices[k]
+    for i in prange(max_scores):
+        idx = indices[i]
         if idx + analysis_period < len(close_price) and dates[idx] == dates[idx + analysis_period]:
             entry_price = close_price[idx]
-            exit_max_price = close_price[idx:idx + analysis_period].max()
-            exit_min_price = close_price[idx:idx + analysis_period].min()
+            exit_max_price = close_price[idx + 1:idx + 1 + analysis_period].max()
+            exit_min_price = close_price[idx + 1:idx + 1 + analysis_period].min()
             if abs(exit_max_price - entry_price) >= abs(exit_min_price - entry_price):
                 exit_price = exit_max_price
             else:
@@ -73,7 +61,7 @@ def _calculate_spike_score_array(close_price: np.ndarray, dates: np.ndarray, ind
             price_change = (exit_price / entry_price - 1) * 100
             score = price_change / rate_threshold * 100
             score = max(-100.0, min(100.0, score))
-            scores[k] = score
+            scores[i] = score
     return scores[scores != 0.0]
 
 
