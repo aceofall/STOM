@@ -5,7 +5,6 @@ import sqlite3
 import hashlib
 import numpy as np
 import pandas as pd
-from datetime import datetime
 from numba import njit, prange
 from traceback import format_exc
 from PyQt5.QtWidgets import QMessageBox
@@ -190,14 +189,13 @@ class AnalyzerCandlePattern:
                 code_chunks.append([code for j, code in enumerate(code_list) if j % multi == i])
 
         start = now()
-        ui.windowQ.put((UI_NUM['학습로그'], (start, 0)))
+        ui.windowQ.put((UI_NUM['학습로그'], (start, len_code_list)))
         actual_processes = min(multi, len(code_chunks))
         with Pool(processes=actual_processes, initializer=init_worker, initargs=(ui.windowQ,)) as pool:
             args = [
                 (
-                    i, start, len_code_list, code_chunk, self.backtest_db,
-                    self.idx_open, self.idx_high, self.idx_low, self.idx_close,
-                    self.analysis_period, self.rate_threshold, self.min_samples,
+                    i, code_chunk, self.backtest_db, self.idx_open, self.idx_high,
+                    self.idx_low, self.idx_close, self.analysis_period, self.rate_threshold, self.min_samples,
                     existing_dates_dict, self.pattern_database.setting_hash
                 )
                 for i, code_chunk in enumerate(code_chunks)
@@ -227,9 +225,8 @@ class AnalyzerCandlePattern:
             ui.windowQ.put((UI_NUM['학습로그'], '이미 모든 데이터가 학습되어 있습니다'))
 
     @staticmethod
-    def _train_code_chunk(i: int, start: datetime, len_code_list: int, code_chunk: List[str], backtest_db: str,
-                          idx_open: int, idx_high: int, idx_low: int, idx_close: int,
-                          analysis_period: int, rate_threshold: int, min_samples: int,
+    def _train_code_chunk(i: int, code_chunk: List[str], backtest_db: str, idx_open: int, idx_high: int,
+                          idx_low: int, idx_close: int, analysis_period: int, rate_threshold: int, min_samples: int,
                           existing_dates_dict: Dict[str, set], setting_hash: str) -> List[Any]:
         """단일 종목 청크 학습 (멀티프로세싱용)"""
         global window_queue
@@ -300,9 +297,6 @@ class AnalyzerCandlePattern:
                 except Exception:
                     # noinspection PyUnresolvedReferences
                     window_queue.put((UI_NUM['시스템로그'], format_exc()))
-
-                # noinspection PyUnresolvedReferences
-                window_queue.put((UI_NUM['학습로그'], (start, len_code_list)))
 
         return all_pattern_scores
 

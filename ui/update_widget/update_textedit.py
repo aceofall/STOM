@@ -18,9 +18,11 @@ class UpdateTextedit:
     로그 텍스트 에디터를 업데이트하고 데이터베이스 관리를 수행합니다.
     """
     def __init__(self, ui):
-        self.ui        = ui
-        self.learn_cnt = 0
-        self.data_save = False
+        self.ui          = ui
+        self.learn_start = 0
+        self.learn_last  = 0
+        self.learn_cnt   = 0
+        self.data_save   = False
 
     @error_decorator
     def update_texedit(self, data):
@@ -41,22 +43,11 @@ class UpdateTextedit:
             self.ui.fm_tcnt = data[3]
 
         elif gubun == UI_NUM['학습로그'] and data[1].__class__ == tuple:
-            start, last = data[1]
-            if last == 0:
-                self.learn_cnt = 0
-                self.ui.ptn_progresBar_01.setFormat('%p%')
-                self.ui.ptn_progresBar_01.setValue(0)
-            else:
-                self.learn_cnt += 1
-                curr_time = now()
-                left_time = curr_time - start
-                left_secs = left_time.total_seconds()
-                remn_time = timedelta_sec(left_secs / self.learn_cnt * (last - self.learn_cnt)) - curr_time
-                self.ui.ptn_progresBar_01.setFormat(
-                    f'%p% | 경과 시간 {str(left_time)[:-3]} | 남은 시간 {str(remn_time)[:-3]}'
-                )
-                self.ui.ptn_progresBar_01.setValue(self.learn_cnt)
-                self.ui.ptn_progresBar_01.setRange(0, last)
+            self.learn_start, self.learn_last = data[1]
+            self.learn_cnt = 0
+            self.ui.ptn_progresBar_01.setFormat('%p%')
+            self.ui.ptn_progresBar_01.setRange(0, self.learn_last)
+            self.ui.ptn_progresBar_01.setValue(0)
 
         else:
             time_ = str(now())[:-3]
@@ -109,6 +100,17 @@ class UpdateTextedit:
 
             elif gubun == UI_NUM['학습로그']:
                 self.ui.ptn_textEdittt_01.append(text)
+                if '학습 중 ...' in text:
+                    self.learn_cnt += 1
+                    curr_time = now()
+                    left_time = curr_time - self.learn_start
+                    left_secs = left_time.total_seconds()
+                    remn_time = timedelta_sec(left_secs / self.learn_cnt * (self.learn_last - self.learn_cnt)) - curr_time
+                    self.ui.ptn_progresBar_01.setFormat(
+                        f'%p% | 경과 시간 {str(left_time)[:-3]} | 남은 시간 {str(remn_time)[:-3]}'
+                    )
+                    self.ui.ptn_progresBar_01.setValue(self.learn_cnt)
+
                 if self.ui.auto_mode and '캔들분석 학습 완료' in text:
                     qtest_qwait(2)
                     _auto_learn_running(self.ui, 2)

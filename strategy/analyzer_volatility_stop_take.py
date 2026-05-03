@@ -4,7 +4,6 @@ import sqlite3
 import hashlib
 import numpy as np
 import pandas as pd
-from datetime import datetime
 from numba import njit, prange
 from traceback import format_exc
 from PyQt5.QtWidgets import QMessageBox
@@ -277,14 +276,14 @@ class AnalyzerVolatilityStopTake:
                 code_chunks.append([code for j, code in enumerate(code_list) if j % multi == i])
 
         start = now()
-        ui.windowQ.put((UI_NUM['학습로그'], (start, 0)))
+        ui.windowQ.put((UI_NUM['학습로그'], (start, len_code_list)))
         actual_processes = min(multi, len(code_chunks))
         with Pool(processes=actual_processes, initializer=init_worker, initargs=(ui.windowQ,)) as pool:
             args = [
                 (
-                    i, start, len_code_list, code_chunk, self.backtest_db,
-                    self.idx_close, self.analysis_period, self.min_samples, existing_dates_dict,
-                    self.is_tick, self.volatility_database.setting_hash
+                    i, code_chunk, self.backtest_db, self.idx_close, self.analysis_period,
+                    self.min_samples, existing_dates_dict, self.is_tick,
+                    self.volatility_database.setting_hash
                 )
                 for i, code_chunk in enumerate(code_chunks)
             ]
@@ -313,9 +312,9 @@ class AnalyzerVolatilityStopTake:
             ui.windowQ.put((UI_NUM['학습로그'], '이미 모든 데이터가 학습되어 있습니다'))
 
     @staticmethod
-    def _train_single_chunk(i: int, start: datetime, len_code_list: int, code_chunk: List[str], backtest_db: str,
-                            idx_close: int, analysis_period: int, min_samples: int, existing_dates_dict: Dict[str, set],
-                            is_tick: bool, setting_hash: str) -> List[Any]:
+    def _train_single_chunk(i: int, code_chunk: List[str], backtest_db: str, idx_close: int, analysis_period: int,
+                            min_samples: int, existing_dates_dict: Dict[str, set], is_tick: bool,
+                            setting_hash: str) -> List[Any]:
         """단일 종목 청크 학습 (멀티프로세싱용)"""
         global window_queue
 
@@ -417,9 +416,6 @@ class AnalyzerVolatilityStopTake:
             except Exception:
                 # noinspection PyUnresolvedReferences
                 window_queue.put((UI_NUM['시스템로그'], format_exc()))
-
-            # noinspection PyUnresolvedReferences
-            window_queue.put((UI_NUM['학습로그'], (start, len_code_list)))
 
         return all_volatility_scores
 
