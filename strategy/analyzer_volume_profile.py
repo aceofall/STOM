@@ -373,7 +373,7 @@ class VolumeProfileDatabase:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(f'''
-                SELECT price_level, avg_score, upward_strength, downward_strength, sample_count, confidence_score
+                SELECT price_level, avg_score, confidence_score
                 FROM {self.table_name}
                 WHERE code = ? AND setting_hash = ? AND last_update = 
                 (SELECT MAX(last_update) FROM {self.table_name} WHERE code = ? AND setting_hash = ?)
@@ -384,10 +384,7 @@ class VolumeProfileDatabase:
             for result in results:
                 volume_scores[result[0]] = {
                     'avg_score': result[1],
-                    'upward_strength': result[2],
-                    'downward_strength': result[3],
-                    'sample_count': result[4],
-                    'confidence_score': result[5]
+                    'confidence_score': result[2]
                 }
             return volume_scores
 
@@ -401,7 +398,7 @@ class VolumeProfileDatabase:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(f'''
-                SELECT price_level, avg_score, upward_strength, downward_strength, sample_count, confidence_score
+                SELECT price_level, avg_score, confidence_score
                 FROM {self.table_name}
                 WHERE code = ? AND setting_hash = ? AND last_update = 
                 (SELECT MAX(last_update) FROM {self.table_name} WHERE code = ? AND setting_hash = ? AND last_update < ?)
@@ -412,10 +409,7 @@ class VolumeProfileDatabase:
             for result in results:
                 volume_scores[result[0]] = {
                     'avg_score': result[1],
-                    'upward_strength': result[2],
-                    'downward_strength': result[3],
-                    'sample_count': result[4],
-                    'confidence_score': result[5]
+                    'confidence_score': result[2]
                 }
             return volume_scores
 
