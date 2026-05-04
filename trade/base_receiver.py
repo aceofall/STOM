@@ -130,17 +130,17 @@ class BaseReceiver:
     def _save_code_info(self, noti=True):
         """종목명 정보를 조회하고 저장 후 리시버 시작 알림을 보냅니다."""
         if self.dict_info:
-            dict_name = {code: value['종목명'] for code, value in self.dict_info.items()}
-            dict_code = {name: code for code, name in dict_name.items()}
-
-            self.windowQ.put((UI_NUM['종목명데이터'], dict_name, dict_code))
-            if self.market_gubun > 5:
-                self.stgQ.put(('종목정보', self.dict_info))
-
             df = pd.DataFrame.from_dict(self.dict_info, orient='index')
             self.queryQ.put(('종목디비', df, self.market_info['종목디비'], 'replace'))
 
             if noti:
+                dict_name = {code: value['종목명'] for code, value in self.dict_info.items()}
+                dict_code = {name: code for code, name in dict_name.items()}
+
+                self.windowQ.put((UI_NUM['종목명데이터'], dict_name, dict_code))
+                if self.market_gubun > 5:
+                    self.stgQ.put(('종목정보', self.dict_info))
+
                 text = f"{self.market_info['마켓이름']} 시스템을 시작하였습니다."
                 self.teleQ.put(text)
                 if self.dict_set['알림소리']:
