@@ -81,7 +81,7 @@ class LsRestAPI:
         """국내주식종목정보 ['구분'], '국내주식상장주수' ['종목코드', '거래소구분코드']
         etfgubun: 0 (코스피 + 코스닥), 1 (ETF), 2 (ETN)
         data['spac_gubun'] == 'N' - 구분 무관 공통사항 스펙 제외
-        data['shcode'][-1] == '0' - 우선주 및 ETN 제외(ETN일 경우 확인X)"""
+        code[-1] == '0' - 우선주 및 ETN 제외(ETN일 경우 확인X)"""
         try:
             from utility.settings.setting_base import DB_SETTING
             con = sqlite3.connect(DB_SETTING)
