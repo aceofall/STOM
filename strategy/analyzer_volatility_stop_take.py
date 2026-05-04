@@ -200,7 +200,7 @@ class AnalyzerVolatilityStopTake:
         """
         self.volatility_data[code] = self.volatility_database.get_volatility_code_scores(code, date)
 
-    def analyze_current_volatility(self, code: str, code_data: np.ndarray) -> Tuple[float, float, float]:
+    def analyze_current_volatility(self, code: str, code_data: np.ndarray) -> Tuple[float, float, float, float]:
         """실시간 변동성 변화율 분석 및 학습된 손절/익절 반환
         code: 종목코드
         code_data: 코드 데이터 2차원 어레이

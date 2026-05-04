@@ -74,7 +74,7 @@ class ManagerFormula(StgGlobalsFunc):
         self.base_cnt     = self.dict_findex['관심종목'] + 1
 
         if self.is_tick:
-            self.add_start = self.dict_findex['신뢰도']
+            self.add_start = self.dict_findex['시그널']
             self.add_end   = self.dict_findex['변손익신뢰도'] + 1
             self.dict_findex['초당매도수금액'] = self.dict_findex['초당매수금액']
             self.dict_findex['누적초당매도수수량'] = self.dict_findex['누적초당매수수량']
