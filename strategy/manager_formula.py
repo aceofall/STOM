@@ -3,14 +3,6 @@ import sqlite3
 from strategy.stg_globals_func import StgGlobalsFunc
 from utility.static_method.static_datetime import dt_ymdhms
 
-dict_fm_count = {
-    '선:일반': 1,
-    '선:조건': 1,
-    '화살표:일반': 1,
-    '화살표:매매': 2,
-    '범위': 3
-}
-
 
 def get_formula_data(forchart, col_idx):
     import pandas as pd
@@ -40,6 +32,14 @@ def get_formula_data(forchart, col_idx):
       0      1       2      3       4     5    6    7      8      9
     """
     if fm_list:
+        dict_fm_count = {
+            '선:일반': 1,
+            '선:조건': 1,
+            '화살표:일반': 1,
+            '화살표:매매': 2,
+            '범위': 3
+        }
+
         cnt_list = [dict_fm_count[fm[4]] for fm in fm_list]
         fm_tcnt  = sum(cnt_list)
         if fm_tcnt > 0:
@@ -59,19 +59,19 @@ class ManagerFormula(StgGlobalsFunc):
     """
     def __init__(self, fm_list, dict_set, is_tick, dict_findex):
         super().__init__()
-        self.fm_list      = fm_list
-        self.dict_set     = dict_set
-        self.is_tick      = is_tick
-        self.dict_findex  = dict_findex
+        self.fm_list     = fm_list
+        self.dict_set    = dict_set
+        self.is_tick     = is_tick
+        self.dict_findex = dict_findex
 
-        self.check        = None
-        self.buy          = None
-        self.sell         = None
-        self.line         = None
-        self.up           = None
-        self.down         = None
-        self.hold         = False
-        self.base_cnt     = self.dict_findex['관심종목'] + 1
+        self.check       = None
+        self.buy         = None
+        self.sell        = None
+        self.line        = None
+        self.up          = None
+        self.down        = None
+        self.hold        = False
+        self.base_cnt    = self.dict_findex['관심종목'] + 1
 
         if self.is_tick:
             self.add_start = self.dict_findex['시그널']
