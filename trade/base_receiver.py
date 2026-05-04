@@ -33,8 +33,7 @@ class MonitorReceivQ(QThread):
 
 class BaseReceiver:
     """실시간 데이터를 수신하고 처리하는 기본 클래스입니다.
-    다양한 큐를 통해 다른 모듈과 통신하며,
-    시장 데이터(체결, 호가)를 처리합니다."""
+    다양한 큐를 통해 다른 모듈과 통신하며, 실시간 데이터를 처리합니다."""
     def __init__(self, qlist, dict_set, market_infos):
         """
         windowQ, soundQ, queryQ, teleQ, chartQ, hogaQ, webcQ, backQ, receivQ, traderQ, stgQs, liveQ, testQ
@@ -125,10 +124,12 @@ class BaseReceiver:
         self.qtimer.start()
 
     def _get_code_info(self):
+        """종목명 정보를 조회합니다.
+        각 거래소 클래스에서 오버라이드되어 있음"""
         pass
 
     def _save_code_info(self, noti=True):
-        """종목명 정보를 조회하고 저장 후 리시버 시작 알림을 보냅니다."""
+        """종목정보를 저장하고 리시버 시작 알림을 보냅니다."""
         if self.dict_info:
             df = pd.DataFrame.from_dict(self.dict_info, orient='index')
             self.queryQ.put(('종목디비', df, self.market_info['종목디비'], 'replace'))
@@ -686,7 +687,9 @@ class BaseReceiver:
 
     def _money_top_search(self):
         """거래대금상위 종목을 검색합니다.
-        국내주식와 해외주식은 등락율 0% 이상으로 필터링
+        국내주식와 해외주식은 순위 필터링 후에 등락율(0%초과) 필터링
+        국내주식ETF, ETN, 업비트는 등락율 필터링 후에 순위 필터링
+        그외 선물 거래소는 순위 필터링만
         """
         sorted_daym = sorted(self.dict_daym.items(), key=lambda x: x[1], reverse=True)
         if self.market_gubun in (1, 4):

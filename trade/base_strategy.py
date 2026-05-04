@@ -132,6 +132,7 @@ class BaseStrategy(StgGlobalsFunc):
         self._main_loop()
 
     def _set_analyzer(self):
+        """분석시스템 객체를 설정합니다."""
         self.ms_analyzer = AnalyzerMicrostructure(self.market_info['마켓구분'], self.dict_findex)
         self.rk_analyzer = AnalyzerRisk(self.market_info['마켓구분'], self.dict_findex)
         self.pt_analyzer = AnalyzerCandlePattern(self.market_gubun, self.market_info, realtime=True)
@@ -141,7 +142,7 @@ class BaseStrategy(StgGlobalsFunc):
         self.vt_analyzer = AnalyzerVolatilityStopTake(self.market_gubun, self.market_info, self.is_tick, realtime=True)
 
     def _set_formula_data(self):
-        """공식 데이터를 설정합니다."""
+        """수식관리자 데이터를 설정합니다."""
         self.fm_list, dict_fm, self.fm_tcnt = get_formula_data(False, self.data_cnt)
         self.windowQ.put((UI_NUM['사용자수식'], deepcopy(self.fm_list), dict_fm, self.fm_tcnt))
         if self.fm_list:
@@ -211,7 +212,7 @@ class BaseStrategy(StgGlobalsFunc):
         self._set_buy_strategy(buytxt)
 
     def _set_buy_strategy(self, buytxt):
-        """매수 전략을 설정합니다.
+        """매수 전략과 보조지표 세부설정을 설정합니다.
         Args:
             buytxt: 매수 전략 텍스트
         """
@@ -224,7 +225,7 @@ class BaseStrategy(StgGlobalsFunc):
         self.indi_settings = list(self.indicator.values())
 
     def _get_buy_indi_stg(self, buytxt):
-        """매수 지표 전략을 반환합니다.
+        """매수전략과 보지지표 설정을 분리하여 반환합니다.
         Args:
             buytxt: 매수 전략 텍스트
         Returns:
@@ -250,7 +251,7 @@ class BaseStrategy(StgGlobalsFunc):
         return buystg, indistg
 
     def _set_passticks(self, dfpt):
-        """패스 틱을 설정합니다.
+        """경과틱수를 설정합니다.
         Args:
             dfpt: 패스 틱 데이터프레임
         """
@@ -372,7 +373,7 @@ class BaseStrategy(StgGlobalsFunc):
 
     # noinspection PyUnusedLocal
     def _strategy_tick(self, data):
-        """틱 전략을 실행합니다.
+        """1초스냅샷 전략을 실행합니다.
         Args:
             data: 데이터
         """
@@ -609,7 +610,7 @@ class BaseStrategy(StgGlobalsFunc):
 
     # noinspection PyUnusedLocal
     def _strategy_min(self, data):
-        """분봉 전략을 실행합니다.
+        """1분봉 전략을 실행합니다.
         Args:
             data: 데이터
         """
@@ -922,7 +923,7 @@ class BaseStrategy(StgGlobalsFunc):
 
     # noinspection PyUnusedLocal
     def _strategy_future_tick(self, data):
-        """선물 틱 전략을 실행합니다.
+        """선물 1초스냅샷 전략을 실행합니다.
         Args:
             data: 데이터
         """
@@ -1181,7 +1182,7 @@ class BaseStrategy(StgGlobalsFunc):
 
     # noinspection PyUnusedLocal
     def _strategy_future_min(self, data):
-        """선물 분봉 전략을 실행합니다.
+        """선물 1분봉 전략을 실행합니다.
         Args:
             data: 데이터
         """
