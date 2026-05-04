@@ -257,6 +257,8 @@ class BaseReceiver:
         if v is None:
             bids_ = round(tbids - pretbids, 8)
             asks_ = round(tasks - pretasks, 8)
+            if bids_ == tbids: bids_ = 0.0
+            if asks_ == tasks: asks_ = 0.0
         else:
             bids_ = v if cg == '+' else 0
             asks_ = v if cg == '-' else 0
