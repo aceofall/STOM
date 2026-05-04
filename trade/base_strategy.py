@@ -36,6 +36,7 @@ class BaseStrategy(StgGlobalsFunc):
         self.gubun           = gubun
         self.windowQ         = qlist[0]
         self.teleQ           = qlist[3]
+        self.receivQ         = qlist[8]
         self.traderQ         = qlist[9]
         self.stgQs           = qlist[10]
         self.stgQ            = qlist[10][self.gubun]
@@ -360,8 +361,9 @@ class BaseStrategy(StgGlobalsFunc):
         elif data == '분석설정변경':
             self._set_analyzer()
         else:
-            if data != '프로그램종료' and self.gubun == 0:
+            if self.gubun == 0:
                 exit_text = '전략연산 종료' if data == '프로세스종료' else '전략연산 STOP'
+                self.receivQ.put(exit_text)
                 self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} {exit_text}"))
 
             import sys

@@ -749,9 +749,8 @@ class BaseTrader:
     def _sys_exit(self, data):
         """시스템을 종료합니다."""
         self._websocket_kill()
-        if data != '프로그램종료':
-            exit_text = '트레이더 종료' if data == '프로세스종료' else '트레이더 STOP'
-            self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} {exit_text}"))
+        exit_text = '트레이더 종료' if data == '프로세스종료' else '트레이더 STOP'
+        self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} {exit_text}"))
 
         import sys
         qtest_qwait(1)
