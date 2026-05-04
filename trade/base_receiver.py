@@ -144,7 +144,7 @@ class BaseReceiver:
 
             self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 리시버 시작"))
         else:
-            self.windowQ.put((UI_NUM['시스템로그'], f"오류 알림 - 종목정보 조회 실패 매매 프로세스를 종료합니다."))
+            self.windowQ.put((UI_NUM['시스템로그'], "오류 알림 - 종목정보 조회 실패 매매 프로세스를 종료합니다."))
             self._sys_exit('강제종료')
 
     def _update_vi(self, code):
