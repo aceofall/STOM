@@ -764,7 +764,7 @@ class BaseReceiver:
         elif gubun == '차트종목코드':
             self.chart_code = data
         elif gubun == '수동데이터저장':
-            self._save_moneytop()
+            self._sys_exit('프로세스종료')
         elif gubun == '설정변경':
             self.dict_set = data
 

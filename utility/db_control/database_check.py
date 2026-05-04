@@ -226,13 +226,13 @@ def database_check():
 
         if 'stock_etf_info' not in table_list:
             columns = ['index', '종목명', '상장주식수']
-            data = ['005930', '삼성전자']
+            data = ['252670', 'KODEX 200선물인버스2', 5220500000]
             df = pd.DataFrame([data], columns=columns).set_index('index')
             df.to_sql('stock_etf_info', con)
 
         if 'stock_etn_info' not in table_list:
             columns = ['index', '종목명', '상장주식수']
-            data = ['005930', '삼성전자']
+            data = ['530036', '삼성 인버스 2X WTI원', 2800000000]
             df = pd.DataFrame([data], columns=columns).set_index('index')
             df.to_sql('stock_etn_info', con)
 
