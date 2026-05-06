@@ -15,7 +15,7 @@ class BackEngineBinanceOms(BackEngineBaseOms):
             호가 단위
         """
         dict_info = self.dict_info.get(종목코드)
-        return dict_info['호가단위'] if dict_info else 8
+        return dict_info['호가단위'] if dict_info else 0.00000001
 
     def _set_buy_count(self, betting, 현재가, 매수가, oc_ratio):
         """매수 수량을 설정합니다.
