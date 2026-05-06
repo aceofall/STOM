@@ -54,7 +54,7 @@ class BackEngineBinanceOms(BackEngineBaseOms):
         """
         dict_info = self.dict_info.get(self.code)
         소숫점자리수 = dict_info['가격소숫점자리수'] if dict_info else 4
-        return round(거래금액 / 주문수량, 소숫점자리수) if 주문수량 != 0 else 0.0
+        return round(거래금액 / 주문수량, 소숫점자리수)
 
     def _get_profit_info(self, 현재가, 매수가, 보유수량):
         """수익 정보를 계산합니다.
