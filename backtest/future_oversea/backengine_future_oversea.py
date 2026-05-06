@@ -26,7 +26,7 @@ class BackEngineFutureOversea(BackEngineFuture):
         Returns:
             매수 수량
         """
-        return int(betting / 현재가)
+        return int(betting)
 
     def _get_order_price(self, 거래금액, 주문수량):
         """주문 가격을 계산합니다.
