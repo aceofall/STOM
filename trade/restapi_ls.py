@@ -124,7 +124,7 @@ class LsRestAPI:
                         exclusion_list.append(code)
                         dict_data.pop(code, None)
 
-                    if i % 100 == 0 or i == last - 1:
+                    if (i + 1) % 100 == 0 or i == last - 1:
                         self.windowQ.put((UI_NUM['기본로그'], f'국내주식 상장주식수 조회 중 ... [{i+1:04d}/{last:04d}]'))
 
                     qtest_qwait(0.1)
@@ -599,11 +599,11 @@ class LsWebSocketReceiver(QThread):
             await self._disconnect_hg()
 
     async def _connect_cg(self):
-        self.webs_cg = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60)
+        self.webs_cg = await websockets.connect(LsRestData.웹소켓주소)
         self.conn_cg = True
 
     async def _connect_hg(self):
-        self.webs_hg = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60)
+        self.webs_hg = await websockets.connect(LsRestData.웹소켓주소)
         self.conn_hg = True
 
     async def _receive_cg_msg(self):
@@ -731,7 +731,7 @@ class LsWebSocketTrader(QThread):
             await self._disconnect()
 
     async def _connect(self):
-        self.websocket = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60)
+        self.websocket = await websockets.connect(LsRestData.웹소켓주소)
         self.connected = True
         for k, v in LsRestData.주문거래코드.items():
             if self.market in k:

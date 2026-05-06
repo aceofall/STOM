@@ -219,14 +219,14 @@ class UpbitWebSocketReceiver(QThread):
     async def _connect_cg(self):
         """거래 웹소켓에 연결합니다."""
         self.conn_cg = True
-        self.webs_cg = await websockets.connect(self.url, ping_interval=60)
+        self.webs_cg = await websockets.connect(self.url)
         data = [{'ticket': str(uuid.uuid4())}, {'type': 'ticker', 'codes': self.codes, 'isOnlyRealtime': True}]
         await self.webs_cg.send(json.dumps(data))
 
     async def _connect_hg(self):
         """주문 웹소켓에 연결합니다."""
         self.conn_hg = True
-        self.webs_hg = await websockets.connect(self.url, ping_interval=60)
+        self.webs_hg = await websockets.connect(self.url)
         data = [{'ticket': str(uuid.uuid4())}, {'type': 'orderbook', 'codes': self.codes, 'isOnlyRealtime': True}]
         await self.webs_hg.send(json.dumps(data))
 
@@ -319,7 +319,7 @@ class UpbitWebSocketTrader(QThread):
     async def _connect(self):
         """웹소켓에 연결합니다."""
         headers = self._headers()
-        self.websocket = await websockets.connect(self.url, ping_interval=60, additional_headers=headers)
+        self.websocket = await websockets.connect(self.url, additional_headers=headers)
         self.connected = True
         data = [{'ticket': str(uuid.uuid4())}, {'type': 'myOrder'}]
         await self.websocket.send(json.dumps(data))
