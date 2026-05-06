@@ -196,9 +196,7 @@ class UpbitWebSocketReceiver(QThread):
                     await self._connect_cg()
                 await self._receive_cg_msg()
             except Exception:
-                self.windowQ.put(
-                    (UI_NUM['시스템로그'], f'{format_exc()}오류 알림 - 업비트 웹소켓 실시간체결 수신 중 오류가 발생하여 재연결합니다.')
-                )
+                self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
 
             await self._disconnect_cg()
 
@@ -210,9 +208,7 @@ class UpbitWebSocketReceiver(QThread):
                     await self._connect_hg()
                 await self._receive_hg_msg()
             except Exception:
-                self.windowQ.put(
-                    (UI_NUM['시스템로그'], f'{format_exc()}오류 알림 - 업비트 웹소켓 실시간호가 수신 중 오류가 발생하여 재연결합니다.')
-                )
+                self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
 
             await self._disconnect_hg()
 
@@ -301,9 +297,7 @@ class UpbitWebSocketTrader(QThread):
                     await self._connect()
                 await self._receive_msg()
             except Exception:
-                self.windowQ.put(
-                    (UI_NUM['시스템로그'], f'{format_exc()}오류 알림 - 업비트 웹소켓 주문체결 수신 중 오류가 발생하여 재연결합니다.')
-                )
+                self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
 
             await self._disconnect()
 

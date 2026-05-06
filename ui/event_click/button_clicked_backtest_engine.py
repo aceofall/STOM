@@ -332,7 +332,7 @@ def get_code_test_result(ui, gubun):
 
     data = ui.testQ.get()
     if data == '전략테스트오류':
-        ui.windowQ.put((UI_NUM['시스템로그'], f'{gubun}에 오류가 있어 저장하지 못하였습니다.'))
+        ui.windowQ.put((UI_NUM['시스템로그'], f'오류 알림 - {gubun}에 오류가 있어 저장하지 못하였습니다.'))
         return False
     else:
         return True

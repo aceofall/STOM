@@ -352,7 +352,7 @@ class BackEngineBase(StgGlobalsFunc):
                                 self.buystg = compile(data[6], '<string>', 'exec')
                             except Exception:
                                 if self.gubun == 0:
-                                    self.wq.put((UI_NUM['시스템로그'], f'{format_exc()}오류 알림 - 매수전략'))
+                                    self.wq.put((UI_NUM['시스템로그'], format_exc()))
                                 self._back_stop()
                             else:
                                 self.opti_kind = data[7]
