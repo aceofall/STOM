@@ -373,8 +373,8 @@ class LsRestAPI:
             주문구분코드 = LsRestData.국내주식주문구분코드[주문구분]
             호가유형코드 = LsRestData.국내주식호가유형코드[호가유형]
             주문조건코드 = LsRestData.국내주식주문조건코드[호가유형]
-            data = self._post(tr_name, 종목코드=종목코드, 주문수량=주문수량, 주문가격=주문가격, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드,
-                              신용거래코드='000', 대출일='', 주문조건코드=주문조건코드, 회원사번호='')
+            data = self._post(tr_name, 종목코드=종목코드, 주문수량=주문수량, 주문가격=주문가격, 주문구분코드=주문구분코드,
+                              호가유형코드=호가유형코드, 신용거래코드='000', 대출일='', 주문조건코드=주문조건코드, 회원사번호='')
             return data[out_block]['OrdNo'], data['rsp_msg']
         except Exception:
             return 0, format_exc()
@@ -441,7 +441,8 @@ class LsRestAPI:
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
-            data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드, 주문가격=주문가격, 주문수량=주문수량)
+            data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드,
+                              주문가격=주문가격, 주문수량=주문수량)
             return data[out_block]['OrdNo'], data['rsp_msg']
         except Exception:
             return 0, format_exc()
@@ -452,7 +453,8 @@ class LsRestAPI:
             tr_name = '지수선물정정주문'
             out_block = LsRestData.tr_data[tr_name]['out_block']
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
-            data = self._post(tr_name, 종목코드=종목코드, 원주문번호=원주문번호, 호가유형코드=호가유형코드, 주문가격=주문가격, 주문수량=주문수량)
+            data = self._post(tr_name, 종목코드=종목코드, 원주문번호=원주문번호, 호가유형코드=호가유형코드,
+                              주문가격=주문가격, 주문수량=주문수량)
             return data[out_block]['OrdNo'], data['rsp_msg']
         except Exception:
             return 0, format_exc()
@@ -474,8 +476,8 @@ class LsRestAPI:
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
-            data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드, 주문가격=주문가격,
-                              주문수량=주문수량)
+            data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드,
+                              주문가격=주문가격, 주문수량=주문수량)
             return data[out_block]['OrdNo'], data['rsp_msg']
         except Exception:
             return 0, format_exc()
@@ -486,8 +488,8 @@ class LsRestAPI:
             tr_name = '야간선물정정주문'
             out_block = LsRestData.tr_data[tr_name]['out_block']
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
-            data = self._post( tr_name, 종목코드=종목코드, 원주문번호=원주문번호, 호가유형코드=호가유형코드, 주문가격=주문가격,
-                               주문수량=주문수량)
+            data = self._post( tr_name, 종목코드=종목코드, 원주문번호=원주문번호, 호가유형코드=호가유형코드,
+                               주문가격=주문가격, 주문수량=주문수량)
             return data[out_block]['OrdNo'], data['rsp_msg']
         except Exception:
             return 0, format_exc()
