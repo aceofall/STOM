@@ -1117,7 +1117,7 @@ class BaseTrader:
         if 주문구분 in ('BUY_LONG', 'SELL_SHORT', 'SELL_LONG', 'BUY_SHORT'):
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
                 if 종목코드 in self.dict_jg:
-                    보유수량 = round(self.dict_jg[종목코드]['보유수량'] + 체결수량, self.dict_info[종목코드]['소숫점자리수'])
+                    보유수량 = round(self.dict_jg[종목코드]['보유수량'] + 체결수량, self.dict_info[종목코드]['수량소숫점자리수'])
                     매입금액 = round(self.dict_jg[종목코드]['매입금액'] + 체결수량 * 체결가격, 4)
                     매수가 = round(매입금액 / 보유수량, 8)
                     보유금액 = round(체결가격 * 보유수량, 4)
@@ -1171,7 +1171,7 @@ class BaseTrader:
                     return
                 포지션 = self.dict_jg[종목코드]['포지션']
                 매수가 = self.dict_jg[종목코드]['매수가']
-                보유수량 = round(self.dict_jg[종목코드]['보유수량'] - 체결수량, self.dict_info[종목코드]['소숫점자리수'])
+                보유수량 = round(self.dict_jg[종목코드]['보유수량'] - 체결수량, self.dict_info[종목코드]['수량소숫점자리수'])
                 if 보유수량 != 0:
                     매입금액 = round(매수가 * 보유수량, 4)
                     보유금액 = round(체결가격 * 보유수량, 4)
