@@ -305,16 +305,19 @@ class LsRestAPI:
             tr_name = '해외선물종목정보'
             out_block = LsRestData.tr_data[tr_name]['out_block']
             data = self._post(tr_name, 구분='')
+            name_list = []
             dict_data = {}
             for data in data[out_block]:
                 name = data['BscGdsNm'].replace(' ', '_')
-                dict_data[data['Symbol']] = {
-                    '종목명': name,
-                    '위탁증거금': int(float(data['OpngMgn'])),
-                    '호가단위': float(data['UntPrc']),
-                    '틱가치': float(data['MnChgAmt']),
-                    '소숫점자리수': int(data['DotGb'])
-                }
+                if name not in name_list:
+                    name_list.append(name)
+                    dict_data[data['Symbol']] = {
+                        '종목명': name,
+                        '위탁증거금': int(float(data['OpngMgn'])),
+                        '호가단위': float(data['UntPrc']),
+                        '틱가치': float(data['MnChgAmt']),
+                        '소숫점자리수': int(data['DotGb'])
+                    }
             return dict_data, list(dict_data.keys())
         except Exception:
             self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
