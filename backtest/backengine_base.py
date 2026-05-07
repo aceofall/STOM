@@ -870,13 +870,6 @@ class BackEngineBase(StgGlobalsFunc):
                     if vturn == 0 and self.tick_count < self.vars[0]:
                         continue
 
-                    if self.dict_condition:
-                        self.turn_key = f'{vturn}{vturn}'
-                        if 종목코드 not in self.dict_cond_indexn:
-                            self.dict_cond_indexn[종목코드] = {}
-                        for k, v in self.dict_condition.items():
-                            exec(v)
-
                     if not self.is_tick:
                         if self.indistg is not None:
                             exec(self.indistg)
@@ -884,6 +877,13 @@ class BackEngineBase(StgGlobalsFunc):
                         AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                             MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                             get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+                    if self.dict_condition:
+                        self.turn_key = f'{vturn}{vturn}'
+                        if 종목코드 not in self.dict_cond_indexn:
+                            self.dict_cond_indexn[종목코드] = {}
+                        for k, v in self.dict_condition.items():
+                            exec(v)
 
                     self.info_for_order = 현재가, 저가대비고가등락율, vturn, vkey
                     self.curr_trade_info = self.trade_info[vturn][vkey]
@@ -918,13 +918,6 @@ class BackEngineBase(StgGlobalsFunc):
                     elif self.tick_count < self.avgtime:
                         return
 
-                    if self.dict_condition:
-                        self.turn_key = f'{vturn}{vturn}'
-                        if 종목코드 not in self.dict_cond_indexn:
-                            self.dict_cond_indexn[종목코드] = {}
-                        for k, v in self.dict_condition.items():
-                            exec(v)
-
                     if not self.is_tick:
                         if self.indistg is not None:
                             exec(self.indistg)
@@ -932,6 +925,13 @@ class BackEngineBase(StgGlobalsFunc):
                         AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                             MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                             get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+                    if self.dict_condition:
+                        self.turn_key = f'{vturn}{vturn}'
+                        if 종목코드 not in self.dict_cond_indexn:
+                            self.dict_cond_indexn[종목코드] = {}
+                        for k, v in self.dict_condition.items():
+                            exec(v)
 
                     self.info_for_order = 현재가, 저가대비고가등락율, vturn, vkey
                     self.curr_trade_info = self.trade_info[vturn][vkey]
@@ -966,13 +966,6 @@ class BackEngineBase(StgGlobalsFunc):
                 if self.tick_count < self.avgtime:
                     return
 
-            if self.dict_condition:
-                self.turn_key = f'{vturn}{vturn}'
-                if 종목코드 not in self.dict_cond_indexn:
-                    self.dict_cond_indexn[종목코드] = {}
-                for k, v in self.dict_condition.items():
-                    exec(v)
-
             if not self.is_tick:
                 if self.indistg is not None:
                     exec(self.indistg)
@@ -980,6 +973,13 @@ class BackEngineBase(StgGlobalsFunc):
                 AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                     MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                     get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+            if self.dict_condition:
+                self.turn_key = f'{vturn}{vturn}'
+                if 종목코드 not in self.dict_cond_indexn:
+                    self.dict_cond_indexn[종목코드] = {}
+                for k, v in self.dict_condition.items():
+                    exec(v)
 
             self.info_for_order = 현재가, 저가대비고가등락율, vturn, vkey
             self.curr_trade_info = self.trade_info[vturn][vkey]
@@ -1155,7 +1155,7 @@ class BackEngineBase(StgGlobalsFunc):
                         잔량배열 = 매도잔량배열[:self.sell_hj_limit]
 
                     거래금액, 체결가능 = self._calc_fill_amount(주문수량, 호가배열, 잔량배열)
-                    if not 체결완료:
+                    if not 체결가능:
                         거래금액 = 주문수량 * 호가배열[0]
 
                     self.curr_trade_info['매도가'] = self._get_order_price(거래금액, 주문수량)

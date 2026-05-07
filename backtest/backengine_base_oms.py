@@ -158,13 +158,6 @@ class BackEngineBaseOms(BackEngineBase):
                     if vturn == 0 and self.tick_count < self.vars[0]:
                         continue
 
-                    if self.dict_condition:
-                        self.turn_key = f'{vturn}{vturn}'
-                        if 종목코드 not in self.dict_cond_indexn:
-                            self.dict_cond_indexn[종목코드] = {}
-                        for k, v in self.dict_condition.items():
-                            exec(v)
-
                     if not self.is_tick:
                         if self.indistg is not None:
                             exec(self.indistg)
@@ -172,6 +165,13 @@ class BackEngineBaseOms(BackEngineBase):
                         AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                             MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                             get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+                    if self.dict_condition:
+                        self.turn_key = f'{vturn}{vturn}'
+                        if 종목코드 not in self.dict_cond_indexn:
+                            self.dict_cond_indexn[종목코드] = {}
+                        for k, v in self.dict_condition.items():
+                            exec(v)
 
                     self.curr_day_info = self.day_info[vturn][vkey]
                     self.curr_trade_info = self.trade_info[vturn][vkey]
@@ -237,13 +237,6 @@ class BackEngineBaseOms(BackEngineBase):
                     elif self.tick_count < self.avgtime:
                         return
 
-                    if self.dict_condition:
-                        self.turn_key = f'{vturn}{vturn}'
-                        if 종목코드 not in self.dict_cond_indexn:
-                            self.dict_cond_indexn[종목코드] = {}
-                        for k, v in self.dict_condition.items():
-                            exec(v)
-
                     if not self.is_tick:
                         if self.indistg is not None:
                             exec(self.indistg)
@@ -251,6 +244,13 @@ class BackEngineBaseOms(BackEngineBase):
                         AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                             MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                             get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+                    if self.dict_condition:
+                        self.turn_key = f'{vturn}{vturn}'
+                        if 종목코드 not in self.dict_cond_indexn:
+                            self.dict_cond_indexn[종목코드] = {}
+                        for k, v in self.dict_condition.items():
+                            exec(v)
 
                     self.curr_day_info = self.day_info[vturn][vkey]
                     self.curr_trade_info = self.trade_info[vturn][vkey]
@@ -322,13 +322,6 @@ class BackEngineBaseOms(BackEngineBase):
                 if self.tick_count < self.avgtime:
                     return
 
-            if self.dict_condition:
-                self.turn_key = f'{vturn}{vturn}'
-                if 종목코드 not in self.dict_cond_indexn:
-                    self.dict_cond_indexn[종목코드] = {}
-                for k, v in self.dict_condition.items():
-                    exec(v)
-
             if not self.is_tick:
                 if self.indistg is not None:
                     exec(self.indistg)
@@ -336,6 +329,13 @@ class BackEngineBaseOms(BackEngineBase):
                 AD, ADOSC, ADXR, APO, AROOND, AROONU, ATR, BBU, BBM, BBL, CCI, DIM, DIP, MACD, MACDS, MACDH, \
                     MFI, MOM, OBV, PPO, ROC, RSI, SAR, STOCHSK, STOCHSD, STOCHFK, STOCHFD, WILLR = \
                     get_indicator(self.mc, self.mh, self.ml, self.mv, self.k)
+
+            if self.dict_condition:
+                self.turn_key = f'{vturn}{vturn}'
+                if 종목코드 not in self.dict_cond_indexn:
+                    self.dict_cond_indexn[종목코드] = {}
+                for k, v in self.dict_condition.items():
+                    exec(v)
 
             self.curr_day_info = self.day_info[vturn][vkey]
             self.curr_trade_info = self.trade_info[vturn][vkey]
