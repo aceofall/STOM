@@ -235,6 +235,9 @@ class BaseTrader:
                 주문취소 = True
         elif self.dict_bool['잔고청산']:
             주문취소 = True
+        elif self.market_gubun == 5 and 주문수량 * 주문가격 < 5000:
+            self.windowQ.put((UI_NUM['시스템로그'], f'오류 알림 - 주문금액이 5천원미만입니다.'))
+            주문취소 = True
         elif 주문구분 == '매수':
             inthms = get_inthms(self.market_gubun)
             거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명]))
@@ -409,11 +412,6 @@ class BaseTrader:
             elif 주문구분 in ('SELL_LONG', 'BUY_SHORT') and 정정횟수 == 0:
                 if 수동주문유형 is None and '지정가' in self.dict_set['매도주문유형']:
                     주문가격 = self._get_order_sell_price(종목코드, 주문구분, 주문가격)
-
-        if self.market_gubun == 5 and 주문수량 * 주문가격 < 5000:
-            self.windowQ.put((UI_NUM['시스템로그'], f'오류 알림 - 주문금액이 5천원미만입니다.'))
-            self._put_order_complete(f'{주문구분}취소', 종목코드)
-            return
 
         if self.market_gubun == 9 and 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
             주문수량 = round(주문수량 * self.dict_lvrg[종목코드], self.dict_info[종목코드]['수량소숫점자리수'])

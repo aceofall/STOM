@@ -1658,8 +1658,7 @@ class BaseStrategy(StgGlobalsFunc):
                 betting = self.betting * self.set_weight[9]
 
         oc_ratio = DICT_ORDER_RATIO[self.dict_set['매수분할방법']][self.dict_set['매수분할횟수']][분할매수횟수]
-        매수수량 = self._set_buy_count(betting, 현재가, 매수가, oc_ratio)
-        return 매수수량
+        return self._set_buy_count(betting, 현재가, 매수가, oc_ratio)
 
     def Sell(self, sell_long=False):
         """매도 주문을 실행합니다.
