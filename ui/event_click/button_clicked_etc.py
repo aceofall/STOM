@@ -201,7 +201,13 @@ def lvbutton_clicked_01(ui):
     Args:
         ui: UI 클래스 인스턴스
     """
-    ui.dialog_leverage.show() if not ui.dialog_leverage.isVisible() else ui.dialog_leverage.close()
+    from ui.create_widget.dialog_animation import DialogAnimator
+
+    if not ui.dialog_leverage.isVisible():
+        DialogAnimator.setup_dialog_animation(ui.dialog_leverage, duration=300)
+        ui.dialog_leverage.show()
+    else:
+        ui.dialog_leverage.close()
 
 
 def lvbutton_clicked_02(ui):
