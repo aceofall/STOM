@@ -892,7 +892,7 @@ class BaseTrader:
                 self.dict_intg['추정예수금'] += 매입금액 + 수익금
 
             if self.dict_set['알림소리']:
-                self.soundQ.put(f'{종목명} {체결수량}주를 {주문구분[:2]}하였습니다')
+                self.soundQ.put(f'{종목명} {체결수량}개를 {주문구분}하였습니다')
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
@@ -912,7 +912,7 @@ class BaseTrader:
             self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
             if self.dict_set['알림소리']:
-                self.soundQ.put(f'{종목명} {주문수량}주를 {주문구분}하였습니다')
+                self.soundQ.put(f'{종목명} {주문수량}개의 {주문구분}주문을 {체결구분}하였습니다')
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
 
@@ -1064,7 +1064,12 @@ class BaseTrader:
                 self.dict_intg['추정예수금'] += 위탁증거금 + 수익금
 
             if self.dict_set['알림소리']:
-                self.soundQ.put(f'{종목명} {체결수량}주를 {주문구분}하였습니다')
+                text = ''
+                if 주문구분 == 'BUY_LONG':     text = f'롱포지션 {체결수량}계약을 매수'
+                elif 주문구분 == 'SELL_SHORT': text = f'숏포지션 {체결수량}계약을 매수'
+                elif 주문구분 == 'SELL_LONG':  text = f'롱포지션 {체결수량}계약을 매도'
+                elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}계약을 매도'
+                self.soundQ.put(f'{종목명} {text}하였습니다')
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
@@ -1085,7 +1090,18 @@ class BaseTrader:
             self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
             if self.dict_set['알림소리']:
-                self.soundQ.put(f'{종목명} {주문수량}주를 {주문구분}하였습니다')
+                text = ''
+                if 체결구분 == '정정':
+                    if 주문구분 == 'BUY_LONG':     text = f'롱포지션 {체결수량}계약의 매수주문을 정정'
+                    elif 주문구분 == 'SELL_SHORT': text = f'숏포지션 {체결수량}계약의 매수주문을 정정'
+                    elif 주문구분 == 'SELL_LONG':  text = f'롱포지션 {체결수량}계약의 매도주문을 정정'
+                    elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}계약의 매도주문을 정정'
+                else:
+                    if 주문구분 == 'BUY_LONG':     text = f'롱포지션 {체결수량}계약의 매수주문을 취소'
+                    elif 주문구분 == 'SELL_SHORT': text = f'숏포지션 {체결수량}계약의 매수주문을 취소'
+                    elif 주문구분 == 'SELL_LONG':  text = f'롱포지션 {체결수량}계약의 매도주문을 취소'
+                    elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}계약의 매도주문을 취소'
+                self.soundQ.put(f'{종목명} {text}하였습니다')
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
 
@@ -1227,11 +1243,11 @@ class BaseTrader:
 
             if self.dict_set['알림소리']:
                 text = ''
-                if 주문구분 == 'BUY_LONG':     text = '롱포지션을 진입'
-                elif 주문구분 == 'SELL_SHORT': text = '숏포지션을 진입'
-                elif 주문구분 == 'SELL_LONG':  text = '롱포지션을 청산'
-                elif 주문구분 == 'BUY_SHORT':  text = '숏포지션을 청산'
-                self.soundQ.put(f"{종목코드} {text}하였습니다.")
+                if 주문구분 == 'BUY_LONG':     text = f'롱포지션 {체결수량}개를 매수'
+                elif 주문구분 == 'SELL_SHORT': text = f'숏포지션 {체결수량}개를 매수'
+                elif 주문구분 == 'SELL_LONG':  text = f'롱포지션 {체결수량}개를 매도'
+                elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}개를 매도'
+                self.soundQ.put(f"{종목코드.replace('USDT', '')} {text}하였습니다.")
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
@@ -1248,11 +1264,11 @@ class BaseTrader:
 
             if self.dict_set['알림소리']:
                 text = ''
-                if 주문구분 == 'BUY_LONG_CANCEL':     text = '롱포지션 진입을 취소'
-                elif 주문구분 == 'SELL_SHORT_CANCEL': text = '숏포지션 진입을 취소'
-                elif 주문구분 == 'SELL_LONG_CANCEL':  text = '롱포지션 청산을 취소'
-                elif 주문구분 == 'BUY_SHORT_CANCEL':  text = '숏포지션 청산을 취소'
-                self.soundQ.put(f"{종목코드} {text}하였습니다.")
+                if 주문구분 == 'BUY_LONG_CANCEL':     text = f'롱포지션 {체결수량}개의 매수주문을 취소'
+                elif 주문구분 == 'SELL_SHORT_CANCEL': text = f'숏포지션 {체결수량}개의 매수주문을 취소'
+                elif 주문구분 == 'SELL_LONG_CANCEL':  text = f'롱포지션 {체결수량}개의 매도주문을 취소'
+                elif 주문구분 == 'BUY_SHORT_CANCEL':  text = f'숏포지션 {체결수량}개의 매도주문을 취소'
+                self.soundQ.put(f"{종목코드.replace('USDT', '')} {text}하였습니다.")
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
 
