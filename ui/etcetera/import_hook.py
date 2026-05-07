@@ -13,6 +13,7 @@ class ImportProgressHook:
             'utility.settings.setting_user',
             'utility.sub_process_and_thread.timesync',
             'utility.static_method.static_etcetera',
+            'utility.static_method.builtin_print',
             'utility.db_control.database_read_only',
             'utility.sub_process_and_thread.webcrawling',
             'utility.static_method.static_datetime',
