@@ -458,7 +458,7 @@ class BaseTrader:
                     timedelta_sec(self.dict_set['매수취소시간초']), 0, 주문가격, 호가단위
                 ]
 
-        주문번호 = '모의투자' if self.market_gubun in (5, 8) else 0
+        주문번호 = '0' if self.market_gubun in (5, 8) else 0
         if self.market_gubun < 6:
             self._update_chejan_data(
                 주문구분, '체결', 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호
