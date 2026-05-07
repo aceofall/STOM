@@ -1045,7 +1045,8 @@ class BaseTrader:
                 if -100 < 수익률 < 100:
                     self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간, 포지션)
 
-                if 수익률 < 0: self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
+                if 수익률 < 0:
+                    self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
 
             self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
 
@@ -1376,7 +1377,9 @@ class BaseTrader:
             주문가격: 주문 가격
             주문번호: 주문 번호
         """
-        self.dict_info[종목코드]['최종거래시간'] = timedelta_sec(self.dict_set['매수금지간격초'])
+        if 주문구분 != '시드부족':
+            self.dict_info[종목코드]['최종거래시간'] = timedelta_sec(self.dict_set['매수금지간격초'])
+
         self.dict_cj[index] = {
             '종목명': 종목명,
             '주문구분': 주문구분,
