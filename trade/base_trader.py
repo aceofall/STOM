@@ -237,7 +237,7 @@ class BaseTrader:
                 주문취소 = True
         elif self.dict_bool['잔고청산']:
             주문취소 = True
-        elif self.market_gubun == 5 and 주문수량 * 주문가격 < 5000:
+        elif 주문수량 != 0 and self.market_gubun == 5 and 주문수량 * 주문가격 < 5000:
             self.windowQ.put((UI_NUM['시스템로그'], f'오류 알림 - 주문금액이 5천원미만입니다.'))
             주문취소 = True
         elif 주문구분 == '매수':
