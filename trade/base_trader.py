@@ -1407,33 +1407,29 @@ class BaseTrader:
             총매입금액 = sum([v['매입금액'] for v in jg_values])
             총평가금액 = sum([v['평가금액'] for v in jg_values])
             총수익률 = round(총평가손익 / 총매입금액 * 100, 2)
-            잔고수량 = len(self.dict_jg)
+            보유종목수 = len(self.dict_jg)
             추정예탁자산 = self.dict_intg['예수금'] + 총평가금액
         else:
-            총평가손익, 총매입금액, 총평가금액, 총수익률, 잔고수량 = 0, 0, 0, 0., 0
+            총평가손익, 총매입금액, 총평가금액, 총수익률, 보유종목수 = 0, 0, 0, 0., 0
             추정예탁자산 = self.dict_intg['예수금']
 
         self.dict_tj[self.str_today] = {
             '추정예탁자산': 추정예탁자산,
             '추정예수금': self.dict_intg['예수금'],
-            '보유종목수': 잔고수량,
+            '보유종목수': 보유종목수,
             '수익률': 총수익률,
             '총평가손익': 총평가손익,
             '총매입금액': 총매입금액,
             '총평가금액': 총평가금액
         }
 
-        거래수익금합계 = sum([v['수익금'] for v in self.dict_td.values()])
-        당일평가손익 = 총평가손익 + 거래수익금합계
-
-        if self.dict_set['손실중지']:
-            기준손실금 = -self.dict_intg['추정예탁자산'] * self.dict_set['손실중지수익률'] / 100
-            if 기준손실금 > 당일평가손익:
+        if self.dict_set['손실중지'] or self.dict_set['수익중지']:
+            거래수익금액 = sum([v['수익금'] for v in self.dict_td.values()])
+            당일평가손익 = 총평가손익 + 거래수익금액
+            기준손익금액 = self.dict_intg['추정예탁자산'] * self.dict_set['수익중지수익률'] / 100
+            if self.dict_set['손실중지'] and -기준손익금액 > 당일평가손익:
                 self._strategy_stop()
-
-        if self.dict_set['수익중지']:
-            기준수익금 = self.dict_intg['추정예탁자산'] * self.dict_set['수익중지수익률'] / 100
-            if 기준수익금 < 당일평가손익:
+            if self.dict_set['수익중지'] and 기준손익금액 < 당일평가손익:
                 self._strategy_stop()
 
         if self.dict_set['투자금고정']:
@@ -1442,27 +1438,25 @@ class BaseTrader:
             종목당투자금 = int(추정예탁자산 * 0.98 / self.dict_set['최대매수종목수'])
 
         if self.dict_intg['종목당투자금'] != 종목당투자금:
-            self.dict_intg['종목당투자금'] = 종목당투자금
             if self.market_gubun in (1, 4):
                 for q in self.stgQs:
-                    q.put(('종목당투자금', self.dict_intg['종목당투자금']))
+                    q.put(('종목당투자금', 종목당투자금))
             else:
-                self.stgQ.put(('종목당투자금', self.dict_intg['종목당투자금']))
-
-        if self.dict_jg:
-            df_jg = pd.DataFrame.from_dict(self.dict_jg, orient='index')
-        else:
-            columns = COLUMNS_JG if self.market_gubun < 6 else (COLUMNS_JGF if self.market_gubun < 9 else COLUMNS_JGCF)
-            df_jg = pd.DataFrame(columns=columns)
-
-        df_tj = pd.DataFrame.from_dict(self.dict_tj, orient='index')
+                self.stgQ.put(('종목당투자금', 종목당투자금))
+            self.dict_intg['종목당투자금'] = 종목당투자금
 
         if self.dict_intg['추정예탁자산캐시'] != 추정예탁자산:
             self.dict_intg['추정예탁자산캐시'] = 추정예탁자산
-            self.queryQ.put(('거래디비', df_jg, self.market_info['잔고디비'], 'replace'))
+            if self.dict_jg:
+                df_jg = pd.DataFrame.from_dict(self.dict_jg, orient='index')
+            else:
+                columns = COLUMNS_JG if self.market_gubun < 6 else (COLUMNS_JGF if self.market_gubun < 9 else COLUMNS_JGCF)
+                df_jg = pd.DataFrame(columns=columns)
+            df_tj = pd.DataFrame.from_dict(self.dict_tj, orient='index')
 
-        self.windowQ.put((UI_NUM['잔고목록'], df_jg))
-        self.windowQ.put((UI_NUM['잔고평가'], df_tj))
+            self.queryQ.put(('거래디비', df_jg, self.market_info['잔고디비'], 'replace'))
+            self.windowQ.put((UI_NUM['잔고목록'], df_jg))
+            self.windowQ.put((UI_NUM['잔고평가'], df_tj))
 
     def _strategy_stop(self):
         """전략을 중지합니다."""
@@ -1582,14 +1576,5 @@ class BaseTrader:
         """주문을 전송합니다.
         Args:
             data: 데이터
-        """
-        pass
-
-    def _convert_order_data(self, data):
-        """주문 데이터를 변환합니다.
-        Args:
-            data: 데이터
-        Returns:
-            변환된 주문 데이터
         """
         pass
