@@ -49,7 +49,7 @@ def sz_button_clicked_01(ui):
                 ui.szoo_pushButon_01,
                 ui.ss_textEditttt_01,
                 QRect(937, 15, 50, 20),
-                QRect(7, 10, 1000, 1347 if ui.extend_window else 740)
+                QRect(7, 10, 1000, 1345 if ui.extend_window else 740)
             )
         else:
             visible = True
@@ -59,7 +59,7 @@ def sz_button_clicked_01(ui):
                 ui.szoo_pushButon_01,
                 ui.ss_textEditttt_01,
                 QRect(937, 15, 50, 20),
-                QRect(7, 10, 1000, 740 if ui.extend_window else 463)
+                QRect(7, 10, 1000, 740 if ui.extend_window else 460)
             )
         ui.ss_textEditttt_02.setVisible(visible)
         ui.szoo_pushButon_02.setVisible(visible)
@@ -72,7 +72,7 @@ def sz_button_clicked_01(ui):
                 ui.szoo_pushButon_01,
                 ui.ss_textEditttt_03,
                 QRect(937, 15, 50, 20),
-                QRect(7, 10, 1000, 1347 if ui.extend_window else 740)
+                QRect(7, 10, 1000, 1345 if ui.extend_window else 740)
             )
         else:
             visible = True
@@ -82,7 +82,7 @@ def sz_button_clicked_01(ui):
                 ui.szoo_pushButon_01,
                 ui.ss_textEditttt_03,
                 QRect(584, 15, 50, 20),
-                QRect(7, 10, 647, 740 if ui.extend_window else 463)
+                QRect(7, 10, 647, 740 if ui.extend_window else 460)
             )
         ui.ss_textEditttt_04.setVisible(visible)
         if ui.sva_pushButton_01.isVisible():
@@ -108,7 +108,7 @@ def sz_button_clicked_02(ui):
                 ui.szoo_pushButon_02,
                 ui.ss_textEditttt_02,
                 QRect(937, 15, 50, 20),
-                QRect(7, 10, 1000, 1347 if ui.extend_window else 740)
+                QRect(7, 10, 1000, 1345 if ui.extend_window else 740)
             )
         else:
             visible = True
@@ -117,8 +117,8 @@ def sz_button_clicked_02(ui):
                 ui,
                 ui.szoo_pushButon_02,
                 ui.ss_textEditttt_02,
-                QRect(937, 761 if ui.extend_window else 483, 50, 20),
-                QRect(7, 756 if ui.extend_window else 480, 1000, 602 if ui.extend_window else 272)
+                QRect(937, 760 if ui.extend_window else 480, 50, 20),
+                QRect(7, 755 if ui.extend_window else 475, 1000, 600 if ui.extend_window else 275)
             )
         ui.ss_textEditttt_01.setVisible(visible)
         ui.szoo_pushButon_01.setVisible(visible)
@@ -131,7 +131,7 @@ def sz_button_clicked_02(ui):
                 ui.szoo_pushButon_02,
                 ui.ss_textEditttt_04,
                 QRect(937, 15, 50, 20),
-                QRect(7, 10, 1000, 1347 if ui.extend_window else 740)
+                QRect(7, 10, 1000, 1345 if ui.extend_window else 740)
             )
         else:
             visible = True
@@ -140,8 +140,8 @@ def sz_button_clicked_02(ui):
                 ui,
                 ui.szoo_pushButon_02,
                 ui.ss_textEditttt_04,
-                QRect(584, 761 if ui.extend_window else 483, 50, 20),
-                QRect(7, 756 if ui.extend_window else 480, 647, 602 if ui.extend_window else 272)
+                QRect(584, 760 if ui.extend_window else 480, 50, 20),
+                QRect(7, 755 if ui.extend_window else 475, 647, 600 if ui.extend_window else 275)
             )
         ui.ss_textEditttt_03.setVisible(visible)
         if ui.sva_pushButton_01.isVisible():

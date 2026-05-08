@@ -371,7 +371,7 @@ class SetDialogEtc:
 
         self.ui.dialog_info.setFixedSize(1403, 570)
         self.ui.gg_textEdittttt_01.setGeometry(7, 5, 692, 90)
-        self.ui.gs_tableWidgett_01.setGeometry(7, 100, 692, 463)
+        self.ui.gs_tableWidgett_01.setGeometry(7, 100, 692, 460)
         self.ui.ns_tableWidgett_01.setGeometry(704, 5, 693, 233)
         self.ui.jm_tableWidgett_01.setGeometry(704, 243, 320, 320)
         self.ui.jm_tableWidgett_02.setGeometry(1024, 243, 373, 320)
@@ -465,7 +465,7 @@ class SetDialogEtc:
         self.ui.dialog_comp.setFixedSize(350, 763)
         self.ui.cp_labelllllll_01.setGeometry(10, 10, 220, 25)
         self.ui.cp_pushButtonn_01.setGeometry(240, 10, 103, 25)
-        self.ui.cp_tableWidget_01.setGeometry(5, 40, 340, 718)
+        self.ui.cp_tableWidget_01.setGeometry(5, 40, 340, 720)
 
         self.ui.dialog_kimp.setFixedSize(535, 763)
         self.ui.kp_tableWidget_01.setGeometry(5, 5, 525, 753)

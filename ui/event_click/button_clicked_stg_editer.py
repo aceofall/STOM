@@ -15,15 +15,15 @@ def group_animation_01(ui):
     current_geo_zoo02 = ui.szoo_pushButon_02.geometry()
 
     # 목표 지오메트리 설정
-    target_geo_tedt1 = QRect(7, 10, 647, 740 if ui.extend_window else 463)
-    target_geo_tedt2 = QRect(7, 756 if ui.extend_window else 478, 647, 602 if ui.extend_window else 272)
-    target_geo_tedt3 = QRect(659, 10, 347, 1347 if ui.extend_window else 740)
+    target_geo_tedt1 = QRect(7, 10, 647, 740 if ui.extend_window else 460)
+    target_geo_tedt2 = QRect(7, 755 if ui.extend_window else 475, 647, 600 if ui.extend_window else 275)
+    target_geo_tedt3 = QRect(659, 10, 347, 1345 if ui.extend_window else 740)
     target_geo_comb1 = QRect(1012, 115, 165, 30)
     target_geo_line1 = QRect(1182, 115, 165, 30)
     target_geo_btn01 = QRect(1012, 150, 165, 30)
     target_geo_btn02 = QRect(1182, 150, 165, 30)
     target_geo_zoo01 = QRect(584, 15, 50, 20)
-    target_geo_zoo02 = QRect(584, 761 if ui.extend_window else 483, 50, 20)
+    target_geo_zoo02 = QRect(584, 760 if ui.extend_window else 480, 50, 20)
 
     # 애니메이션 그룹 생성
     ui.animation_group = QParallelAnimationGroup()
@@ -118,9 +118,9 @@ def group_animation_02(ui):
     current_geo_zoo02 = ui.szoo_pushButon_02.geometry()
 
     # 목표 지오메트리 설정
-    target_geo_tedt1 = QRect(7, 10, 647, 740 if ui.extend_window else 463)
-    target_geo_tedt2 = QRect(7, 756 if ui.extend_window else 478, 647, 602 if ui.extend_window else 272)
-    target_geo_tedt3 = QRect(659, 10, 347, 1347 if ui.extend_window else 740)
+    target_geo_tedt1 = QRect(7, 10, 647, 740 if ui.extend_window else 460)
+    target_geo_tedt2 = QRect(7, 755 if ui.extend_window else 475, 647, 600 if ui.extend_window else 275)
+    target_geo_tedt3 = QRect(659, 10, 347, 1345 if ui.extend_window else 740)
     target_geo_comb1 = QRect(1012, 115, 165, 30)
     target_geo_line1 = QRect(1182, 115, 165, 30)
     target_geo_btn01 = QRect(1012, 150, 165, 30)
@@ -130,7 +130,7 @@ def group_animation_02(ui):
     target_geo_btn03 = QRect(1012, 150, 165, 30)
     target_geo_btn04 = QRect(1182, 150, 165, 30)
     target_geo_zoo01 = QRect(584, 15, 50, 20)
-    target_geo_zoo02 = QRect(584, 761 if ui.extend_window else 483, 50, 20)
+    target_geo_zoo02 = QRect(584, 760 if ui.extend_window else 480, 50, 20)
 
     # 애니메이션 그룹 생성
     ui.animation_group = QParallelAnimationGroup()
@@ -250,8 +250,8 @@ def group_animation_03(ui):
     current_geo_btn04 = ui.sva_pushButton_05.geometry()
 
     # 목표 지오메트리 설정
-    target_geo_tedt1 = QRect(7, 10, 497, 1347 if ui.extend_window else 740)
-    target_geo_tedt2 = QRect(509, 10, 497, 1347 if ui.extend_window else 740)
+    target_geo_tedt1 = QRect(7, 10, 497, 1345 if ui.extend_window else 740)
+    target_geo_tedt2 = QRect(509, 10, 497, 1345 if ui.extend_window else 740)
     target_geo_comb1 = QRect(1012, 10, 165, 30)
     target_geo_line1 = QRect(1182, 10, 165, 30)
     target_geo_btn01 = QRect(1012, 45, 165, 30)
@@ -360,14 +360,14 @@ def group_animation_04(ui):
     current_geo_btn04 = ui.svc_pushButton_04.geometry()
 
     # 목표 지오메트리 설정
-    target_geo_tedt1 = QRect(7, 10, 497, 740 if ui.extend_window else 463)
-    target_geo_tedt2 = QRect(7, 756 if ui.extend_window else 478, 497, 602 if ui.extend_window else 272)
-    target_geo_tedt3 = QRect(509, 10, 497, 740 if ui.extend_window else 463)
-    target_geo_tedt4 = QRect(509, 756 if ui.extend_window else 478, 497, 602 if ui.extend_window else 272)
+    target_geo_tedt1 = QRect(7, 10, 497, 740 if ui.extend_window else 460)
+    target_geo_tedt2 = QRect(7, 755 if ui.extend_window else 475, 497, 600 if ui.extend_window else 275)
+    target_geo_tedt3 = QRect(509, 10, 497, 740 if ui.extend_window else 460)
+    target_geo_tedt4 = QRect(509, 755 if ui.extend_window else 475, 497, 600 if ui.extend_window else 275)
     target_geo_comb1 = QRect(1012, 10, 165, 30)
     target_geo_btn01 = QRect(1182, 10, 165, 30)
-    target_geo_comb2 = QRect(1012, 478, 165, 30)
-    target_geo_btn02 = QRect(1182, 478, 165, 30)
+    target_geo_comb2 = QRect(1012, 475, 165, 30)
+    target_geo_btn02 = QRect(1182, 475, 165, 30)
     target_geo_comb3 = QRect(1012, 115, 165, 30)
     target_geo_line1 = QRect(1182, 115, 165, 30)
     target_geo_btn03 = QRect(1012, 150, 165, 30)
@@ -482,14 +482,14 @@ def group_animation_05(ui):
     current_geo_zoo02 = ui.szoo_pushButon_02.geometry()
 
     # 목표 지오메트리 설정
-    target_geo_tedt1 = QRect(7, 10, 1000, 740 if ui.extend_window else 463)
-    target_geo_tedt2 = QRect(7, 756 if ui.extend_window else 478, 1000, 602 if ui.extend_window else 272)
+    target_geo_tedt1 = QRect(7, 10, 1000, 740 if ui.extend_window else 460)
+    target_geo_tedt2 = QRect(7, 755 if ui.extend_window else 475, 1000, 600 if ui.extend_window else 275)
     target_geo_comb1 = QRect(1012, 10, 165, 25)
     target_geo_btn01 = QRect(1012, 40, 165, 30)
-    target_geo_comb2 = QRect(1012, 478, 165, 25)
-    target_geo_btn02 = QRect(1012, 508, 165, 30)
+    target_geo_comb2 = QRect(1012, 475, 165, 30)
+    target_geo_btn02 = QRect(1012, 510, 165, 30)
     target_geo_zoo01 = QRect(937, 15, 50, 20)
-    target_geo_zoo02 = QRect(937, 761 if ui.extend_window else 483, 50, 20)
+    target_geo_zoo02 = QRect(937, 760 if ui.extend_window else 480, 50, 20)
 
     # 애니메이션 그룹 생성
     ui.animation_group = QParallelAnimationGroup()
@@ -1140,9 +1140,9 @@ def backtest_log(ui):
     ui.ss_textEditttt_07.setVisible(False)
     ui.ss_textEditttt_08.setVisible(False)
 
-    ui.ss_textEditttt_09.setGeometry(7, 10, 1000, 1313 if ui.extend_window else 703)
-    ui.ss_progressBar_01.setGeometry(7, 1328 if ui.extend_window else 718, 830, 30)
-    ui.ss_pushButtonn_08.setGeometry(842, 1328 if ui.extend_window else 718, 165, 30)
+    ui.ss_textEditttt_09.setGeometry(7, 10, 1000, 1310 if ui.extend_window else 705)
+    ui.ss_progressBar_01.setGeometry(7, 1325 if ui.extend_window else 720, 830, 30)
+    ui.ss_pushButtonn_08.setGeometry(842, 1325 if ui.extend_window else 720, 165, 30)
 
     for item in ui.version_list:
         item.setVisible(False)
@@ -1178,7 +1178,7 @@ def backtest_detail(ui):
     ui.ss_textEditttt_07.setVisible(False)
     ui.ss_textEditttt_08.setVisible(False)
 
-    ui.ss_tableWidget_01.setGeometry(7, 40, 1000, 1318 if ui.extend_window else 713)
+    ui.ss_tableWidget_01.setGeometry(7, 40, 1000, 1315 if ui.extend_window else 710)
     if (ui.extend_window and ui.ss_tableWidget_01.rowCount() < 60) or \
             (not ui.extend_window and ui.ss_tableWidget_01.rowCount() < 32):
         ui.ss_tableWidget_01.setRowCount(60 if ui.extend_window else 32)
@@ -1272,8 +1272,8 @@ def opti_cond_editer(ui):
     ui.ss_textEditttt_05.setVisible(False)
     ui.ss_textEditttt_06.setVisible(False)
 
-    ui.ss_textEditttt_07.setGeometry(7, 10, 497, 1347 if ui.extend_window else 740)
-    ui.ss_textEditttt_08.setGeometry(509, 10, 497, 1347 if ui.extend_window else 740)
+    ui.ss_textEditttt_07.setGeometry(7, 10, 497, 1345 if ui.extend_window else 740)
+    ui.ss_textEditttt_08.setGeometry(509, 10, 497, 1345 if ui.extend_window else 740)
 
     for item in ui.version_list:
         item.setVisible(False)

@@ -109,8 +109,8 @@ def strategy_version(ui, gubun1, gubun2, strategy_name):
     version_delete_btn  = getattr(ui, 'ss_pushButtonn_41')
 
     textEdit1, textEdit2, comboBox1, comboBox2 = get_widget(ui, gubun1, gubun2)
-    textEdit1.setGeometry(7, 40, 497, 1307 if ui.extend_window else 700)
-    textEdit2.setGeometry(509, 40, 497, 1307 if ui.extend_window else 700)
+    textEdit1.setGeometry(7, 40, 497, 1315 if ui.extend_window else 710)
+    textEdit2.setGeometry(509, 40, 497, 1315 if ui.extend_window else 710)
     textEdit1.setVisible(True)
     textEdit2.setVisible(True)
 

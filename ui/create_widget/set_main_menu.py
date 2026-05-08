@@ -122,5 +122,5 @@ class SetMainMenu:
 
         self.ui.progressBarrr.setGeometry(6, 490, 35, 267)
 
-        self.ui.image_label1.setGeometry(1057, 478, 335, 105)
-        self.ui.image_label2.setGeometry(1057, 756, 335, 602)
+        self.ui.image_label1.setGeometry(1057, 475, 335, 105)
+        self.ui.image_label2.setGeometry(1057, 755, 335, 600)

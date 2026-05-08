@@ -26,7 +26,7 @@ def update_image(ui, data):
     ui.image_label2.clear()
     qpix = QPixmap()
     qpix.loadFromData(data[2])
-    qpix = qpix.scaled(QSize(335, 602), Qt.IgnoreAspectRatio)
+    qpix = qpix.scaled(QSize(335, 600), Qt.IgnoreAspectRatio)
     ui.image_label2.setPixmap(qpix)
 
 
