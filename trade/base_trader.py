@@ -789,6 +789,7 @@ class BaseTrader:
 
         index = self._get_index()
         종목명 = self.dict_info[종목코드]['종목명']
+        self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
         if 체결구분 == '체결' and 주문구분 != '시드부족':
             if 주문구분 == '매수':
@@ -797,65 +798,50 @@ class BaseTrader:
                     매입금액 = self.dict_jg[종목코드]['매입금액'] + 체결수량 * 체결가격
                     매수가 = int(매입금액 / 보유수량 + 0.5)
                     평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
-
-                    self.dict_jg[종목코드].update({
-                        '매수가': 매수가,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 보유수량,
-                        '매수시간': 체결시간
-                    })
+                    분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
                     보유수량 = 체결수량
                     매입금액 = 체결수량 * 체결가격
                     매수가 = 체결가격
                     평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
+                    분할매수횟수, 분할매도횟수 = 1, 0
 
-                    self.dict_jg[종목코드] = {
-                        '종목명': 종목명,
-                        '매수가': 매수가,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 보유수량,
-                        '분할매수횟수': 0,
-                        '분할매도횟수': 0,
-                        '매수시간': 체결시간
-                    }
-
-                if 미체결수량 == 0:
-                    self.dict_jg[종목코드]['분할매수횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
-
+                self.dict_jg[종목코드] = {
+                    '종목명': 종목명,
+                    '매수가': 매수가,
+                    '현재가': 체결가격,
+                    '수익률': 수익률,
+                    '평가손익': 수익금,
+                    '매입금액': 매입금액,
+                    '평가금액': 평가금액,
+                    '보유수량': 보유수량,
+                    '분할매수횟수': 분할매수횟수,
+                    '분할매도횟수': 분할매도횟수,
+                    '매수시간': 체결시간
+                }
             else:
                 if 종목코드 not in self.dict_jg:
                     return
+
                 보유수량 = self.dict_jg[종목코드]['보유수량'] - 체결수량
                 매수가 = self.dict_jg[종목코드]['매수가']
-                if 보유수량 != 0:
+
+                if 보유수량 > 0:
                     매입금액 = 매수가 * 보유수량
                     평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
-
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
                         '현재가': 체결가격,
                         '수익률': 수익률,
                         '평가손익': 수익금,
                         '매입금액': 매입금액,
                         '평가금액': 평가금액,
-                        '보유수량': 보유수량
+                        '보유수량': 보유수량,
+                        '분할매도횟수': 분할매도횟수
                     })
                 else:
                     del self.dict_jg[종목코드]
-
-                if 미체결수량 == 0:
-                    if 보유수량 > 0:
-                        self.dict_jg[종목코드]['분할매도횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
 
                 매입금액 = 매수가 * 체결수량
                 평가금액, 수익금, 수익률 = self._get_profit(매입금액, 체결수량 * 체결가격)
@@ -866,12 +852,9 @@ class BaseTrader:
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
 
-            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
-
             if 미체결수량 == 0:
+                del self.dict_order[주문구분][종목코드]
                 self._put_order_complete(f'{주문구분}완료', 종목코드)
-
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
             if 주문구분 == '매수':
                 self.dict_intg['예수금'] -= 체결수량 * 체결가격
@@ -884,6 +867,8 @@ class BaseTrader:
             if self.dict_set['알림소리']:
                 self.soundQ.put(f'{종목명} {체결수량}개를 {주문구분}하였습니다')
 
+            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
+            self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
         elif 체결구분 in ('정정', '취소'):
@@ -899,17 +884,10 @@ class BaseTrader:
 
                 self._put_order_complete(주문구분, 종목코드)
 
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
-
             if self.dict_set['알림소리']:
                 self.soundQ.put(f'{종목명} {주문수량}개의 {주문구분}주문을 {체결구분}하였습니다')
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
-
-        elif 주문구분 == '시드부족':
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
-
-        self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
 
     def _update_chejan_data_future(self, 체결구분, 종목코드, 체결수량, 체결가격, 체결시간, 주문번호):
         """선물 체결 데이터를 업데이트합니다."""
@@ -921,6 +899,8 @@ class BaseTrader:
         index = self._get_index()
         종목명 = self.dict_info[종목코드]['종목명']
         주문구분, 주문가격, 주문수량, 체결된수량 = signal_data
+        if 주문구분 == '시드부족' or 체결구분 in ('정정', '취소'):
+            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
         if 체결구분 == '체결' and 주문구분 != '시드부족':
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
@@ -930,95 +910,70 @@ class BaseTrader:
                     직전매입금액 = self.dict_jg[종목코드]['매입금액']
                     보유수량 = 직전보유수량 + 체결수량
                     매입금액 = 직전매입금액 + self.dict_info[종목코드]['위탁증거금'] * 체결수량
-                    매수가 = round((직전매수가 * 직전보유수량 + 체결가격 * 체결수량) / 보유수량, self.dict_info[종목코드]['소숫점자리수'] + 1)
+                    매수가 = round((직전매수가 * 직전보유수량 + 체결가격 * 체결수량) / 보유수량, self.dict_info[종목코드]['소숫점자리수'])
                     보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
                     if 'LONG' in 주문구분:
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
                     else:
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
-
-                    self.dict_jg[종목코드].update({
-                        '매수가': 매수가,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 보유수량,
-                        '매수시간': index[:14]
-                    })
+                    분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
+                    매수가 = 체결가격
                     보유수량 = 체결수량
                     매입금액 = 보유금액 = self.dict_info[종목코드]['위탁증거금'] * 체결수량
                     if 'LONG' in 주문구분:
-                        포지션 = 'LONG'
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
                     else:
-                        포지션 = 'SHORT'
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
+                    분할매수횟수, 분할매도횟수 = 1, 0
 
-                    self.dict_jg[종목코드] = {
-                        '종목명': 종목명,
-                        '포지션': 포지션,
-                        '매수가': 체결가격,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 체결수량,
-                        '분할매수횟수': 0,
-                        '분할매도횟수': 0,
-                        '매수시간': index[:14]
-                    }
-
-                체결된수량 += 체결수량
-                미체결수량 = 주문수량 - 체결된수량
-                if 미체결수량 == 0:
-                    if 보유수량 > 0:
-                        self.dict_jg[종목코드]['분할매수횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
-                    del self.dict_signal[종목코드]
-                else:
-                    signal_data[-1] = 체결된수량
-
+                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
+                self.dict_jg[종목코드] = {
+                    '종목명': 종목명,
+                    '포지션': 포지션,
+                    '매수가': 매수가,
+                    '현재가': 체결가격,
+                    '수익률': 수익률,
+                    '평가손익': 수익금,
+                    '매입금액': 매입금액,
+                    '평가금액': 평가금액,
+                    '보유수량': 보유수량,
+                    '분할매수횟수': 분할매수횟수,
+                    '분할매도횟수': 분할매도횟수,
+                    '매수시간': 체결시간
+                }
             else:
                 if 종목코드 not in self.dict_jg:
                     return
+
                 포지션 = self.dict_jg[종목코드]['포지션']
                 매수가 = self.dict_jg[종목코드]['매수가']
                 보유수량 = self.dict_jg[종목코드]['보유수량'] - 체결수량
-                if 보유수량 != 0:
+
+                if 보유수량 > 0:
                     매입금액 = self.dict_info[종목코드]['위탁증거금'] * 보유수량
                     보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
                     if 'LONG' in 주문구분:
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
                     else:
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
-
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
                         '현재가': 체결가격,
                         '수익률': 수익률,
                         '평가손익': 수익금,
                         '매입금액': 매입금액,
                         '평가금액': 평가금액,
-                        '보유수량': 보유수량
+                        '보유수량': 보유수량,
+                        '분할매도횟수': 분할매도횟수
                     })
                 else:
                     del self.dict_jg[종목코드]
 
-                체결된수량 += 체결수량
-                미체결수량 = 주문수량 - 체결된수량
-                if 미체결수량 == 0:
-                    if 보유수량 > 0:
-                        self.dict_jg[종목코드]['분할매도횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
-                    del self.dict_signal[종목코드]
-                else:
-                    signal_data[-1] = 체결된수량
-
                 매입금액 = self.dict_info[종목코드]['위탁증거금'] * 체결수량
                 보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 체결수량
+
                 if 'LONG' in 주문구분:
                     평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
                 else:
@@ -1030,10 +985,14 @@ class BaseTrader:
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
 
-            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
-
+            체결된수량 += 체결수량
+            미체결수량 = 주문수량 - 체결된수량
             if 미체결수량 == 0:
+                del self.dict_order[주문구분][종목코드]
+                del self.dict_signal[종목코드]
                 self._put_order_complete(f'{주문구분}_COMPLETE', 종목코드)
+            else:
+                signal_data[-1] = 체결된수량
 
             self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
@@ -1054,6 +1013,8 @@ class BaseTrader:
                 elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}계약을 매도'
                 self.soundQ.put(f'{종목명} {text}하였습니다')
 
+            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
+            self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
         elif 체결구분 in ('정정', '취소'):
@@ -1069,8 +1030,6 @@ class BaseTrader:
                 del self.dict_signal[종목코드]
 
                 self._put_order_complete(주문구분, 종목코드)
-
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
             if self.dict_set['알림소리']:
                 text = ''
@@ -1088,11 +1047,6 @@ class BaseTrader:
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
 
-        elif 주문구분 == '시드부족':
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
-
-        self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
-
     def _update_chejan_data_coin_future(self, 주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호):
         """코인 선물 체결 데이터를 업데이트합니다."""
         if 주문구분 != '시드부족' and 종목코드 not in self.dict_order[주문구분]:
@@ -1101,6 +1055,7 @@ class BaseTrader:
 
         index = self._get_index()
         종목명 = self.dict_info[종목코드]['종목명']
+        self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
         if 주문구분 in ('BUY_LONG', 'SELL_SHORT', 'SELL_LONG', 'BUY_SHORT'):
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
@@ -1113,80 +1068,66 @@ class BaseTrader:
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                     else:
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
-
-                    self.dict_jg[종목코드].update({
-                        '매수가': 매수가,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 보유수량,
-                        '매수시간': 체결시간
-                    })
+                    분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
+                    보유수량 = 체결수량
+                    매수가 = 체결가격
                     매입금액 = 보유금액 = round(체결가격 * 체결수량, 4)
-                    레버리지 = self.dict_order[주문구분][종목코드][4]
                     if 주문구분 == 'BUY_LONG':
-                        포지션 = 'LONG'
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                     else:
-                        포지션 = 'SHORT'
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    분할매수횟수, 분할매도횟수 = 1, 0
 
-                    self.dict_jg[종목코드] = {
-                        '종목명': 종목명,
-                        '포지션': 포지션,
-                        '매수가': 체결가격,
-                        '현재가': 체결가격,
-                        '수익률': 수익률,
-                        '평가손익': 수익금,
-                        '매입금액': 매입금액,
-                        '평가금액': 평가금액,
-                        '보유수량': 체결수량,
-                        '분할매수횟수': 0,
-                        '분할매도횟수': 0,
-                        '매수시간': 체결시간,
-                        '레버리지': 레버리지
-                    }
-
-                if 미체결수량 == 0:
-                    self.dict_jg[종목코드]['분할매수횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
-
+                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
+                레버리지 = self.dict_order[주문구분][종목코드][4]
+                self.dict_jg[종목코드] = {
+                    '종목명': 종목명,
+                    '포지션': 포지션,
+                    '매수가': 매수가,
+                    '현재가': 체결가격,
+                    '수익률': 수익률,
+                    '평가손익': 수익금,
+                    '매입금액': 매입금액,
+                    '평가금액': 평가금액,
+                    '보유수량': 보유수량,
+                    '분할매수횟수': 분할매수횟수,
+                    '분할매도횟수': 분할매도횟수,
+                    '매수시간': 체결시간,
+                    '레버리지': 레버리지
+                }
             else:
                 if 종목코드 not in self.dict_jg:
                     return
+
                 포지션 = self.dict_jg[종목코드]['포지션']
                 매수가 = self.dict_jg[종목코드]['매수가']
                 보유수량 = round(self.dict_jg[종목코드]['보유수량'] - 체결수량, self.dict_info[종목코드]['수량소숫점자리수'])
-                if 보유수량 != 0:
+
+                if 보유수량 > 0:
                     매입금액 = round(매수가 * 보유수량, 4)
                     보유금액 = round(체결가격 * 보유수량, 4)
                     if 주문구분 == 'SELL_LONG':
                         평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                     else:
                         평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
-                    """['종목명', '포지션', '매수가', '현재가', '수익률', '평가손익', '매입금액', '평가금액', '보유수량',
-                        '분할매수횟수', '분할매도횟수', '매수시간', '레버리지']"""
+                    분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
                         '현재가': 체결가격,
                         '수익률': 수익률,
                         '평가손익': 수익금,
                         '매입금액': 매입금액,
                         '평가금액': 평가금액,
-                        '보유수량': 보유수량
+                        '보유수량': 보유수량,
+                        '분할매도횟수': 분할매도횟수
                     })
                 else:
                     del self.dict_jg[종목코드]
 
-                if 미체결수량 == 0:
-                    if 보유수량 > 0:
-                        self.dict_jg[종목코드]['분할매도횟수'] += 1
-                    del self.dict_order[주문구분][종목코드]
-
                 매입금액 = round(매수가 * 체결수량, 4)
                 보유금액 = round(체결가격 * 체결수량, 4)
+
                 if 주문구분 == 'SELL_LONG':
                     평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                 else:
@@ -1198,12 +1139,9 @@ class BaseTrader:
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
 
-            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
-
             if 미체결수량 == 0:
+                del self.dict_order[주문구분][종목코드]
                 self._put_order_complete(f'{주문구분}_COMPLETE', 종목코드)
-
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
             if self.dict_set['모의투자']:
                 if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
@@ -1221,6 +1159,8 @@ class BaseTrader:
                 elif 주문구분 == 'BUY_SHORT':  text = f'숏포지션 {체결수량}개를 매도'
                 self.soundQ.put(f"{종목코드.replace('USDT', '')} {text}하였습니다.")
 
+            self.dict_jg = dict(sorted(self.dict_jg.items(), key=lambda x: x[1]['매입금액'], reverse=True))
+            self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {체결가격} | {체결수량}'))
 
         elif 주문구분 in ('BUY_LONG_CANCEL', 'SELL_SHORT_CANCEL', 'SELL_LONG_CANCEL', 'BUY_SHORT_CANCEL'):
@@ -1232,8 +1172,6 @@ class BaseTrader:
 
             self._put_order_complete(주문구분, 종목코드)
 
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
-
             if self.dict_set['알림소리']:
                 text = ''
                 if 주문구분 == 'BUY_LONG_CANCEL':     text = f'롱포지션 {체결수량}개의 매수주문을 취소'
@@ -1243,11 +1181,6 @@ class BaseTrader:
                 self.soundQ.put(f"{종목코드.replace('USDT', '')} {text}하였습니다.")
 
             self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - [{주문구분}] {종목명} | {주문가격} | {주문수량}'))
-
-        elif 주문구분 == '시드부족':
-            self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
-
-        self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
 
     def _update_tradelist(self, index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 주문시간, 포지션=None):
         """거래 리스트를 업데이트합니다."""
