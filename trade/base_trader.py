@@ -740,8 +740,10 @@ class BaseTrader:
                     주문구분 = 'SELL_LONG' if 포지션 == 'LONG' else 'BUY_SHORT'
                 if self.dict_set['모의투자']:
                     self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 현재가, 보유수량, now())
-                else:
+                elif self.market_gubun < 6:
                     self._check_order((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
+                else:
+                    self._check_order_future((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
             if self.dict_set['알림소리']:
                 self.soundQ.put(f"{self.market_info['마켓이름']} 잔고청산 주문을 전송하였습니다.")
             self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 잔고청산 주문 완료"))
