@@ -997,7 +997,7 @@ class BaseTrader:
                 if 미체결수량 == 0:
                     if 보유수량 > 0:
                         self.dict_jg[종목코드]['분할매수횟수'] += 1
-                    del self.dict_order[signal_data][종목코드]
+                    del self.dict_order[주문구분][종목코드]
                     del self.dict_signal[종목코드]
                 else:
                     signal_data[-1] = 체결된수량
@@ -1032,7 +1032,7 @@ class BaseTrader:
                 if 미체결수량 == 0:
                     if 보유수량 > 0:
                         self.dict_jg[종목코드]['분할매도횟수'] += 1
-                    del self.dict_order[signal_data][종목코드]
+                    del self.dict_order[주문구분][종목코드]
                     del self.dict_signal[종목코드]
                 else:
                     signal_data[-1] = 체결된수량
