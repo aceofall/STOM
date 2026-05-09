@@ -782,19 +782,7 @@ class BaseTrader:
         return index
 
     def _update_chejan_data(self, 주문구분, 체결구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호):
-        """체결 데이터를 업데이트합니다.
-        Args:
-            주문구분: 주문 구분
-            체결구분: 체결 구분
-            종목코드: 종목 코드
-            주문수량: 주문 수량
-            체결수량: 체결 수량
-            미체결수량: 미체결 수량
-            체결가격: 체결 가격
-            주문가격: 주문 가격
-            체결시간: 체결 시간
-            주문번호: 주문 번호
-        """
+        """체결 데이터를 업데이트합니다."""
         if 주문구분 != '시드부족' and 종목코드 not in self.dict_order[주문구분]:
             self.windowQ.put((UI_NUM['시스템로그'], '오류 알림 - 수동 주문은 기록하지 않습니다.'))
             return
@@ -924,15 +912,7 @@ class BaseTrader:
         self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
 
     def _update_chejan_data_future(self, 체결구분, 종목코드, 체결수량, 체결가격, 체결시간, 주문번호):
-        """선물 체결 데이터를 업데이트합니다.
-        Args:
-            체결구분: 체결 구분
-            종목코드: 종목 코드
-            체결수량: 체결 수량
-            체결가격: 체결 가격
-            체결시간: 체결 시간
-            주문번호: 주문 번호
-        """
+        """선물 체결 데이터를 업데이트합니다."""
         signal_data = self.dict_signal.get(종목코드)
         if signal_data is None:
             self.windowQ.put((UI_NUM['시스템로그'], '오류 알림 - 수동 주문은 기록하지 않습니다.'))
@@ -1114,18 +1094,7 @@ class BaseTrader:
         self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
 
     def _update_chejan_data_coin_future(self, 주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호):
-        """코인 선물 체결 데이터를 업데이트합니다.
-        Args:
-            주문구분: 주문 구분
-            종목코드: 종목 코드
-            주문수량: 주문 수량
-            체결수량: 체결 수량
-            미체결수량: 미체결 수량
-            체결가격: 체결 가격
-            주문가격: 주문 가격
-            체결시간: 체결 시간
-            주문번호: 주문 번호
-        """
+        """코인 선물 체결 데이터를 업데이트합니다."""
         if 주문구분 != '시드부족' and 종목코드 not in self.dict_order[주문구분]:
             self.windowQ.put((UI_NUM['시스템로그'], '오류 알림 - 수동 주문은 기록하지 않습니다.'))
             return
@@ -1281,18 +1250,7 @@ class BaseTrader:
         self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
 
     def _update_tradelist(self, index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 주문시간, 포지션=None):
-        """거래 리스트를 업데이트합니다.
-        Args:
-            index: 인덱스
-            종목명: 종목명
-            매입금액: 매입 금액
-            평가금액: 평가 금액
-            체결수량: 체결 수량
-            수익률: 수익률
-            수익금: 수익금
-            주문시간: 주문 시간
-            포지션: 포지션
-        """
+        """거래 리스트를 업데이트합니다."""
         if 포지션 is None:
             self.dict_td[index] = {
                 '종목명': 종목명,
@@ -1327,10 +1285,7 @@ class BaseTrader:
         self._update_totaltradelist()
 
     def _update_totaltradelist(self, first=False):
-        """당일실현손익을 업데이트합니다.
-        Args:
-            first: 첫 번째 여부
-        """
+        """당일실현손익을 업데이트합니다."""
         td_values = self.dict_td.values()
         거래횟수 = len(set([(v['종목명'], v['체결시간']) for v in td_values]))
         총매수금액 = sum([v['매수금액'] for v in td_values])
@@ -1365,20 +1320,7 @@ class BaseTrader:
             self.liveQ.put((self.market_info['마켓구분'], data_list))
 
     def _update_chegeollist(self, index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호):
-        """체결 리스트를 업데이트합니다.
-        Args:
-            index: 인덱스
-            종목코드: 종목 코드
-            종목명: 종목명
-            주문구분: 주문 구분
-            주문수량: 주문 수량
-            체결수량: 체결 수량
-            미체결수량: 미체결 수량
-            체결가격: 체결 가격
-            체결시간: 체결 시간
-            주문가격: 주문 가격
-            주문번호: 주문 번호
-        """
+        """체결 리스트를 업데이트합니다."""
         if 주문구분 != '시드부족':
             self.dict_info[종목코드]['최종거래시간'] = timedelta_sec(self.dict_set['매수금지간격초'])
 
@@ -1470,10 +1412,7 @@ class BaseTrader:
         self._jango_cheongsan('수동')
 
     def _get_order_code_list(self):
-        """주문 종목 코드 리스트를 반환합니다.
-        Returns:
-            주문 종목 코드 리스트
-        """
+        """주문 종목 코드 리스트를 반환합니다."""
         if self.market_gubun < 6:
             return tuple(self.dict_order['매수']) + tuple(self.dict_order['매도'])
         else:
@@ -1481,86 +1420,35 @@ class BaseTrader:
                 tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
 
     def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
-        """매수 주문 가격을 반환합니다.
-        Args:
-            종목코드: 종목 코드
-            주문구분: 주문 구분
-            주문가격: 주문 가격
-        Returns:
-            매수 주문 가격
-        """
+        """매수 주문 가격을 반환합니다."""
         return 0
 
     def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
-        """매도 주문 가격을 반환합니다.
-        Args:
-            종목코드: 종목 코드
-            주문구분: 주문 구분
-            주문가격: 주문 가격
-        Returns:
-            매도 주문 가격
-        """
+        """매도 주문 가격을 반환합니다."""
         return 0
 
     def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
-        """매수 정정 가격을 반환합니다.
-        Args:
-            현재가: 현재가
-            정정호가: 정정 호가
-            종목코드: 종목 코드
-        Returns:
-            매수 정정 가격
-        """
+        """매수 정정 가격을 반환합니다."""
         return 0
 
     def _get_modify_sell_price(self, 현재가, 정정호가, 종목코드):
-        """매도 정정 가격을 반환합니다.
-        Args:
-            현재가: 현재가
-            정정호가: 정정 호가
-            종목코드: 종목 코드
-        Returns:
-            매도 정정 가격
-        """
+        """매도 정정 가격을 반환합니다."""
         return 0
 
     def _get_profit(self, 매입금액, 보유금액):
-        """수익을 계산합니다.
-        Args:
-            매입금액: 매입 금액
-            보유금액: 보유 금액
-        Returns:
-            수익
-        """
+        """수익을 계산합니다."""
         return 0, 0, 0
 
     def _get_profit_long(self, 매입금액, 보유금액, 종목코드=None):
-        """롱 수익을 계산합니다.
-        Args:
-            매입금액: 매입 금액
-            보유금액: 보유 금액
-        Returns:
-            롱 수익
-        """
+        """롱 수익을 계산합니다."""
         return 0, 0, 0
 
     def _get_profit_short(self, 매입금액, 보유금액, 종목코드=None):
-        """숏 수익을 계산합니다.
-        Args:
-            매입금액: 매입 금액
-            보유금액: 보유 금액
-        Returns:
-            숏 수익
-        """
+        """숏 수익을 계산합니다."""
         return 0, 0, 0
 
     def _get_hogaunit(self, 주문가격또는종목코드):
-        """호가 단위를 반환합니다.
-        Args:
-            주문가격또는종목코드: 주문 가격 또는 종목 코드
-        Returns:
-            호가 단위
-        """
+        """호가 단위를 반환합니다."""
         return 0
 
     def _set_position(self):
@@ -1568,15 +1456,9 @@ class BaseTrader:
         pass
 
     def _set_leverage(self, data):
-        """레버리지를 설정합니다.
-        Args:
-            data: 데이터
-        """
+        """레버리지를 설정합니다."""
         pass
 
     def _send_order(self, data):
-        """주문을 전송합니다.
-        Args:
-            data: 데이터
-        """
+        """주문을 전송합니다."""
         pass
