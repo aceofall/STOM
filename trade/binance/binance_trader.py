@@ -214,8 +214,3 @@ class BinanceTrader(BaseTrader):
     def _get_hogaunit(self, 주문가격또는종목코드):
         """호가 단위를 반환합니다."""
         return self.dict_info[주문가격또는종목코드]['호가단위']
-
-    def _get_order_code_list(self):
-        """주문 종목 코드 리스트를 반환합니다."""
-        return tuple(self.dict_order['BUY_LONG']) + tuple(self.dict_order['SELL_SHORT']) + \
-            tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
