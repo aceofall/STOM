@@ -24,8 +24,7 @@ from utility.settings.setting_base import COLUMNS_HJ, COLUMNS_HC, COLUMNS_HG, CO
 
 class SetDialogEtc:
     """기타 다이얼로그 설정 클래스입니다.
-    호가, 정보, 데이터베이스, 주문 등 다양한 다이얼로그를 설정합니다.
-    """
+    호가, 정보, 데이터베이스, 주문 등 다양한 다이얼로그를 설정합니다."""
     def __init__(self, ui_class, wc):
         self.ui = ui_class
         self.wc = wc

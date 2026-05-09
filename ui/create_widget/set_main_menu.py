@@ -10,8 +10,7 @@ from ui.event_click.button_clicked_show_dialog import show_order, show_backsched
 
 class SetMainMenu:
     """메인 메뉴 설정 클래스입니다.
-    메인 윈도우의 메뉴 버튼 및 단축키를 설정합니다.
-    """
+    메인 윈도우의 메뉴 버튼 및 단축키를 설정합니다."""
     def __init__(self, ui_class, wc):
         self.ui = ui_class
         self.wc = wc

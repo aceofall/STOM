@@ -21,8 +21,7 @@ from ui.create_widget.set_text import optistandard, optitext, train_period, vali
 
 class SetStrategyTab:
     """전략 탭 설정 클래스입니다.
-    매수/매도 전략 및 최적화 탭을 설정합니다.
-    """
+    매수/매도 전략 및 최적화 탭을 설정합니다."""
     def __init__(self, ui_class, wc):
         self.ui = ui_class
         self.wc = wc

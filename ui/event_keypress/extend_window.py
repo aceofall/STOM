@@ -1,9 +1,6 @@
 
 def extend_window(ui):
-    """전략탭 창을 확장/축소합니다.
-    Args:
-        ui: UI 클래스 인스턴스
-    """
+    """전략탭 창을 확장/축소합니다."""
     from PyQt5.QtWidgets import QMessageBox
 
     if ui.main_btn != 2:

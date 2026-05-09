@@ -131,10 +131,7 @@ class BaseTrader:
         self._load_database()
 
     def _get_yesugm_for_paper_trading(self):
-        """모의투스용 예수금을 반환합니다.
-        Returns:
-            예수금
-        """
+        """모의투스용 예수금을 반환합니다."""
         from utility.settings.setting_base import DB_TRADELIST
         con = sqlite3.connect(DB_TRADELIST)
         df = pd.read_sql(f"SELECT * FROM {self.market_info['거래디비']}", con)
@@ -146,10 +143,7 @@ class BaseTrader:
         return yesugm
 
     def _set_yesugm_and_noti(self, yesugm):
-        """예수금을 설정하고 트레이더 시작 알림을 보냅니다.
-        Args:
-            yesugm: 예수금
-        """
+        """예수금을 설정하고 트레이더 시작 알림을 보냅니다."""
         총매입금액 = sum([v['매입금액'] for v in self.dict_jg.values()]) if self.dict_jg else 0
         self.dict_intg['예수금'] = int(yesugm - 총매입금액)
         self.dict_intg['추정예수금'] = int(yesugm - 총매입금액)
@@ -162,10 +156,7 @@ class BaseTrader:
         self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 트레이더 시작"))
 
     def _get_jgcs_time(self):
-        """잔고청산 시간을 반환합니다.
-        Returns:
-            int: 잔고청산 시간 (HHMMSS)
-        """
+        """잔고청산 시간을 반환합니다."""
         return int(str_hms(timedelta_sec(-120, dt_hms(str(self.dict_set['전략종료시간'])))))
 
     def _load_database(self):
@@ -177,6 +168,7 @@ class BaseTrader:
         df_cj.set_index('index', inplace=True)
         df_td.set_index('index', inplace=True)
         df_jg.set_index('index', inplace=True)
+        con.close()
         if len(df_cj) > 0:
             self.dict_cj = df_cj.to_dict('index')
             self.windowQ.put((UI_NUM['체결목록'], df_cj[::-1]))
@@ -186,7 +178,6 @@ class BaseTrader:
         if len(df_jg) > 0:
             self.dict_jg = df_jg.to_dict('index')
             self.receivQ.put(('잔고목록', tuple(self.dict_jg)))
-        con.close()
         self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 데이터베이스 불러오기 완료"))
 
     def _scheduler1(self):
@@ -210,10 +201,7 @@ class BaseTrader:
         self._update_totaljango()
 
     def _check_order(self, data):
-        """주문을 확인합니다.
-        Args:
-            data: 데이터
-        """
+        """주문을 확인합니다."""
         if len(data) == 7:
             주문구분, 종목코드, 종목명, 주문가격, 주문수량, 시그널시간, 잔고청산 = data
             수동주문유형 = None
@@ -278,17 +266,12 @@ class BaseTrader:
                     self._put_order_complete(f'{주문구분}주문', 종목코드)
                 self._create_order(주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 0, 수동주문유형)
             else:
-                if 주문구분 == '매수':
-                    if self.dict_set['매도취소매수시그널'] and 매도주문중: self._cancel_order(종목코드, 주문구분)
-                elif 주문구분 == '매도':
-                    if self.dict_set['매수취소매도시그널'] and 매수주문중: self._cancel_order(종목코드, 주문구분)
+                if (주문구분 == '매수' and 매도주문중) or (주문구분 == '매도' and 매수주문중):
+                    self._cancel_order(종목코드, 주문구분)
                 self._put_order_complete(f'{주문구분}취소', 종목코드)
 
     def _check_order_future(self, data):
-        """선물 주문을 확인합니다.
-        Args:
-            data: 데이터
-        """
+        """선물 주문을 확인합니다."""
         if len(data) == 7:
             주문구분, 종목코드, 종목명, 주문가격, 주문수량, 시그널시간, 잔고청산 = data
             수동주문유형 = None
@@ -358,22 +341,13 @@ class BaseTrader:
                     self._put_order_complete(f'{주문구분}_MANUAL', 종목코드)
                 self._create_order(주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 0, 수동주문유형)
             else:
-                if 주문구분 == 'BUY_LONG':
-                    if self.dict_set['매도취소매수시그널'] and 롱매도주문중: self._cancel_order(종목코드, 주문구분)
-                elif 주문구분 == 'SELL_SHORT':
-                    if self.dict_set['매도취소매수시그널'] and 숏매도주문중: self._cancel_order(종목코드, 주문구분)
-                elif 주문구분 == 'SELL_LONG':
-                    if self.dict_set['매수취소매도시그널'] and 롱매수주문중: self._cancel_order(종목코드, 주문구분)
-                elif 주문구분 == 'BUY_SHORT':
-                    if self.dict_set['매수취소매도시그널'] and 숏매수주문중: self._cancel_order(종목코드, 주문구분)
+                if (주문구분 == 'BUY_LONG' and 롱매도주문중) or (주문구분 == 'SELL_SHORT' and 숏매도주문중) or \
+                        (주문구분 == 'SELL_LONG' and 롱매수주문중) or (주문구분 == 'BUY_SHORT' and 숏매수주문중):
+                    self._cancel_order(종목코드, 주문구분)
                 self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
 
     def _put_order_complete(self, 주문구분, 종목코드):
-        """주문 완료를 전송합니다.
-        Args:
-            주문구분: 주문 구분
-            종목코드: 종목 코드
-        """
+        """주문 완료를 전송합니다."""
         data = (주문구분, 종목코드)
         if self.market_gubun in (1, 4):
             self.stgQs[self.dict_sgbn[종목코드]].put(data)
@@ -381,19 +355,7 @@ class BaseTrader:
             self.stgQ.put(data)
 
     def _create_order(self, 주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 정정횟수, 수동주문유형):
-        """주문을 생성합니다.
-        Args:
-            주문구분: 주문 구분
-            종목코드: 종목 코드
-            종목명: 종목명
-            주문가격: 주문 가격
-            주문수량: 주문 수량
-            원주문번호: 원 주문 번호
-            시그널시간: 시그널 시간
-            잔고청산: 잔고 청산 여부
-            정정횟수: 정정 횟수
-            수동주문유형: 수동 주문 유형
-        """
+        """주문을 생성합니다."""
         if self.market_gubun < 6:
             if 주문구분 == '매수' and 정정횟수 == 0:
                 if 수동주문유형 is None and '지정가' in self.dict_set['매수주문유형']:
@@ -423,14 +385,7 @@ class BaseTrader:
             self._send_order(data)
 
     def _push_chejan_data_for_paper_trade(self, 주문구분, 종목코드, 주문가격, 주문수량, 시그널시간):
-        """모의투스용 체결 데이터를 전송합니다.
-        Args:
-            주문구분: 주문 구분
-            종목코드: 종목 코드
-            주문수량: 주문 수량
-            주문가격: 주문 가격
-            시그널시간: 시그널 시간
-        """
+        """모의투스용 체결 데이터를 전송합니다."""
         self._order_time_log(시그널시간)
         체결시간 = get_str_ymdhms(self.market_gubun)
         if 주문구분 == '시드부족':
@@ -479,18 +434,12 @@ class BaseTrader:
         return True
 
     def _order_time_log(self, signal_time):
-        """주문 시간 로그를 기록합니다.
-        Args:
-            signal_time: 시그널 시간
-        """
+        """주문 시간 로그를 기록합니다."""
         gap = (now() - signal_time).total_seconds()
         self.windowQ.put((UI_NUM['타임로그'], f'시그널 주문 시간 알림 - 발생시간과 주문시간의 차이는 [{gap:.6f}]초입니다.'))
 
     def _update_tuple(self, data):
-        """튜플을 업데이트합니다.
-        Args:
-            data: 데이터
-        """
+        """튜플을 업데이트합니다."""
         gubun, data = data
         if gubun == '잔고갱신':
             self._update_jango(data)
@@ -533,10 +482,7 @@ class BaseTrader:
                 self._set_position()
 
     def _update_jango(self, data):
-        """잔고를 업데이트합니다.
-        Args:
-            data: 데이터
-        """
+        """잔고를 업데이트합니다."""
         종목코드, 현재가 = data
         self.dict_curc[종목코드] = 현재가
         try:
@@ -580,10 +526,7 @@ class BaseTrader:
 
     # noinspection PyUnresolvedReferences
     def _order_time_control(self, code_=None):
-        """주문시간 및 주문가격을 확인하여 취소 및 정정 주문을 생성합니다.
-        Args:
-            code_: 종목 코드
-        """
+        """주문시간 및 주문가격을 확인하여 취소 및 정정 주문을 생성합니다."""
         cancel_list = []
         modify_list = []
 
@@ -630,11 +573,7 @@ class BaseTrader:
                 self._modify_order(code, gubun, 정정가격)
 
     def _cancel_order(self, 종목코드, 주문구분):
-        """주문을 취소합니다.
-        Args:
-            종목코드: 종목 코드
-            주문구분: 주문 구분
-        """
+        """주문을 취소합니다."""
         종목명 = self.dict_info[종목코드]['종목명']
         last_value = self._get_chejan_last_value(종목명, 주문구분)
         if last_value:
@@ -651,12 +590,7 @@ class BaseTrader:
                     )
 
     def _modify_order(self, 종목코드, 주문구분, 정정가격):
-        """주문을 정정합니다.
-        Args:
-            종목코드: 종목 코드
-            주문구분: 주문 구분
-            정정가격: 정정 가격
-        """
+        """주문을 정정합니다."""
         종목명 = self.dict_info[종목코드]['종목명']
         last_value = self._get_chejan_last_value(종목명, 주문구분)
         if last_value:
@@ -688,13 +622,7 @@ class BaseTrader:
                     )
 
     def _get_chejan_last_value(self, code, gubun):
-        """마지막 체결 데이터를 반환합니다.
-        Args:
-            code: 종목 코드
-            gubun: 구분
-        Returns:
-            마지막 체결 데이터
-        """
+        """마지막 체결 데이터를 반환합니다."""
         if self.market_gubun < 6:
             return [v for v in self.dict_cj.values() if v['종목명'] == code and
                     (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}접수')][-1]
@@ -703,20 +631,14 @@ class BaseTrader:
                     (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}_REG')][-1]
 
     def _update_string(self, data):
-        """문자열을 업데이트합니다.
-        Args:
-            data: 데이터
-        """
+        """문자열을 업데이트합니다."""
         if data == '잔고청산':
             self._jango_cheongsan('수동')
         else:
             self._sys_exit(data)
 
     def _jango_cheongsan(self, gubun):
-        """잔고 청산을 수행합니다.
-        Args:
-            gubun: 구분
-        """
+        """잔고 청산을 수행합니다."""
         for 주문구분 in self.dict_order:
             for 종목코드 in self.dict_order[주문구분]:
                 self._cancel_order(종목코드, 주문구분)
@@ -766,10 +688,7 @@ class BaseTrader:
             self.ws_thread = None
 
     def _get_index(self):
-        """체결목록용 인덱스를 반환합니다.
-        Returns:
-            인덱스
-        """
+        """체결목록용 인덱스를 반환합니다."""
         index = get_str_ymdhmsf(self.market_gubun)
         if index in self.dict_cj:
             while index in self.dict_cj:
@@ -1348,45 +1267,45 @@ class BaseTrader:
                 tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
 
     def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
-        """매수 주문 가격을 반환합니다."""
+        """매수 주문 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
-        """매도 주문 가격을 반환합니다."""
+        """매도 주문 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
-        """매수 정정 가격을 반환합니다."""
+        """매수 정정 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_modify_sell_price(self, 현재가, 정정호가, 종목코드):
-        """매도 정정 가격을 반환합니다."""
+        """매도 정정 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_profit(self, 매입금액, 보유금액):
-        """수익을 계산합니다."""
+        """수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
     def _get_profit_long(self, 매입금액, 보유금액, 종목코드=None):
-        """롱 수익을 계산합니다."""
+        """롱 수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
     def _get_profit_short(self, 매입금액, 보유금액, 종목코드=None):
-        """숏 수익을 계산합니다."""
+        """숏 수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
     def _get_hogaunit(self, 주문가격또는종목코드):
-        """호가 단위를 반환합니다."""
+        """호가 단위를 반환합니다. (오버라이드용)"""
         return 0
 
     def _set_position(self):
-        """포지션을 설정합니다."""
+        """포지션을 설정합니다. (오버라이드용)"""
         pass
 
     def _set_leverage(self, data):
-        """레버리지를 설정합니다."""
+        """레버리지를 설정합니다. (오버라이드용)"""
         pass
 
     def _send_order(self, data):
-        """주문을 전송합니다."""
+        """주문을 전송합니다. (오버라이드용)"""
         pass
