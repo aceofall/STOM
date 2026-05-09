@@ -84,8 +84,6 @@ class BaseReceiver:
         self.lvhp_time    = now()
         self.int_logt     = 0
 
-        self.ls           = None
-        self.token        = None
         self.int_mtdt     = None
         self.hoga_code    = None
         self.chart_code   = None

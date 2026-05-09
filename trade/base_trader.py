@@ -101,12 +101,7 @@ class BaseTrader:
                 'BUY_SHORT': {}
             }
 
-        self.ls         = None
-        self.token      = None
-        self.upbit      = None
-        self.binance    = None
         self.ws_thread  = None
-
         self.is_tick    = self.dict_set['타임프레임']
         self.access_key = self.dict_set['access_key']
         self.secret_key = self.dict_set['secret_key']
