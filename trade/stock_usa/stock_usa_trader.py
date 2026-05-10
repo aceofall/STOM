@@ -93,7 +93,6 @@ class StockUsaTrader(BaseTrader):
             self._check_order_error(주문번호, 응답메시지, 주문구분, 종목명, 주문가격, 주문수량)
 
         self.order_time = timedelta_sec(0.2)
-        self.receivQ.put(('주문목록', self._get_order_code_list()))
 
     @error_decorator
     def _convert_order_data(self, data):

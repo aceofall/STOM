@@ -103,7 +103,6 @@ class BinanceTrader(BaseTrader):
                 ))
 
         self.order_time = timedelta_sec(0.2)
-        self.receivQ.put(('주문목록', self._get_order_code_list()))
 
     def _set_position(self):
         """포지션을 설정합니다."""

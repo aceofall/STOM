@@ -198,7 +198,151 @@ class BaseTrader:
         if self.dict_set['잔고청산'] and not self.dict_bool['잔고청산'] and self.jgcs_time < inthms < self.jgcs_time + 10:
             self._jango_cheongsan('자동')
 
+        self.receivQ.put(('주문목록', self._get_order_code_list()))
         self._update_totaljango()
+
+    # noinspection PyUnresolvedReferences
+    def _order_time_control(self, code_=None):
+        """주문시간 및 주문가격을 확인하여 취소 및 정정 주문을 생성합니다."""
+        cancel_list = []
+        modify_list = []
+
+        for gubun in self.dict_order:
+            for code in self.dict_order[gubun]:
+                if code_ is None or code == code_:
+                    if self.market_gubun < 9:
+                        주문취소시간, 정정횟수, 주문가격, _, 호가단위 = self.dict_order[gubun][code]
+                    else:
+                        주문취소시간, 정정횟수, 주문가격, _, 호가단위, _ = self.dict_order[gubun][code]
+
+                    if self.market_gubun < 6:
+                        매수매도구분 = gubun
+                        범위이탈구분 = gubun == '매수'
+                    else:
+                        매수매도구분 = '매수' if gubun in ('BUY_LONG', 'SELL_SHORT') else '매도'
+                        범위이탈구분 = 'BUY' in gubun
+
+                    범위이탈 = False
+                    호가차이 = 호가단위 * self.dict_set[f'{매수매도구분}정정호가차이']
+                    현재가 = self.dict_curc.get(code)
+                    if 현재가:
+                        if 범위이탈구분:
+                            범위이탈 = 현재가 >= 주문가격 + 호가차이
+                        else:
+                            범위이탈 = 현재가 <= 주문가격 - 호가차이
+
+                    if self.dict_set[f'{매수매도구분}취소시간'] and now() > 주문취소시간:
+                        cancel_list.append((code, gubun))
+
+                    elif 정정횟수 < self.dict_set[f'{매수매도구분}정정횟수'] and 범위이탈:
+                        정정호가 = self.dict_set[f'{매수매도구분}정정호가']
+                        if not 범위이탈구분: 정정호가 *= -1
+                        정정가격 = self._get_modify_price(현재가, 정정호가, code)
+                        modify_list.append((code, gubun, 정정가격))
+
+        if cancel_list:
+            for code, gubun in cancel_list:
+                self._cancel_order(code, gubun)
+        if modify_list:
+            for code, gubun, 정정가격 in modify_list:
+                self._modify_order(code, gubun, 정정가격)
+
+    def _cancel_order(self, 종목코드, 주문구분):
+        """주문을 취소합니다."""
+        종목명 = self.dict_info[종목코드]['종목명']
+        last_value = self._get_chejan_last_value(종목명, 주문구분)
+        if last_value:
+            미체결수량 = last_value['미체결수량']
+            if 미체결수량 > 0:
+                원주문번호, 원주문가격 = last_value['주문번호'], last_value['주문가격']
+                if self.market_gubun < 6:
+                    self._create_order(
+                        f'{주문구분}취소', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
+                    )
+                else:
+                    self._create_order(
+                        f'{주문구분}_CANCEL', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
+                    )
+
+    def _modify_order(self, 종목코드, 주문구분, 정정가격):
+        """주문을 정정합니다."""
+        종목명 = self.dict_info[종목코드]['종목명']
+        last_value = self._get_chejan_last_value(종목명, 주문구분)
+        if last_value:
+            미체결수량 = last_value['미체결수량']
+            if 미체결수량 > 0:
+                정정횟수 = self.dict_order[주문구분][종목코드][1] + 1
+                원주문번호, 원주문가격 = last_value['주문번호'], last_value['주문가격']
+                if self.market_gubun < 5:
+                    self._create_order(
+                        f'{주문구분}정정', 종목코드, 종목명, 정정가격, 미체결수량, 원주문번호, now(), False, 정정횟수, None
+                    )
+                elif self.market_gubun == 5:
+                    self._create_order(
+                        f'{주문구분}취소', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
+                    )
+                    self._create_order(
+                        주문구분, 종목코드, 종목명, 정정가격, 미체결수량, '', now(), False, 정정횟수, None
+                    )
+                elif self.market_gubun < 9:
+                    self._create_order(
+                        f'{주문구분}_MODIFY', 종목코드, 종목명, 정정가격, 미체결수량, 원주문번호, now(), False, 정정횟수, None
+                    )
+                else:
+                    self._create_order(
+                        f'{주문구분}_CANCEL', 종목코드, 종목코드, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
+                    )
+                    self._create_order(
+                        주문구분, 종목코드, 종목코드, 정정가격, 미체결수량, '', now(), False, 정정횟수, None
+                    )
+
+    def _get_chejan_last_value(self, code, gubun):
+        """마지막 체결 데이터를 반환합니다."""
+        if self.market_gubun < 6:
+            return [v for v in self.dict_cj.values() if v['종목명'] == code and
+                    (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}접수')][-1]
+        else:
+            return [v for v in self.dict_cj.values() if v['종목명'] == code and
+                    (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}_REG')][-1]
+
+    def _get_order_code_list(self):
+        """주문 종목 코드 리스트를 반환합니다."""
+        if self.market_gubun < 6:
+            return tuple(self.dict_order['매수']) + tuple(self.dict_order['매도'])
+        else:
+            return tuple(self.dict_order['BUY_LONG']) + tuple(self.dict_order['SELL_SHORT']) + \
+                tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
+
+    def _jango_cheongsan(self, gubun):
+        """잔고 청산을 수행합니다."""
+        for 주문구분 in self.dict_order:
+            for 종목코드 in self.dict_order[주문구분]:
+                self._cancel_order(종목코드, 주문구분)
+
+        if self.dict_jg:
+            if gubun == '수동':
+                self.teleQ.put(f"{self.market_info['마켓이름']} 잔고청산 주문을 전송합니다.")
+            for 종목코드 in self.dict_jg.copy():
+                종목명 = self.dict_jg[종목코드]['종목명']
+                현재가 = self.dict_jg[종목코드]['현재가']
+                보유수량 = self.dict_jg[종목코드]['보유수량']
+                if self.market_gubun < 6:
+                    주문구분 = '매도'
+                else:
+                    포지션 = self.dict_jg[종목코드]['포지션']
+                    주문구분 = 'SELL_LONG' if 포지션 == 'LONG' else 'BUY_SHORT'
+                if self.dict_set['모의투자']:
+                    self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 현재가, 보유수량, now(), True)
+                elif self.market_gubun < 6:
+                    self._check_order((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
+                else:
+                    self._check_order_future((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
+            if self.dict_set['알림소리']:
+                self.soundQ.put(f"{self.market_info['마켓이름']} 잔고청산 주문을 전송하였습니다.")
+            self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 잔고청산 주문 완료"))
+        elif gubun == '수동':
+            self.teleQ.put(f"현재는 {self.market_info['마켓이름']} 보유종목이 없습니다.")
+        self.dict_bool['잔고청산'] = True
 
     def _check_order(self, data):
         """주문을 확인합니다."""
@@ -531,147 +675,12 @@ class BaseTrader:
                 '손절거래시간': dummy_time
             })
 
-    # noinspection PyUnresolvedReferences
-    def _order_time_control(self, code_=None):
-        """주문시간 및 주문가격을 확인하여 취소 및 정정 주문을 생성합니다."""
-        cancel_list = []
-        modify_list = []
-
-        for gubun in self.dict_order:
-            for code in self.dict_order[gubun]:
-                if code_ is None or code == code_:
-                    if self.market_gubun < 9:
-                        주문취소시간, 정정횟수, 주문가격, _, 호가단위 = self.dict_order[gubun][code]
-                    else:
-                        주문취소시간, 정정횟수, 주문가격, _, 호가단위, _ = self.dict_order[gubun][code]
-
-                    if self.market_gubun < 6:
-                        매수매도구분 = gubun
-                        범위이탈구분 = gubun == '매수'
-                    else:
-                        매수매도구분 = '매수' if gubun in ('BUY_LONG', 'SELL_SHORT') else '매도'
-                        범위이탈구분 = 'BUY' in gubun
-
-                    범위이탈 = False
-                    호가차이 = 호가단위 * self.dict_set[f'{매수매도구분}정정호가차이']
-                    현재가 = self.dict_curc.get(code)
-                    if 현재가:
-                        if 범위이탈구분:
-                            범위이탈 = 현재가 >= 주문가격 + 호가차이
-                        else:
-                            범위이탈 = 현재가 <= 주문가격 - 호가차이
-
-                    if self.dict_set[f'{매수매도구분}취소시간'] and now() > 주문취소시간:
-                        cancel_list.append((code, gubun))
-
-                    elif 정정횟수 < self.dict_set[f'{매수매도구분}정정횟수'] and 범위이탈:
-                        정정호가 = self.dict_set[f'{매수매도구분}정정호가']
-                        if not 범위이탈구분: 정정호가 *= -1
-                        정정가격 = self._get_modify_price(현재가, 정정호가, code)
-                        modify_list.append((code, gubun, 정정가격))
-
-        if cancel_list:
-            for code, gubun in cancel_list:
-                self._cancel_order(code, gubun)
-        if modify_list:
-            for code, gubun, 정정가격 in modify_list:
-                self._modify_order(code, gubun, 정정가격)
-
-    def _cancel_order(self, 종목코드, 주문구분):
-        """주문을 취소합니다."""
-        종목명 = self.dict_info[종목코드]['종목명']
-        last_value = self._get_chejan_last_value(종목명, 주문구분)
-        if last_value:
-            미체결수량 = last_value['미체결수량']
-            if 미체결수량 > 0:
-                원주문번호, 원주문가격 = last_value['주문번호'], last_value['주문가격']
-                if self.market_gubun < 6:
-                    self._create_order(
-                        f'{주문구분}취소', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
-                    )
-                else:
-                    self._create_order(
-                        f'{주문구분}_CANCEL', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
-                    )
-
-    def _modify_order(self, 종목코드, 주문구분, 정정가격):
-        """주문을 정정합니다."""
-        종목명 = self.dict_info[종목코드]['종목명']
-        last_value = self._get_chejan_last_value(종목명, 주문구분)
-        if last_value:
-            미체결수량 = last_value['미체결수량']
-            if 미체결수량 > 0:
-                정정횟수 = self.dict_order[주문구분][종목코드][1] + 1
-                원주문번호, 원주문가격 = last_value['주문번호'], last_value['주문가격']
-                if self.market_gubun < 5:
-                    self._create_order(
-                        f'{주문구분}정정', 종목코드, 종목명, 정정가격, 미체결수량, 원주문번호, now(), False, 정정횟수, None
-                    )
-                elif self.market_gubun == 5:
-                    self._create_order(
-                        f'{주문구분}취소', 종목코드, 종목명, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
-                    )
-                    self._create_order(
-                        주문구분, 종목코드, 종목명, 정정가격, 미체결수량, '', now(), False, 정정횟수, None
-                    )
-                elif self.market_gubun < 9:
-                    self._create_order(
-                        f'{주문구분}_MODIFY', 종목코드, 종목명, 정정가격, 미체결수량, 원주문번호, now(), False, 정정횟수, None
-                    )
-                else:
-                    self._create_order(
-                        f'{주문구분}_CANCEL', 종목코드, 종목코드, 원주문가격, 미체결수량, 원주문번호, now(), False, 0, None
-                    )
-                    self._create_order(
-                        주문구분, 종목코드, 종목코드, 정정가격, 미체결수량, '', now(), False, 정정횟수, None
-                    )
-
-    def _get_chejan_last_value(self, code, gubun):
-        """마지막 체결 데이터를 반환합니다."""
-        if self.market_gubun < 6:
-            return [v for v in self.dict_cj.values() if v['종목명'] == code and
-                    (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}접수')][-1]
-        else:
-            return [v for v in self.dict_cj.values() if v['종목명'] == code and
-                    (v['주문구분'] == gubun or v['주문구분'] == f'{gubun}_REG')][-1]
-
     def _update_string(self, data):
         """문자열을 업데이트합니다."""
         if data == '잔고청산':
             self._jango_cheongsan('수동')
         else:
             self._sys_exit(data)
-
-    def _jango_cheongsan(self, gubun):
-        """잔고 청산을 수행합니다."""
-        for 주문구분 in self.dict_order:
-            for 종목코드 in self.dict_order[주문구분]:
-                self._cancel_order(종목코드, 주문구분)
-
-        if self.dict_jg:
-            if gubun == '수동':
-                self.teleQ.put(f"{self.market_info['마켓이름']} 잔고청산 주문을 전송합니다.")
-            for 종목코드 in self.dict_jg.copy():
-                종목명 = self.dict_jg[종목코드]['종목명']
-                현재가 = self.dict_jg[종목코드]['현재가']
-                보유수량 = self.dict_jg[종목코드]['보유수량']
-                if self.market_gubun < 6:
-                    주문구분 = '매도'
-                else:
-                    포지션 = self.dict_jg[종목코드]['포지션']
-                    주문구분 = 'SELL_LONG' if 포지션 == 'LONG' else 'BUY_SHORT'
-                if self.dict_set['모의투자']:
-                    self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 현재가, 보유수량, now(), True)
-                elif self.market_gubun < 6:
-                    self._check_order((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
-                else:
-                    self._check_order_future((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
-            if self.dict_set['알림소리']:
-                self.soundQ.put(f"{self.market_info['마켓이름']} 잔고청산 주문을 전송하였습니다.")
-            self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 잔고청산 주문 완료"))
-        elif gubun == '수동':
-            self.teleQ.put(f"현재는 {self.market_info['마켓이름']} 보유종목이 없습니다.")
-        self.dict_bool['잔고청산'] = True
 
     def _sys_exit(self, data):
         """시스템을 종료합니다."""
@@ -1262,14 +1271,6 @@ class BaseTrader:
         else:
             self.stgQ.put('매수전략중지')
         self._jango_cheongsan('수동')
-
-    def _get_order_code_list(self):
-        """주문 종목 코드 리스트를 반환합니다."""
-        if self.market_gubun < 6:
-            return tuple(self.dict_order['매수']) + tuple(self.dict_order['매도'])
-        else:
-            return tuple(self.dict_order['BUY_LONG']) + tuple(self.dict_order['SELL_SHORT']) + \
-                tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
 
     def _get_modify_price(self, 현재가, 정정호가, 종목코드):
         """정정 가격을 반환합니다. (오버라이드용)"""
