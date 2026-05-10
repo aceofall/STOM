@@ -374,36 +374,39 @@ class BaseTrader:
             self.dict_signal[종목코드] = [주문구분, 주문가격, 주문수량, 0]
 
         if self.dict_set['모의투자'] or 주문구분 == '시드부족':
-            self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 주문가격, 주문수량, 시그널시간)
+            self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 주문가격, 주문수량, 시그널시간, 잔고청산, 수동주문유형)
         else:
             data = (주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 정정횟수, 수동주문유형)
             self._send_order(data)
 
-    def _push_chejan_data_for_paper_trade(self, 주문구분, 종목코드, 주문가격, 주문수량, 시그널시간):
-        """모의투스용 체결 데이터를 전송합니다."""
+    def _push_chejan_data_for_paper_trade(self, 주문구분, 종목코드, 주문가격, 주문수량, 시그널시간, 잔고청산, 수동주문유형=None):
+        """모의투자용 체결 데이터를 전송합니다."""
         self._order_time_log(시그널시간)
-        체결시간 = get_str_ymdhms(self.market_gubun)
+
         if 주문구분 == '시드부족':
             체결가격, 체결수량, 미체결수량 = 0, 0, 주문수량
         else:
             체결가격, 체결수량, 미체결수량 = 주문가격, 주문수량, 0
+            호가단위 = self._get_hogaunit(주문가격 if self.market_gubun < 6 else 종목코드)
 
-        if self.market_gubun < 6:
-            호가단위 = self._get_hogaunit(주문가격)
-        else:
-            호가단위 = self._get_hogaunit(종목코드)
-
-        if 주문구분 != '시드부족':
             if self.market_gubun == 9:
                 self.dict_order[주문구분][종목코드] = [
-                    timedelta_sec(self.dict_set['매수취소시간초']), 0, 주문가격, 호가단위, self.dict_lvrg[종목코드]
+                    timedelta_sec(self.dict_set['매수취소시간초']), 0, 주문가격, 주문수량, 호가단위, self.dict_lvrg[종목코드]
                 ]
             else:
                 self.dict_order[주문구분][종목코드] = [
-                    timedelta_sec(self.dict_set['매수취소시간초']), 0, 주문가격, 호가단위
+                    timedelta_sec(self.dict_set['매수취소시간초']), 0, 주문가격, 주문수량, 호가단위
                 ]
 
+        주문구분_ = '매수' if '매수' in 주문구분 or 'BUY_LONG' in 주문구분 or 'SELL_SHORT' in 주문구분 else '매도'
+        주문유형 = self.dict_set[f'{주문구분_}주문유형'] if 수동주문유형 is None else 수동주문유형
+        if 주문구분 == '시드부족' or '지정가' not in 주문유형 or 잔고청산:
+            self._push_chejan_data(주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격)
+
+    def _push_chejan_data(self, 주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격):
+        체결시간 = get_str_ymdhms(self.market_gubun)
         주문번호 = '0' if self.market_gubun in (5, 8) else 0
+
         if self.market_gubun < 6:
             self._update_chejan_data(
                 주문구분, '체결', 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호
@@ -480,34 +483,41 @@ class BaseTrader:
         """잔고를 업데이트합니다."""
         종목코드, 현재가 = data
         self.dict_curc[종목코드] = 현재가
-        try:
-            if 현재가 != self.dict_jg[종목코드]['현재가']:
-                매입금액 = self.dict_jg[종목코드]['매입금액']
-                보유수량 = self.dict_jg[종목코드]['보유수량']
 
-                if self.market_gubun < 6 or self.market_gubun == 9:
-                    보유금액 = 보유수량 * 현재가
+        code_jg = self.dict_jg.get(종목코드)
+        if code_jg and 현재가 != code_jg['현재가']:
+            매입금액 = code_jg['매입금액']
+            보유수량 = code_jg['보유수량']
+
+            if self.market_gubun < 6 or self.market_gubun == 9:
+                보유금액 = 보유수량 * 현재가
+            else:
+                매수가 = code_jg['매수가']
+                보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+
+            if self.market_gubun < 6:
+                평가금액, 평가손익, 수익률 = self._get_profit(매입금액, 보유금액)
+            else:
+                포지션 = code_jg['포지션']
+                if 포지션 == 'LONG':
+                    평가금액, 평가손익, 수익률 = self._get_profit_long(매입금액, 보유금액)
                 else:
-                    매수가 = self.dict_jg[종목코드]['매수가']
-                    보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+                    평가금액, 평가손익, 수익률 = self._get_profit_short(매입금액, 보유금액)
 
-                if self.market_gubun < 6:
-                    평가금액, 평가손익, 수익률 = self._get_profit(매입금액, 보유금액)
-                else:
-                    포지션 = self.dict_jg[종목코드]['포지션']
-                    if 포지션 == 'LONG':
-                        평가금액, 평가손익, 수익률 = self._get_profit_long(매입금액, 보유금액)
-                    else:
-                        평가금액, 평가손익, 수익률 = self._get_profit_short(매입금액, 보유금액)
+            code_jg.update({
+                '현재가': 현재가,
+                '수익률': 수익률,
+                '평가손익': 평가손익,
+                '평가금액': 평가금액
+            })
 
-                self.dict_jg[종목코드].update({
-                    '현재가': 현재가,
-                    '수익률': 수익률,
-                    '평가손익': 평가손익,
-                    '평가금액': 평가금액
-                })
-        except Exception:
-            pass
+        if self.dict_set['모의투자']:
+            for 주문구분, 종목주문정보 in self.dict_order.copy().items():
+                방향구분 = True if '매수' in 주문구분 or 'BUY' in 주문구분 else False
+                for 주문종목코드, 주문정보 in 종목주문정보.items():
+                    주문가격, 주문수량 = 주문정보[2:4]
+                    if 종목코드 == 주문종목코드 and ((방향구분 and 현재가 < 주문가격) or (not 방향구분 and 현재가 > 주문가격)):
+                        self._push_chejan_data(주문구분, 종목코드, 주문수량, 주문수량, 0, 주문가격, 주문가격)
 
     def _update_dict_info(self):
         """종목정보 딕셔너리를 업데이트합니다."""
@@ -529,9 +539,9 @@ class BaseTrader:
             for code in self.dict_order[gubun]:
                 if code_ is None or code == code_:
                     if self.market_gubun < 9:
-                        주문취소시간, 정정횟수, 주문가격, 호가단위 = self.dict_order[gubun][code]
+                        주문취소시간, 정정횟수, 주문가격, _, 호가단위 = self.dict_order[gubun][code]
                     else:
-                        주문취소시간, 정정횟수, 주문가격, 호가단위, _ = self.dict_order[gubun][code]
+                        주문취소시간, 정정횟수, 주문가격, _, 호가단위, _ = self.dict_order[gubun][code]
 
                     if self.market_gubun < 6:
                         매수매도구분 = gubun
@@ -649,7 +659,7 @@ class BaseTrader:
                     포지션 = self.dict_jg[종목코드]['포지션']
                     주문구분 = 'SELL_LONG' if 포지션 == 'LONG' else 'BUY_SHORT'
                 if self.dict_set['모의투자']:
-                    self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 현재가, 보유수량, now())
+                    self._push_chejan_data_for_paper_trade(주문구분, 종목코드, 현재가, 보유수량, now(), True)
                 elif self.market_gubun < 6:
                     self._check_order((주문구분, 종목코드, 종목명, 현재가, 보유수량, now(), True))
                 else:
@@ -928,7 +938,7 @@ class BaseTrader:
             if 체결구분 == '정정':
                 정정횟수 = self.dict_order[주문구분][종목코드][1] + 1
                 취소시간 = timedelta_sec(self.dict_set['매수취소시간초' if 주문구분 in ('BUY_LONG', 'SELL_SHORT') else '매도취소시간초'])
-                self.dict_order[주문구분][종목코드] = [취소시간, 정정횟수, 주문가격, self._get_hogaunit(종목코드)]
+                self.dict_order[주문구분][종목코드] = [취소시간, 정정횟수, 주문가격, 주문수량, self._get_hogaunit(종목코드)]
             else:
                 if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
                     self.dict_intg['추정예수금'] += 주문수량 * self.dict_info[종목코드]['위탁증거금']
@@ -988,7 +998,7 @@ class BaseTrader:
                     분할매수횟수, 분할매도횟수 = 1, 0
 
                 포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
-                레버리지 = self.dict_order[주문구분][종목코드][4]
+                레버리지 = self.dict_order[주문구분][종목코드][-1]
                 self.dict_jg[종목코드] = {
                     '종목명': 종목명,
                     '포지션': 포지션,

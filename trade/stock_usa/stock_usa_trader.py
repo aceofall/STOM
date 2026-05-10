@@ -68,7 +68,7 @@ class StockUsaTrader(BaseTrader):
                     add_time = self.dict_set['매도취소시간초']
 
                 self.dict_order[주문구분][종목코드] = [
-                    timedelta_sec(add_time), 정정횟수, 주문가격, 0.01
+                    timedelta_sec(add_time), 정정횟수, 주문가격, 주문수량, 0.01
                 ]
 
                 self._update_chegeollist(

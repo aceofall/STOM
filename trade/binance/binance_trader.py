@@ -77,7 +77,8 @@ class BinanceTrader(BaseTrader):
                     add_time = self.dict_set['매도취소시간초']
 
                 self.dict_order[주문구분][종목코드] = [
-                    timedelta_sec(add_time), 정정횟수, 주문가격, self.dict_info[종목코드]['호가단위'], self.dict_lvrg[종목코드]
+                    timedelta_sec(add_time), 정정횟수, 주문가격, 주문수량, self.dict_info[종목코드]['호가단위'],
+                    self.dict_lvrg[종목코드]
                 ]
 
                 self.dict_pos[종목코드] = 포지션
