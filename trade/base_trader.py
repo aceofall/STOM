@@ -224,14 +224,13 @@ class BaseTrader:
             self.windowQ.put((UI_NUM['시스템로그'], f'오류 알림 - 주문금액이 5천원미만입니다.'))
             주문취소 = True
         elif 주문구분 == '매수':
-            inthms = get_inthms(self.market_gubun)
             거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명]))
             손절횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명 and v['수익률'] < 0]))
             if self.dict_set['매수금지거래횟수'] and self.dict_set['매수금지거래횟수값'] <= 거래횟수:
                 주문취소 = True
             elif self.dict_set['매수금지손절횟수'] and self.dict_set['매수금지손절횟수값'] <= 손절횟수:
                 주문취소 = True
-            elif 잔고없음 and inthms < self.dict_set['전략종료시간'] and len(self.dict_jg) >= self.dict_set['최대매수종목수']:
+            elif 잔고없음 and len(self.dict_jg) >= self.dict_set['최대매수종목수']:
                 주문취소 = True
             elif self.dict_set['매수금지간격'] and 현재시간 < self.dict_info[종목코드]['최종거래시간']:
                 주문취소 = True
@@ -300,14 +299,13 @@ class BaseTrader:
         elif self.dict_bool['잔고청산']:
             주문취소 = True
         elif 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
-            inthms = get_inthms(self.market_gubun)
             거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명]))
             손절횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명 and v['수익률'] < 0]))
             if self.dict_set['매수금지거래횟수'] and self.dict_set['매수금지거래횟수값'] <= 거래횟수:
                 주문취소 = True
             elif self.dict_set['매수금지손절횟수'] and self.dict_set['매수금지손절횟수값'] <= 손절횟수:
                 주문취소 = True
-            elif 잔고없음 and inthms < self.dict_set['전략종료시간'] and len(self.dict_jg) >= self.dict_set['최대매수종목수']:
+            elif 잔고없음 and len(self.dict_jg) >= self.dict_set['최대매수종목수']:
                 주문취소 = True
             elif self.dict_set['매수금지간격'] and 현재시간 < self.dict_info[종목코드]['최종거래시간']:
                 주문취소 = True
@@ -369,22 +367,6 @@ class BaseTrader:
 
     def _create_order(self, 주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 정정횟수, 수동주문유형):
         """주문을 생성합니다."""
-        if self.market_gubun < 6:
-            if 주문구분 == '매수' and 정정횟수 == 0:
-                if 수동주문유형 is None and '지정가' in self.dict_set['매수주문유형']:
-                    주문가격 = self._get_order_buy_price(종목코드, 주문구분, 주문가격)
-            elif 주문구분 == '매도' and 정정횟수 == 0:
-                if 수동주문유형 is None and '지정가' in self.dict_set['매도주문유형']:
-                    주문가격 = self._get_order_sell_price(종목코드, 주문구분, 주문가격)
-        else:
-            if 주문구분 in ('BUY_LONG', 'SELL_SHORT') and 정정횟수 == 0:
-                if 수동주문유형 is None and '지정가' in self.dict_set['매수주문유형']:
-                    주문가격 = self._get_order_buy_price(종목코드, 주문구분, 주문가격)
-
-            elif 주문구분 in ('SELL_LONG', 'BUY_SHORT') and 정정횟수 == 0:
-                if 수동주문유형 is None and '지정가' in self.dict_set['매도주문유형']:
-                    주문가격 = self._get_order_sell_price(종목코드, 주문구분, 주문가격)
-
         if self.market_gubun == 9 and 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
             주문수량 = round(주문수량 * self.dict_lvrg[종목코드], self.dict_info[종목코드]['수량소숫점자리수'])
 
@@ -1278,14 +1260,6 @@ class BaseTrader:
         else:
             return tuple(self.dict_order['BUY_LONG']) + tuple(self.dict_order['SELL_SHORT']) + \
                 tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
-
-    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
-        """매수 주문 가격을 반환합니다. (오버라이드용)"""
-        return 0
-
-    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
-        """매도 주문 가격을 반환합니다. (오버라이드용)"""
-        return 0
 
     def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
         """매수 정정 가격을 반환합니다. (오버라이드용)"""

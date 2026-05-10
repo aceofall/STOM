@@ -1536,8 +1536,9 @@ class BaseStrategy(StgGlobalsFunc):
             기준가격, 체결가능 = 현재가, True
             if self.dict_set['매수지정가기준가격'] == '매도1호가':
                 기준가격 = 매도호가1 if self.market_gubun < 6 or buy_long else 매수호가1
-            if self.dict_set['매수지정가기준가격'] == '매수1호가':
+            elif self.dict_set['매수지정가기준가격'] == '매수1호가':
                 기준가격 = 매수호가1 if self.market_gubun < 6 or buy_long else 매도호가1
+            기준가격 = self._get_order_buy_price(self.code, signal_gubun, 기준가격)
         else:
             기준가격 = 0
             if self.market_gubun < 6 or buy_long:
@@ -1607,8 +1608,9 @@ class BaseStrategy(StgGlobalsFunc):
             기준가격, 체결가능 = 현재가, True
             if self.dict_set['매도지정가기준가격'] == '매도1호가':
                 기준가격 = 매도호가1 if self.market_gubun < 6 or sell_long else 매수호가1
-            if self.dict_set['매도지정가기준가격'] == '매수1호가':
+            elif self.dict_set['매도지정가기준가격'] == '매수1호가':
                 기준가격 = 매수호가1 if self.market_gubun < 6 or sell_long else 매도호가1
+            기준가격 = self._get_order_sell_price(self.code, signal_gubun, 기준가격)
         else:
             기준가격 = 0
             if self.market_gubun < 6 or sell_long:
@@ -1689,6 +1691,14 @@ class BaseStrategy(StgGlobalsFunc):
                     q.put('프로세스종료')
         else:
             self.stgQ.put('프로세스종료')
+
+    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
+        """매수 주문 가격을 반환합니다. (오버라이드용)"""
+        return 0
+
+    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
+        """매도 주문 가격을 반환합니다. (오버라이드용)"""
+        return 0
 
     def _get_hogaunit(self, 주문가격또는종목코드):
         """호가 단위를 반환합니다. (오버라이드용)"""

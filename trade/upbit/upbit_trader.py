@@ -128,16 +128,6 @@ class UpbitTrader(BaseTrader):
                     주문구분, 체결구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호
                 )
 
-    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
-        """매수 주문 가격을 반환합니다."""
-        매수지정가호가번호 = self.dict_set['매수지정가호가번호']
-        return round(주문가격 + get_hogaunit_coin(주문가격) * 매수지정가호가번호, 8)
-
-    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
-        """매도 주문 가격을 반환합니다."""
-        매도지정가호가번호 = self.dict_set['매도지정가호가번호']
-        return round(주문가격 + get_hogaunit_coin(주문가격) * 매도지정가호가번호, 8)
-
     def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
         """매수 정정 가격을 반환합니다."""
         return round(현재가 - 정정호가, 8)

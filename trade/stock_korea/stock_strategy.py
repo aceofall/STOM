@@ -11,6 +11,16 @@ class StockStrategy(BaseStrategy):
     def __init__(self, gubun, qlist, dict_set, market_info):
         super().__init__(gubun, qlist, dict_set, market_info)
 
+    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
+        """매수 주문 가격을 반환합니다."""
+        매수지정가호가번호 = self.dict_set['매수지정가호가번호']
+        return int(주문가격 + get_hogaunit_stock(주문가격) * 매수지정가호가번호)
+
+    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
+        """매도 주문 가격을 반환합니다."""
+        매도지정가호가번호 = self.dict_set['매도지정가호가번호']
+        return int(주문가격 + get_hogaunit_stock(주문가격) * 매도지정가호가번호)
+
     def _get_hogaunit(self, 주문가격):
         """호가 단위를 반환합니다."""
         return get_hogaunit_stock(주문가격)
