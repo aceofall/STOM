@@ -301,8 +301,8 @@ class BaseTrader:
             주문취소 = True
         elif 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
             inthms = get_inthms(self.market_gubun)
-            거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목코드]))
-            손절횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목코드 and v['수익률'] < 0]))
+            거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명]))
+            손절횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명 and v['수익률'] < 0]))
             if self.dict_set['매수금지거래횟수'] and self.dict_set['매수금지거래횟수값'] <= 거래횟수:
                 주문취소 = True
             elif self.dict_set['매수금지손절횟수'] and self.dict_set['매수금지손절횟수값'] <= 손절횟수:
