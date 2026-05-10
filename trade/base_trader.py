@@ -259,11 +259,11 @@ class BaseTrader:
 
         if 주문취소:
             if '취소' not in 주문구분:
-                self._put_order_complete(f'{주문구분}취소', 종목코드)
+                self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
         else:
             if 주문수량 > 0:
                 if 잔고청산:
-                    self._put_order_complete(f'{주문구분}주문', 종목코드)
+                    self._put_order_complete(f'{주문구분}_MANUAL', 종목코드)
                 self._create_order(주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 0, 수동주문유형)
             else:
                 취소주문구분 = None
@@ -273,7 +273,7 @@ class BaseTrader:
                     취소주문구분 = '매도'
                 if 취소주문구분 is not None:
                     self._cancel_order(종목코드, 취소주문구분)
-                self._put_order_complete(f'{주문구분}취소', 종목코드)
+                self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
 
     def _check_order_future(self, data):
         """선물 주문을 확인합니다."""
@@ -781,7 +781,7 @@ class BaseTrader:
 
             if 미체결수량 == 0:
                 del self.dict_order[주문구분][종목코드]
-                self._put_order_complete(f'{주문구분}완료', 종목코드)
+                self._put_order_complete(f'{주문구분}_COMPLETE', 종목코드)
 
             if 주문구분 == '매수':
                 self.dict_intg['예수금'] -= 체결수량 * 체결가격
@@ -809,7 +809,7 @@ class BaseTrader:
 
                 del self.dict_order[주문구분][종목코드]
 
-                self._put_order_complete(주문구분, 종목코드)
+                self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
 
             if self.dict_set['알림소리']:
                 self.soundQ.put(f'{종목명} {주문수량}개의 {주문구분}주문을 {체결구분}하였습니다')
@@ -956,7 +956,7 @@ class BaseTrader:
                 del self.dict_order[주문구분][종목코드]
                 del self.dict_signal[종목코드]
 
-                self._put_order_complete(주문구분, 종목코드)
+                self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
 
             if self.dict_set['알림소리']:
                 text = ''
