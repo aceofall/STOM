@@ -588,6 +588,8 @@ class BaseTrader:
         elif gubun == '주문확인':
             code, c = data
             self.dict_curc[code] = c
+            if self.dict_set['모의투자']:
+                self._check_limit_order_for_paper_trade(code, c)
             self._order_time_control(code)
         elif gubun == '저가대비고가등락율':
             self._set_leverage(data)
@@ -655,15 +657,18 @@ class BaseTrader:
                 '평가금액': 평가금액
             })
 
-        if self.dict_set['모의투자']:
-            for 주문구분, 종목주문정보 in self.dict_order.copy().items():
-                주문정보 = 종목주문정보.get(종목코드)
-                if 주문정보:
-                    방향구분 = True if '매수' in 주문구분 or 'BUY' in 주문구분 else False
-                    # noinspection PyUnresolvedReferences
-                    주문가격, 주문수량 = 주문정보[2:4]
-                    if (방향구분 and 현재가 < 주문가격) or (not 방향구분 and 현재가 > 주문가격):
-                        self._push_chejan_data(주문구분, 종목코드, 주문수량, 주문수량, 0, 주문가격, 주문가격)
+        if self.is_tick and self.dict_set['모의투자']:
+            self._check_limit_order_for_paper_trade(종목코드, 현재가)
+
+    def _check_limit_order_for_paper_trade(self, 종목코드, 현재가):
+        for 주문구분, 종목주문정보 in self.dict_order.copy().items():
+            주문정보 = 종목주문정보.get(종목코드)
+            if 주문정보:
+                방향구분 = True if '매수' in 주문구분 or 'BUY' in 주문구분 else False
+                # noinspection PyUnresolvedReferences
+                주문가격, 주문수량 = 주문정보[2:4]
+                if (방향구분 and 현재가 < 주문가격) or (not 방향구분 and 현재가 > 주문가격):
+                    self._push_chejan_data(주문구분, 종목코드, 주문수량, 주문수량, 0, 주문가격, 주문가격)
 
     def _update_dict_info(self):
         """종목정보 딕셔너리를 업데이트합니다."""
