@@ -188,6 +188,7 @@ class BaseTrader:
                 q.put(data)
         else:
             self.stgQ.put(data)
+        self.receivQ.put(('주문목록', self._get_order_code_list()))
 
     def _scheduler2(self):
         """스케줄러2를 실행합니다."""
@@ -198,7 +199,6 @@ class BaseTrader:
         if self.dict_set['잔고청산'] and not self.dict_bool['잔고청산'] and self.jgcs_time < inthms < self.jgcs_time + 10:
             self._jango_cheongsan('자동')
 
-        self.receivQ.put(('주문목록', self._get_order_code_list()))
         self._update_totaljango()
 
     # noinspection PyUnresolvedReferences
