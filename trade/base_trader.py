@@ -266,8 +266,13 @@ class BaseTrader:
                     self._put_order_complete(f'{주문구분}주문', 종목코드)
                 self._create_order(주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 0, 수동주문유형)
             else:
-                if (주문구분 == '매수' and 매도주문중) or (주문구분 == '매도' and 매수주문중):
-                    self._cancel_order(종목코드, 주문구분)
+                취소주문구분 = None
+                if 주문구분 == '매도' and 매수주문중:
+                    취소주문구분 = '매수'
+                elif 주문구분 == '매수' and 매도주문중:
+                    취소주문구분 = '매도'
+                if 취소주문구분 is not None:
+                    self._cancel_order(종목코드, 취소주문구분)
                 self._put_order_complete(f'{주문구분}취소', 종목코드)
 
     def _check_order_future(self, data):
@@ -341,9 +346,17 @@ class BaseTrader:
                     self._put_order_complete(f'{주문구분}_MANUAL', 종목코드)
                 self._create_order(주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 0, 수동주문유형)
             else:
-                if (주문구분 == 'BUY_LONG' and 롱매도주문중) or (주문구분 == 'SELL_SHORT' and 숏매도주문중) or \
-                        (주문구분 == 'SELL_LONG' and 롱매수주문중) or (주문구분 == 'BUY_SHORT' and 숏매수주문중):
-                    self._cancel_order(종목코드, 주문구분)
+                취소주문구분 = None
+                if 주문구분 == 'SELL_LONG' and 롱매수주문중:
+                    취소주문구분 = 'BUY_LONG'
+                elif 주문구분 == 'BUY_LONG' and 롱매도주문중:
+                    취소주문구분 = 'SELL_LONG'
+                elif 주문구분 == 'BUY_SHORT' and 숏매수주문중:
+                    취소주문구분 = 'SELL_SHORT'
+                elif 주문구분 == 'SELL_SHORT' and 숏매도주문중:
+                    취소주문구분 = 'BUY_SHORT'
+                if 취소주문구분 is not None:
+                    self._cancel_order(종목코드, 취소주문구분)
                 self._put_order_complete(f'{주문구분}_CANCEL', 종목코드)
 
     def _put_order_complete(self, 주문구분, 종목코드):
