@@ -117,13 +117,9 @@ class StockTrader(BaseTrader):
                 주문구분, 체결구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호
             )
 
-    def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
+    def _get_modify_price(self, 현재가, 정정호가, 종목코드):
         """매수 정정 가격을 반환합니다."""
         return int(현재가 - 정정호가)
-
-    def _get_modify_sell_price(self, 현재가, 정정호가, 종목코드):
-        """매도 정정 가격을 반환합니다."""
-        return int(현재가 + 정정호가)
 
     def _get_profit(self, 매입금액, 보유금액):
         """수익을 계산합니다."""

@@ -554,10 +554,8 @@ class BaseTrader:
 
                     elif 정정횟수 < self.dict_set[f'{매수매도구분}정정횟수'] and 범위이탈:
                         정정호가 = self.dict_set[f'{매수매도구분}정정호가']
-                        if 범위이탈구분:
-                            정정가격 = self._get_modify_buy_price(현재가, 정정호가, code)
-                        else:
-                            정정가격 = self._get_modify_sell_price(현재가, 정정호가, code)
+                        if not 범위이탈구분: 정정호가 *= -1
+                        정정가격 = self._get_modify_price(현재가, 정정호가, code)
                         modify_list.append((code, gubun, 정정가격))
 
         if cancel_list:
@@ -1261,12 +1259,8 @@ class BaseTrader:
             return tuple(self.dict_order['BUY_LONG']) + tuple(self.dict_order['SELL_SHORT']) + \
                 tuple(self.dict_order['SELL_LONG']) + tuple(self.dict_order['BUY_SHORT'])
 
-    def _get_modify_buy_price(self, 현재가, 정정호가, 종목코드):
-        """매수 정정 가격을 반환합니다. (오버라이드용)"""
-        return 0
-
-    def _get_modify_sell_price(self, 현재가, 정정호가, 종목코드):
-        """매도 정정 가격을 반환합니다. (오버라이드용)"""
+    def _get_modify_price(self, 현재가, 정정호가, 종목코드):
+        """정정 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_profit(self, 매입금액, 보유금액):

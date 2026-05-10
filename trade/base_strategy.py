@@ -1692,14 +1692,6 @@ class BaseStrategy(StgGlobalsFunc):
         else:
             self.stgQ.put('프로세스종료')
 
-    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
-        """매수 주문 가격을 반환합니다. (오버라이드용)"""
-        return 0
-
-    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
-        """매도 주문 가격을 반환합니다. (오버라이드용)"""
-        return 0
-
     def _get_hogaunit(self, 주문가격또는종목코드):
         """호가 단위를 반환합니다. (오버라이드용)"""
         return 0
@@ -1730,6 +1722,14 @@ class BaseStrategy(StgGlobalsFunc):
 
     def _set_sell_count(self, 보유수량, 보유비율, oc_ratio):
         """매도 수량을 설정합니다. (오버라이드용)"""
+        return 0
+
+    def _get_order_buy_price(self, 종목코드, 주문구분, 주문가격):
+        """매수 주문 가격을 반환합니다. (오버라이드용)"""
+        return 0
+
+    def _get_order_sell_price(self, 종목코드, 주문구분, 주문가격):
+        """매도 주문 가격을 반환합니다. (오버라이드용)"""
         return 0
 
     def _get_order_price(self, 거래금액, 주문수량):
