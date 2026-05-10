@@ -690,6 +690,8 @@ class BaseTrader:
 
         import sys
         qtest_qwait(1)
+        self.qtimer1.stop()
+        self.qtimer2.stop()
         self.traderQ.put('큐스레드종료')
         self.updater.wait()
         sys.exit()
