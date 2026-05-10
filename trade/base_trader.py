@@ -513,10 +513,12 @@ class BaseTrader:
 
         if self.dict_set['모의투자']:
             for 주문구분, 종목주문정보 in self.dict_order.copy().items():
-                방향구분 = True if '매수' in 주문구분 or 'BUY' in 주문구분 else False
-                for 주문종목코드, 주문정보 in 종목주문정보.items():
+                주문정보 = 종목주문정보.get(종목코드)
+                if 주문정보:
+                    방향구분 = True if '매수' in 주문구분 or 'BUY' in 주문구분 else False
+                    # noinspection PyUnresolvedReferences
                     주문가격, 주문수량 = 주문정보[2:4]
-                    if 종목코드 == 주문종목코드 and ((방향구분 and 현재가 < 주문가격) or (not 방향구분 and 현재가 > 주문가격)):
+                    if (방향구분 and 현재가 < 주문가격) or (not 방향구분 and 현재가 > 주문가격):
                         self._push_chejan_data(주문구분, 종목코드, 주문수량, 주문수량, 0, 주문가격, 주문가격)
 
     def _update_dict_info(self):
