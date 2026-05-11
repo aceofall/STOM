@@ -64,7 +64,7 @@ class ImportProgressHook:
         """커스텀 임포트 함수입니다."""
         if name in self.modules:
             self.current_index += 1
-            progress = (self.current_index / self.total_modules) * 49
+            progress = (self.current_index / self.total_modules) * 50
             self.splash.show_progress(f"{name}...", int(progress))
         return self.original_import(name, *args, **kwargs)
 
