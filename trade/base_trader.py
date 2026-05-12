@@ -524,7 +524,7 @@ class BaseTrader:
             self._send_order(data)
 
     def _paper_trade(self, 주문구분, 종목코드, 주문가격, 주문수량, 시그널시간, 잔고청산, 수동주문유형=None):
-        """모의투자용 체결 데이터를 전송합니다."""
+        """모의투자용 주문체결을 기록합니다."""
         self._order_time_log(시그널시간)
 
         if 주문구분 == '시드부족':
@@ -548,6 +548,7 @@ class BaseTrader:
             self._push_chejan_data(주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격)
 
     def _push_chejan_data(self, 주문구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격):
+        """모의투자용 주문체결 데이터를 전송합니다."""
         체결시간 = get_str_ymdhms(self.market_gubun)
         주문번호 = '0' if self.market_gubun in (5, 8) else 0
 
@@ -661,6 +662,7 @@ class BaseTrader:
             self._check_limit_order(종목코드, 현재가)
 
     def _check_limit_order(self, 종목코드, 현재가):
+        """모의투자용 지정가 주문체결을 추적합니다."""
         for 주문구분, 종목주문정보 in self.dict_order.copy().items():
             주문정보 = 종목주문정보.get(종목코드)
             if 주문정보:
