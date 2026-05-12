@@ -109,7 +109,7 @@ def load_settings():
             '옵튜나자동스탭':     df_b['옵튜나자동스탭'][no],
             '보조지표설정':      [int(x) if '.' not in x else float(x) for x in df_b['보조지표설정'][no].split(';')],
 
-            '테마': df_e['테마'][no],
+            '테마':            df_e['테마'][no],
             '저해상도':         df_e['저해상도'][no],
             '스톰라이브':       df_e['스톰라이브'][no],
             '휴무프로세스종료':   df_e['휴무프로세스종료'][no],
