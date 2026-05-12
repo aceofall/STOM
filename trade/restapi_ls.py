@@ -594,11 +594,11 @@ class LsWebSocketReceiver(QThread):
             await self._disconnect_hg()
 
     async def _connect_cg(self):
-        self.webs_cg = await websockets.connect(LsRestData.웹소켓주소)
+        self.webs_cg = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60, ping_timeout=60)
         self.conn_cg = True
 
     async def _connect_hg(self):
-        self.webs_hg = await websockets.connect(LsRestData.웹소켓주소)
+        self.webs_hg = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60, ping_timeout=60)
         self.conn_hg = True
 
     async def _receive_cg_msg(self):
@@ -730,7 +730,7 @@ class LsWebSocketTrader(QThread):
             await self._disconnect()
 
     async def _connect(self):
-        self.websocket = await websockets.connect(LsRestData.웹소켓주소)
+        self.websocket = await websockets.connect(LsRestData.웹소켓주소, ping_interval=60, ping_timeout=60)
         self.connected = True
         for k, v in LsRestData.주문거래코드.items():
             if self.market in k:
