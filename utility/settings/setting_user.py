@@ -192,8 +192,8 @@ def load_settings():
             '백테엔진프로파일링': False
         }
     except fernet.InvalidToken:
-        return 'fernet.InvalidToken', location_list
+        return 'InvalidToken', None
     except Exception:
-        return format_exc(), location_list
+        return format_exc(), None
     else:
         return DICT_SET, location_list
