@@ -39,10 +39,10 @@ def update_progressbar(ui):
 
     ui.progressBar01.setValue(ui.cpu_per)
     ui.progressBar02.setValue(ui.memory_per)
-    ui.progressBar03.setValue(int(round(ui.network_recv_mbps)))
+    ui.progressBar03.setValue(int(round(ui.net_recv)))
     ui.progressLbl01.setText(f'CPU\n{ui.cpu_per}%')
     ui.progressLbl02.setText(f'MEM\n{ui.memory_per}%')
-    ui.progressLbl03.setText(f'NET\n{ui.network_recv_mbps}\nMbps')
+    ui.progressLbl03.setText(f'NET\n{ui.net_recv}\nMbps')
     ui.counter = 0 if ui.counter == 599 else ui.counter + 1
 
     ui.be_pushButtonnn_01.setStyleSheet(style_bc_by if ui.backengine_running else style_bc_bt)

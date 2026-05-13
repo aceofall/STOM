@@ -90,9 +90,10 @@ def _update_cpuper(ui):
     """네트워크, 메모리, CPU 사용률을 업데이트합니다."""
     import psutil
 
-    net_io = psutil.net_io_counters()
-    recv_bps = net_io.bytes_recv - ui.last_recv_bytes
-    ui.last_recv_bytes   = net_io.bytes_recv
-    ui.network_recv_mbps = round(recv_bps * 8 / 1_000_000, 1)
-    ui.memory_per = int(round(psutil.virtual_memory().percent))
+    memory        = psutil.virtual_memory()
+    net_io        = psutil.net_io_counters()
+    recv_bps      = net_io.bytes_recv - ui.last_recv
+    ui.last_recv  = net_io.bytes_recv
+    ui.net_recv   = round(recv_bps * 8 / 1_000_000, 1)
+    ui.memory_per = int(round(memory.percent))
     ui.cpu_per    = int(round(psutil.cpu_percent(interval=1)))
