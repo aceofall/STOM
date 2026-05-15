@@ -80,7 +80,7 @@ class SetDialogChart:
         self.ui.ct_pushButtonnn_08 = self.wc.setPushbutton('', parent=self.ui.ct_groupBoxxxxx_01, click=lambda: hg_button_clicked_01(self.ui, '다음'), shortcut='Alt+right')
         self.ui.ct_pushButtonnn_09 = self.wc.setPushbutton('', parent=self.ui.ct_groupBoxxxxx_01, click=lambda: hg_button_clicked_02(self.ui, '매수'), shortcut='Alt+up')
         self.ui.ct_pushButtonnn_10 = self.wc.setPushbutton('', parent=self.ui.ct_groupBoxxxxx_01, click=lambda: hg_button_clicked_02(self.ui, '매도'), shortcut='Alt+down')
-        self.ui.ct_pushButtonnn_11 = self.wc.setPushbutton('', parent=self.ui.ct_groupBoxxxxx_01, click=lambda: chart_screenshot2(self.ui), shortcut='Shift+S')
+        self.ui.ct_pushButtonnn_11 = self.wc.setPushbutton('', parent=self.ui.ct_groupBoxxxxx_01, click=lambda: chart_screenshot2(self.ui), shortcut='Alt+S')
 
         self.ui.ct_dateEdittttt_02 = self.wc.setDateEdit(self.ui.dialog_chart, changed=lambda: chart_moneytop_list(self.ui))
         self.ui.ct_tableWidgett_01 = self.wc.setTablewidget(self.ui.dialog_chart, ['종목명'], 100, vscroll=True, clicked=lambda row, col: cell_clicked_06(self.ui, row, col))
