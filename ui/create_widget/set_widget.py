@@ -321,39 +321,63 @@ class HoverGroupBox(QGroupBox):
     마우스 오버 시 배경색이 변경됩니다."""
     def __init__(self, title, parent=None, duration=100):
         super().__init__(title, parent)
-        self._normal_color = f'rgb({color_hv_bt.red()}, {color_hv_bt.green()}, {color_hv_bt.blue()})'
-        self._hover_color = f'rgb({color_bg_bl.red()}, {color_bg_bl.green()}, {color_bg_bl.blue()})'
         self._duration = duration
-        self.setStyleSheet(self._build_style(self._normal_color))
+        self.setStyleSheet(self._build_style(False))
 
-    def _build_style(self, bg_color):
+    def _build_style(self, hover):
         """스타일시트를 빌드합니다."""
-        return f"""
-            QGroupBox {{
-                background-color: {bg_color};
-                font-family: "나눔고딕";
-                font-size: 12px;
-            }}
-            QGroupBox::title {{
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-                font-family: "나눔고딕";
-                font-size: 12px;
-            }}
-            QLabel, QCheckBox, QPushButton, QDateEdit, HoverComboBox {{
-                font-family: "나눔고딕";
-                font-size: 12px;
-            }}
-        """
+        if hover:
+            red, green, blue = color_bg_bl.red(), color_bg_bl.green(), color_bg_bl.blue()
+            return f"""
+                QGroupBox {{
+                    background-color: qlineargradient(
+                        x1:0, y1:0, x2:1, y2:0,
+                        stop:0 rgb({red+20}, {green+20}, {blue+20}),
+                        stop:0.5 rgb({red+10}, {green+10}, {blue+10}),
+                        stop:1 rgb({red}, {green}, {blue})
+                    );
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+                QGroupBox::title {{
+                    subcontrol-origin: margin;
+                    subcontrol-position: top left;
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+                QLabel, QCheckBox, QPushButton, QDateEdit, HoverComboBox {{
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+            """
+        else:
+            bg_color = f'rgb({color_hv_bt.red()}, {color_hv_bt.green()}, {color_hv_bt.blue()})'
+            return f"""
+                QGroupBox {{
+                    background-color: {bg_color};
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+                QGroupBox::title {{
+                    subcontrol-origin: margin;
+                    subcontrol-position: top left;
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+                QLabel, QCheckBox, QPushButton, QDateEdit, HoverComboBox {{
+                    font-family: "나눔고딕";
+                    font-size: 12px;
+                }}
+            """
 
     def enterEvent(self, event):
         """마우스 진입 이벤트를 처리합니다."""
-        self.setStyleSheet(self._build_style(self._hover_color))
+        self.setStyleSheet(self._build_style(True))
         super().enterEvent(event)
 
     def leaveEvent(self, event):
         """마우스 이탈 이벤트를 처리합니다."""
-        self.setStyleSheet(self._build_style(self._normal_color))
+        self.setStyleSheet(self._build_style(False))
         super().leaveEvent(event)
 
 
