@@ -56,7 +56,7 @@ style_bc_by = f'''
         );
     }}'''
 
-r, g, b = 100, 100, 150
+r, g, b = 80, 80, 130
 style_bc_sl = f'''
     QPushButton {{
         background-color: qlineargradient(
@@ -77,7 +77,7 @@ style_bc_sl = f'''
         );
     }}'''
 
-r, g, b = 80, 130, 80
+r, g, b = 60, 110, 60
 style_bc_bs = f'''
     QPushButton {{
         background-color: qlineargradient(
@@ -98,7 +98,7 @@ style_bc_bs = f'''
         );
     }}'''
 
-r, g, b = 30, 80, 30
+r, g, b = 30, 60, 30
 style_bc_bd = f'''
     QPushButton {{
         background-color: qlineargradient(
