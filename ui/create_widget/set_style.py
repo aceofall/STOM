@@ -274,6 +274,19 @@ style_bc_dk = f'''
     QPushButton, QTextEdit, QLineEdit, QCheckBox
     {{background-color: {rgb_bg_dk};border-style: solid;border-width: 1px;border-color: {rgb_bg_dk};}}
     QPushButton:hover {{background-color: {rgb_bg_bt};}}'''
-style_pgbar = f'QProgressBar {{background-color: {rgb_bg_dk};}} QProgressBar::chunk {{background-color: {rgb_bf_bb};}}'
+style_pgbar = f'''
+    QProgressBar {{border: none; border-radius: 2px; background-color: {rgb_bg_dk};}}
+    QProgressBar::chunk {{
+        border: none;
+        border-radius: 2px;
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {rgb_bg_bl}, stop:0.5 {rgb_bf_dk}, stop:1 {rgb_bf_bb});
+    }}'''
+style_pgbar2 = f'''
+    QProgressBar {{border: none; border-radius: 2px; background-color: {rgb_bg_dk};}}
+    QProgressBar::chunk {{
+        border: none;
+        border-radius: 2px;
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {rgb_bg_bl}, stop:0.5 {rgb_bf_dk}, stop:1 {rgb_bf_bb});
+    }}'''
 style_ht_gb = f'QGroupBox {{background-color: {rgb_bg_ct}; border: 2px solid {rgb_bg_ct};}}'
 style_ht_pb = f'QPushButton {{background-color: {rgb_bg_ct}; border: 2px solid {rgb_bg_ct};}}'
