@@ -30,47 +30,262 @@ color_bt_yl = QColor(255, 255, 160)
 color_pluss = QColor(200, 50, 50)
 color_minus = QColor(50, 50, 200)
 
-style_bc_by = '''
-    QPushButton{background-color: rgb(150, 100, 100);border-style: solid;border-width: 1px;border-color: rgb(150, 100, 100);}
-    QPushButton:hover{background-color: rgb(170, 120, 120);}'''
-style_bc_sl = '''
-    QPushButton{background-color: rgb(100, 100, 150);border-style: solid;border-width: 1px;border-color: rgb(100, 100, 150);}
-    QPushButton:hover{background-color: rgb(120, 120, 170);}'''
-style_bc_bs = '''
-    QPushButton{background-color: rgb(80, 130, 80);border-style: solid;border-width: 1px;border-color: rgb(80, 130, 80);}
-    QPushButton:hover{background-color: rgb(100, 150, 100);}'''
-style_bc_bd = '''
-    QPushButton{background-color: rgb(30, 80, 30);border-style: solid;border-width: 1px;border-color: rgb(30, 80, 30);}
-    QPushButton:hover{background-color: rgb(50, 100, 50);}'''
-style_ck_bx = ''''
+style_ck_bx = '''
     QCheckBox::indicator {width: 15px; height: 15px;}
     QCheckBox::indicator::unchecked {image: url(ui/_icon/unchecked.png);}
     QCheckBox::indicator::checked {image: url(ui/_icon/checked.png);}'''
 
-style_st_ss = '''
-    QPushButton{background-color: rgb(60, 60, 80);border-style: solid;border-width: 1px;border-color: rgb(60, 60, 80);}
-    QPushButton:hover{background-color: rgb(80, 80, 100);}'''
-style_st_su = '''
-    QPushButton{background-color: rgb(70, 70, 90);border-style: solid;border-width: 1px;border-color: rgb(70, 70, 90);}
-    QPushButton:hover{background-color: rgb(90, 90, 110);}'''
-style_st_cf = '''
-    QPushButton{background-color: rgb(90, 90, 100);border-style: solid;border-width: 1px;border-color: rgb(90, 90, 100);}
-    QPushButton:hover{background-color: rgb(110, 110, 120);}'''
-style_st_sf = '''
-    QPushButton{background-color: rgb(70, 70, 80);border-style: solid;border-width: 1px;border-color: rgb(70, 70, 80);}
-    QPushButton:hover{background-color: rgb(90, 90, 100);}'''
-style_st_mf = '''
-    QPushButton{background-color: rgb(50, 50, 60);border-style: solid;border-width: 1px;border-color: rgb(50, 50, 60);}
-    QPushButton:hover{background-color: rgb(70, 70, 80);}'''
-style_st_sp = '''
-    QPushButton{background-color: rgb(80, 100, 80);border-style: solid;border-width: 1px;border-color: rgb(80, 100, 80);}
-    QPushButton:hover{background-color: rgb(100, 120, 100);}'''
-style_st_ct = '''
-    QPushButton{background-color: rgb(80, 80, 100);border-style: solid;border-width: 1px;border-color: rgb(80, 80, 100);}
-    QPushButton:hover{background-color: rgb(100, 100, 120);}'''
-style_st_ks = '''
-    QPushButton{background-color: rgb(100, 100, 80);border-style: solid;border-width: 1px;border-color: rgb(100, 100, 80);}
-    QPushButton:hover{background-color: rgb(120, 120, 100);}'''
+r, g, b = 130, 80, 80
+style_bc_by = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 100, 100, 150
+style_bc_sl = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 80, 130, 80
+style_bc_bs = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 30, 80, 30
+style_bc_bd = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 60, 60, 80
+style_st_ss = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 70, 70, 90
+style_st_su = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 90, 90, 100
+style_st_cf = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 70, 70, 80
+style_st_sf = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 50, 50, 60
+style_st_mf = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 80, 100, 80
+style_st_sp = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 80, 80, 100
+style_st_ct = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = 100, 100, 80
+style_st_ks = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
 
 if dict_set['테마'] == '다크블루':
     color_fg_bt = QColor(230, 230, 240)
@@ -250,43 +465,118 @@ else:
 
 rgb_fg_bt = f'rgb({color_fg_bt.red()}, {color_fg_bt.green()}, {color_fg_bt.blue()})'
 rgb_fg_dk = f'rgb({color_fg_dk.red()}, {color_fg_dk.green()}, {color_fg_dk.blue()})'
-rgb_bf_bt = f'rgb({color_bf_bt.red()}, {color_bf_bt.green()}, {color_bf_bt.blue()})'
-rgb_bf_bb = f'rgb({color_bf_bb.red()}, {color_bf_bb.green()}, {color_bf_bb.blue()})'
-rgb_bf_dk = f'rgb({color_bf_dk.red()}, {color_bf_dk.green()}, {color_bf_dk.blue()})'
-rgb_bg_bl = f'rgb({color_bg_bl.red()}, {color_bg_bl.green()}, {color_bg_bl.blue()})'
-rgb_bg_bt = f'rgb({color_bg_bt.red()}, {color_bg_bt.green()}, {color_bg_bt.blue()})'
-rgb_bg_bc = f'rgb({color_bg_bc.red()}, {color_bg_bc.green()}, {color_bg_bc.blue()})'
-rgb_bg_dk = f'rgb({color_bg_dk.red()}, {color_bg_dk.green()}, {color_bg_dk.blue()})'
 rgb_bg_ct = f'rgb({color_bg_ct.red()}, {color_bg_ct.green()}, {color_bg_ct.blue()})'
 
 style_fc_bt = f'QLineEdit {{color: {rgb_fg_bt};}}'
 style_fc_dk = f'QFrame {{color: {rgb_fg_dk};}}'
-style_bc_st = f'''
-    QPushButton {{background-color: {rgb_bf_bb};border-style: solid;border-width: 1px;border-color: {rgb_bf_bb};}}
-    QPushButton:hover {{background-color: {rgb_bf_bt};}}'''
-style_bc_bt = f'''
-    QPushButton {{background-color: {rgb_bf_dk};border-style: solid;border-width: 1px;border-color: {rgb_bf_dk};}}
-    QPushButton:hover {{background-color: {rgb_bf_bb};}}'''
-style_bc_bb = f'''
-    QPushButton {{background-color: {rgb_bg_bc};border-style: solid;border-width: 1px;border-color: {rgb_bg_bc};}}
-    QPushButton:hover {{background-color: {rgb_bg_bl};}}'''
-style_bc_dk = f'''
-    QPushButton, QTextEdit, QLineEdit, QCheckBox
-    {{background-color: {rgb_bg_dk};border-style: solid;border-width: 1px;border-color: {rgb_bg_dk};}}
-    QPushButton:hover {{background-color: {rgb_bg_bt};}}'''
-style_pgbar = f'''
-    QProgressBar {{border: none; border-radius: 2px; background-color: {rgb_bg_dk};}}
-    QProgressBar::chunk {{
-        border: none;
-        border-radius: 2px;
-        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {rgb_bg_bl}, stop:0.5 {rgb_bf_dk}, stop:1 {rgb_bf_bb});
-    }}'''
-style_pgbar2 = f'''
-    QProgressBar {{border: none; border-radius: 2px; background-color: {rgb_bg_dk};}}
-    QProgressBar::chunk {{
-        border: none;
-        border-radius: 2px;
-        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {rgb_bg_bl}, stop:0.5 {rgb_bf_dk}, stop:1 {rgb_bf_bb});
-    }}'''
 style_ht_gb = f'QGroupBox {{background-color: {rgb_bg_ct}; border: 2px solid {rgb_bg_ct};}}'
 style_ht_pb = f'QPushButton {{background-color: {rgb_bg_ct}; border: 2px solid {rgb_bg_ct};}}'
+
+r, g, b = color_bf_bb.red(), color_bf_bb.green(), color_bf_bb.blue()
+style_bc_st = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = color_bf_dk.red(), color_bf_dk.green(), color_bf_dk.blue()
+style_bc_bt = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = color_bg_bc.red(), color_bg_bc.green(), color_bg_bc.blue()
+style_bc_bb = f'''
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = color_bg_dk.red(), color_bg_dk.green(), color_bg_dk.blue()
+style_bc_dk = f'''
+    PlainTextEdit {{background-color: rgb({r}, {g}, {b});}}
+    QTextEdit {{background-color: rgb({r}, {g}, {b});}}
+    QLineEdit {{background-color: rgb({r}, {g}, {b});}}
+    QPushButton {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+        border-style: solid;
+        border-width: 1px;
+        border-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r}, {g}, {b}), stop:0.5 rgb({r+10}, {g+10}, {b+10}), stop:1 rgb({r+20}, {g+20}, {b+20})
+        );
+    }}
+    QPushButton:hover {{
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+
+r, g, b = color_bg_dk.red(), color_bg_dk.green(), color_bg_dk.blue()
+style_pgbar = f'''
+    QProgressBar {{border: none; border-radius: 2px; background-color: rgb({r}, {g}, {b});}}
+    QProgressBar::chunk {{
+        border: none;
+        border-radius: 2px;
+        background: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
+style_pgbar2 = f'''
+    QProgressBar {{border: none; border-radius: 2px; background-color: rgb({r}, {g}, {b});}}
+    QProgressBar::chunk {{
+        border: none;
+        border-radius: 2px;
+        background: qlineargradient(
+            x1:0, y1:0, x2:0, y2:1,
+            stop:0 rgb({r+20}, {g+20}, {b+20}), stop:0.5 rgb({r+30}, {g+30}, {b+30}), stop:1 rgb({r+40}, {g+40}, {b+40})
+        );
+    }}'''
