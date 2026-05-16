@@ -583,6 +583,19 @@ class FixedColumnTableWidget(QTableWidget):
             self._first_column_table.setCellWidget(row, 0, widget_clone)
 
 
+class CustomDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.on_dialog_open()
+
+    def on_dialog_open(self):
+        from ui.etcetera.etc import change_title_bar_color
+        change_title_bar_color(self)
+
+
 class WidgetCreater:
     """위젯 생성자 클래스입니다.
     다양한 UI 위젯을 생성하고 설정합니다."""
@@ -836,9 +849,9 @@ class WidgetCreater:
     def setDialog(self, name, parent=None, location_save=False):
         """다이얼로그를 생성합니다."""
         if parent is None:
-            dialog = QDialog()
+            dialog = CustomDialog()
         else:
-            dialog = QDialog(parent)
+            dialog = CustomDialog(parent)
         dialog.setWindowTitle(name)
         dialog.setWindowModality(Qt.WindowModality.NonModal)
         dialog.setWindowIcon(self.ui.icon_main)
