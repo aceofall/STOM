@@ -238,21 +238,21 @@ def pattern_setting_help(ui):
 
 def change_title_bar_color(window):
     import ctypes
-    from ui.create_widget.set_style import color_fg_bc, color_bf_dk
+    from ui.create_widget.set_style import color_bf_dk, color_fg_bc
 
     hwnd = int(window.winId())
-    bg_color = (color_fg_bc.blue() << 16) | (color_fg_bc.green() << 8) | color_fg_bc.red()
-    fg_color = (color_bf_dk.blue() << 16) | (color_bf_dk.green() << 8) | color_bf_dk.red()
+    bg_color = (color_bf_dk.blue() << 16) | (color_bf_dk.green() << 8) | color_bf_dk.red()
+    fg_color = (color_fg_bc.blue() << 16) | (color_fg_bc.green() << 8) | color_fg_bc.red()
 
     # noinspection PyUnresolvedReferences
     ctypes.windll.dwmapi.DwmSetWindowAttribute(
-        hwnd, 36,
+        hwnd, 35,
         ctypes.byref(ctypes.c_int(bg_color)),
         ctypes.sizeof(ctypes.c_int)
     )
     # noinspection PyUnresolvedReferences
     ctypes.windll.dwmapi.DwmSetWindowAttribute(
-        hwnd, 35,
+        hwnd, 36,
         ctypes.byref(ctypes.c_int(fg_color)),
         ctypes.sizeof(ctypes.c_int)
     )
