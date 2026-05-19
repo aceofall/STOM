@@ -876,7 +876,7 @@ class WidgetCreater:
     # noinspection PyUnusedLocal
     def location_save(self, event, dialog, number):
         if not self.ui.window_closing:
-            data = [str(int(dialog.x())), str(max(0, int(dialog.y())))]
+            data = [str(max(0, int(dialog.x()))), str(max(0, int(dialog.y())))]
             try:
                 self.ui.location_list[number] = data
             except Exception:
