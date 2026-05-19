@@ -875,12 +875,18 @@ class WidgetCreater:
 
     # noinspection PyUnusedLocal
     def location_save(self, event, dialog, number):
-        if not self.ui.window_closing:
-            data = [str(max(0, int(dialog.x()))), str(max(0, int(dialog.y())))]
-            try:
-                self.ui.location_list[number] = data
-            except Exception:
-                self.ui.location_list.append(data)
+        """다이알로그의 위치를 저장합니다.
+        창의 위치가 타이틀바 크기 만큼 y좌표가 잘못 저장되는 경우가 발생하기 때문에
+        윈도우10 +31, 윈도우11 +32 만큼 클 경우 이전 위치로 저장한다.
+        또한 좌표가 마이너스일 경우 0으로 변경한다."""
+        location_list = self.ui.location_list[number]
+        prev_x, prev_y = int(location_list[0]), int(location_list[1])
+        curr_x = max(0, int(dialog.x()))
+        curr_y = max(0, int(dialog.y()))
+        if prev_y + 31 == curr_y or prev_y + 32 == curr_y:
+            curr_y = prev_y
+        data = [str(curr_x), str(curr_y)]
+        self.ui.location_list[number] = data
 
     # noinspection PyUnresolvedReferences
     def setTablewidget(self, parent, columns, rowcount, vscroll=False, visible=True, clicked=None, valuechanged=None,

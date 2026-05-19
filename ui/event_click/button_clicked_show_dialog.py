@@ -10,9 +10,8 @@ class QuietPage(QWebEnginePage):
 
 def show_dialog_graph(ui, df):
     """그래프 다이얼로그를 표시합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_graph.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_graph, duration=300)
         ui.dialog_graph.show()
 
@@ -209,9 +208,8 @@ def show_qsize(ui):
 
 def show_dialog_formula(ui):
     """수식 관리자 다이얼로그를 표시합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_formula.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_formula, duration=300)
         ui.dialog_formula.show()
     else:
@@ -220,9 +218,8 @@ def show_dialog_formula(ui):
 
 def show_dialog_factor(ui):
     """팩터 다이얼로그를 표시합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_factor.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_factor, duration=300)
         ui.dialog_factor.show()
     else:
@@ -239,10 +236,9 @@ def show_chart(ui):
 
 def show_hoga(ui):
     """호가 다이얼로그를 토글합니다."""
-    from utility.settings.setting_base import COLUMNS_HC
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_hoga.isVisible():
+        from utility.settings.setting_base import COLUMNS_HC
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_hoga, duration=300)
         ui.dialog_hoga.setFixedSize(572, 355)
         ui.hj_tableWidgett_01.setGeometry(5, 5, 562, 42)
@@ -264,13 +260,13 @@ def show_hoga(ui):
 
 def show_giup(ui):
     """기업정보 다이얼로그를 토글합니다."""
-    from PyQt5.QtCore import QUrl
     from ui.create_widget.dialog_animation import DialogAnimator
 
     if ui.webEngineView is None:
         webengineview_set(ui)
 
     if not ui.dialog_web.isVisible():
+        from PyQt5.QtCore import QUrl
         DialogAnimator.setup_dialog_animation(ui.dialog_web, duration=300)
         ui.dialog_web.show()
         # noinspection PyUnresolvedReferences
@@ -287,9 +283,8 @@ def show_giup(ui):
 
 def show_treemap(ui):
     """트리맵 다이얼로그를 토글합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_tree.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_tree, duration=300)
         ui.dialog_tree.show()
         ui.webcQ.put(('트리맵', ''))
@@ -299,80 +294,82 @@ def show_treemap(ui):
 
 def show_db(ui):
     """데이터베이스 관리 다이얼로그를 표시합니다."""
-    from PyQt5.QtCore import Qt
-    from PyQt5.QtWidgets import QTableWidgetItem
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_db.isVisible():
+        from PyQt5.QtCore import Qt
+        from PyQt5.QtWidgets import QTableWidgetItem
+        from ui.create_widget.dialog_animation import DialogAnimator
+
         DialogAnimator.setup_dialog_animation(ui.dialog_db, duration=300)
         ui.dialog_db.show()
 
-    ui.db_tableWidgett_01.clearContents()
-    ui.db_tableWidgett_02.clearContents()
-    ui.db_tableWidgett_03.clearContents()
+        ui.db_tableWidgett_01.clearContents()
+        ui.db_tableWidgett_02.clearContents()
+        ui.db_tableWidgett_03.clearContents()
 
-    stock_stg_list = [f"{ui.market_info['전략구분']}_buy", f"{ui.market_info['전략구분']}_sell",
-                      f"{ui.market_info['전략구분']}_optibuy", f"{ui.market_info['전략구분']}_optisell"]
-    maxlow = 0
-    for i, stock_stg in enumerate(stock_stg_list):
-        df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM {stock_stg}')
+        stock_stg_list = [f"{ui.market_info['전략구분']}_buy", f"{ui.market_info['전략구분']}_sell",
+                          f"{ui.market_info['전략구분']}_optibuy", f"{ui.market_info['전략구분']}_optisell"]
+        maxlow = 0
+        for i, stock_stg in enumerate(stock_stg_list):
+            df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM {stock_stg}')
+            stg_names = df['index'].to_list()
+            stg_names.sort()
+
+            if len(df) > maxlow:
+                maxlow = len(df)
+                ui.db_tableWidgett_01.setRowCount(maxlow)
+
+            for j, stg_name in enumerate(stg_names):
+                item = QTableWidgetItem(stg_name)
+                item.setTextAlignment(int(Qt.AlignVCenter | Qt.AlignCenter))
+                ui.db_tableWidgett_01.setItem(j, i, item)
+
+        if maxlow < 8:
+            ui.db_tableWidgett_01.setRowCount(8)
+
+        stock_stg_list = [f"{ui.market_info['전략구분']}_optivars", f"{ui.market_info['전략구분']}_optigavars",
+                          f"{ui.market_info['전략구분']}_buyconds", f"{ui.market_info['전략구분']}_sellconds"]
+        maxlow = 0
+        for i, stock_stg in enumerate(stock_stg_list):
+            df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM {stock_stg}')
+            stg_names = df['index'].to_list()
+            stg_names.sort()
+
+            if len(df) > maxlow:
+                maxlow = len(df)
+                ui.db_tableWidgett_02.setRowCount(maxlow)
+
+            for j, stg_name in enumerate(stg_names):
+                item = QTableWidgetItem(stg_name)
+                item.setTextAlignment(int(Qt.AlignVCenter | Qt.AlignCenter))
+                ui.db_tableWidgett_02.setItem(j, i, item)
+
+        if maxlow < 8:
+            ui.db_tableWidgett_02.setRowCount(8)
+
+        df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM schedule')
         stg_names = df['index'].to_list()
         stg_names.sort()
 
         if len(df) > maxlow:
             maxlow = len(df)
-            ui.db_tableWidgett_01.setRowCount(maxlow)
+            ui.db_tableWidgett_03.setRowCount(maxlow)
 
         for j, stg_name in enumerate(stg_names):
             item = QTableWidgetItem(stg_name)
             item.setTextAlignment(int(Qt.AlignVCenter | Qt.AlignCenter))
-            ui.db_tableWidgett_01.setItem(j, i, item)
+            ui.db_tableWidgett_03.setItem(j, 0, item)
 
-    if maxlow < 8:
-        ui.db_tableWidgett_01.setRowCount(8)
+        if maxlow < 8:
+            ui.db_tableWidgett_03.setRowCount(8)
 
-    stock_stg_list = [f"{ui.market_info['전략구분']}_optivars", f"{ui.market_info['전략구분']}_optigavars",
-                      f"{ui.market_info['전략구분']}_buyconds", f"{ui.market_info['전략구분']}_sellconds"]
-    maxlow = 0
-    for i, stock_stg in enumerate(stock_stg_list):
-        df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM {stock_stg}')
-        stg_names = df['index'].to_list()
-        stg_names.sort()
-
-        if len(df) > maxlow:
-            maxlow = len(df)
-            ui.db_tableWidgett_02.setRowCount(maxlow)
-
-        for j, stg_name in enumerate(stg_names):
-            item = QTableWidgetItem(stg_name)
-            item.setTextAlignment(int(Qt.AlignVCenter | Qt.AlignCenter))
-            ui.db_tableWidgett_02.setItem(j, i, item)
-
-    if maxlow < 8:
-        ui.db_tableWidgett_02.setRowCount(8)
-
-    df = ui.dbreader.read_sql('전략디비', f'SELECT * FROM schedule')
-    stg_names = df['index'].to_list()
-    stg_names.sort()
-
-    if len(df) > maxlow:
-        maxlow = len(df)
-        ui.db_tableWidgett_03.setRowCount(maxlow)
-
-    for j, stg_name in enumerate(stg_names):
-        item = QTableWidgetItem(stg_name)
-        item.setTextAlignment(int(Qt.AlignVCenter | Qt.AlignCenter))
-        ui.db_tableWidgett_03.setItem(j, 0, item)
-
-    if maxlow < 8:
-        ui.db_tableWidgett_03.setRowCount(8)
+    else:
+        ui.dialog_db.close()
 
 
 def show_backscheduler(ui):
     """백테스트 스케줄러 다이얼로그를 토글합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_scheduler.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_scheduler, duration=300)
         ui.dialog_scheduler.show()
     else:
@@ -381,12 +378,12 @@ def show_backscheduler(ui):
 
 def show_kimp(ui):
     """김프 다이얼로그를 토글합니다."""
-    from multiprocessing import Process
-    from ui.create_widget.dialog_animation import DialogAnimator
     from ui.etcetera.process_alive import coinkimp_process_alive
     from utility.sub_process_and_thread.kimp_upbit_binance import Kimp
 
     if not ui.dialog_kimp.isVisible():
+        from multiprocessing import Process
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_kimp, duration=300)
         ui.dialog_kimp.show()
         if not coinkimp_process_alive(ui):
@@ -400,9 +397,8 @@ def show_kimp(ui):
 
 def show_order(ui):
     """주문 다이얼로그를 토글합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_order.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_order, duration=300)
         ui.dialog_order.show()
 
@@ -427,9 +423,8 @@ def show_order(ui):
 
 def show_passticks_dialog(ui):
     """경과틱수 설정 다이얼로그를 토글합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_setsj.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_setsj, duration=300)
         ui.dialog_setsj.show()
     else:
@@ -438,9 +433,8 @@ def show_passticks_dialog(ui):
 
 def show_pattern_dialog(ui):
     """분석시스템 다이얼로그를 토글합니다."""
-    from ui.create_widget.dialog_animation import DialogAnimator
-
     if not ui.dialog_pattern.isVisible():
+        from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_pattern, duration=300)
         ui.dialog_pattern.show()
     else:
