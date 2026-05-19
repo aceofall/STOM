@@ -4,6 +4,7 @@ from PyQt5.QtGui import QPen
 from utility.static_method import syntax
 from ui.create_widget.set_style import *
 from utility.settings.setting_base import *
+from ui.event_keypress.overwrite_keypress_event import key_press_event
 from PyQt5.QtCore import Qt, QDate, QPropertyAnimation, QRect, QEasingCurve, QTimer, QEvent, QPoint
 from PyQt5.QtWidgets import QPushButton, QFrame, QTextEdit, QComboBox, QCheckBox, QLineEdit, QDateEdit, QProgressBar, \
     QDialog, QTableWidget, QAbstractItemView, QGroupBox, QTableWidgetItem, QSizePolicy, QToolTip
@@ -584,12 +585,17 @@ class FixedColumnTableWidget(QTableWidget):
 
 
 class CustomDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, ui, parent=None):
         super().__init__(parent)
+        self.ui = ui
 
     def showEvent(self, event):
-        super().showEvent(event)
         self.on_dialog_open()
+        super().showEvent(event)
+
+    def keyPressEvent(self, event):
+        key_press_event(self.ui, event)
+        super().keyPressEvent(event)
 
     def on_dialog_open(self):
         from ui.etcetera.etc import change_title_bar_color
@@ -849,9 +855,9 @@ class WidgetCreater:
     def setDialog(self, name, parent=None, location_save=False):
         """다이얼로그를 생성합니다."""
         if parent is None:
-            dialog = CustomDialog()
+            dialog = CustomDialog(self.ui)
         else:
-            dialog = CustomDialog(parent)
+            dialog = CustomDialog(self.ui, parent)
         dialog.setWindowTitle(name)
         dialog.setWindowModality(Qt.WindowModality.NonModal)
         dialog.setWindowIcon(self.ui.icon_main)

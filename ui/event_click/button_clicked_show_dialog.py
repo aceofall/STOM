@@ -151,6 +151,7 @@ def show_dialog_chart(ui, real, code, tickcount=None, searchdate=None, starttime
 
     if not ui.dialog_chart.isVisible():
         dialog_chart_show(ui)
+
     if ui.proc_chqs.is_alive():
         if real:
             chart_clear(ui)
@@ -212,6 +213,7 @@ def show_dialog_formula(ui):
         from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_formula, duration=300)
         ui.dialog_formula.show()
+        ui.fm_pushButtonnn_01.setFocus()
     else:
         ui.dialog_formula.close()
 
@@ -230,7 +232,12 @@ def show_chart(ui):
     """차트 다이얼로그를 토글합니다."""
     if not ui.dialog_chart.isVisible():
         dialog_chart_show(ui)
+        ui.ct_pushButtonnn_01.setFocus()
     else:
+        if ui.dialog_formula.isVisible():
+            ui.dialog_formula.close()
+        if ui.dialog_factor.isVisible():
+            ui.dialog_factor.close()
         ui.dialog_chart.close()
 
 
@@ -301,6 +308,7 @@ def show_db(ui):
 
         DialogAnimator.setup_dialog_animation(ui.dialog_db, duration=300)
         ui.dialog_db.show()
+        ui.db_labellllllll_18.setFocus()
 
         ui.db_tableWidgett_01.clearContents()
         ui.db_tableWidgett_02.clearContents()
@@ -372,6 +380,7 @@ def show_backscheduler(ui):
         from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_scheduler, duration=300)
         ui.dialog_scheduler.show()
+        ui.sd_dpushButtonn_01.setFocus()
     else:
         ui.dialog_scheduler.close()
 
@@ -401,6 +410,7 @@ def show_order(ui):
         from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_order, duration=300)
         ui.dialog_order.show()
+        ui.od_pushButtonnn_01.setFocus()
 
         tableWidget = None
         if ui.main_btn == 1:
@@ -427,6 +437,7 @@ def show_passticks_dialog(ui):
         from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_setsj, duration=300)
         ui.dialog_setsj.show()
+        ui.set_pushButton_01.setFocus()
     else:
         ui.dialog_setsj.close()
 
@@ -437,5 +448,6 @@ def show_pattern_dialog(ui):
         from ui.create_widget.dialog_animation import DialogAnimator
         DialogAnimator.setup_dialog_animation(ui.dialog_pattern, duration=300)
         ui.dialog_pattern.show()
+        ui.ptn_pushButton_00.setFocus()
     else:
         ui.dialog_pattern.close()
