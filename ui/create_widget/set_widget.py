@@ -857,54 +857,26 @@ class WidgetCreater:
         dialog.setWindowIcon(self.ui.icon_main)
         dialog.setFont(qfont12)
         if location_save:
-            dialog.finished.connect(lambda event: self.location_save(event, name))
+            dict_num = {
+                'STOM CHART': 1,
+                'STOM BACKTEST SCHEDULER': 2,
+                'STOM INFO': 3,
+                'STOM WEB': 4,
+                'STOM TREEMAP': 5,
+                'STOM KIMP': 6,
+                'STOM HOGA': 7,
+                'STOM BACKTEST ENGINE': 8,
+                'STOM ORDER': 9,
+                'STOM STRATEGY': 10,
+                'STOM MICROSTRUCTURE RADAR': 11,
+            }
+            dialog.finished.connect(lambda event: self.location_save(event, dialog, dict_num.get(name, 0)))
         return dialog
 
     # noinspection PyUnusedLocal
-    def location_save(self, event, name):
-        if self.ui.window_closing:
-            return
-
-        number = 0
-        dialog = None
-
-        if name == 'STOM CHART':
-            number = 1
-            dialog = self.ui.dialog_chart
-        elif name == 'STOM BACKTEST SCHEDULER':
-            number = 2
-            dialog = self.ui.dialog_scheduler
-        elif name == 'STOM INFO':
-            number = 3
-            dialog = self.ui.dialog_info
-        elif name == 'STOM WEB':
-            number = 4
-            dialog = self.ui.dialog_web
-        elif name == 'STOM TREEMAP':
-            number = 5
-            dialog = self.ui.dialog_tree
-        elif name == 'STOM KIMP':
-            number = 6
-            dialog = self.ui.dialog_kimp
-        elif name == 'STOM HOGA':
-            number = 7
-            dialog = self.ui.dialog_hoga
-        elif name == 'STOM BACKTEST ENGINE':
-            number = 8
-            dialog = self.ui.dialog_backengine
-        elif name == 'STOM ORDER':
-            number = 9
-            dialog = self.ui.dialog_order
-        elif name == 'STOM STRATEGY':
-            number = 10
-            dialog = self.ui.dialog_strategy
-        elif name == 'STOM MICROSTRUCTURE RADAR':
-            number = 11
-            dialog = self.ui.radar_dialog
-
-        if number > 0 and dialog is not None:
-            # noinspection PyUnresolvedReferences
-            data = [str(int(dialog.x())), str(int(dialog.y()))]
+    def location_save(self, event, dialog, number):
+        if not self.ui.window_closing:
+            data = [str(int(dialog.x())), str(max(0, int(dialog.y())))]
             try:
                 self.ui.location_list[number] = data
             except Exception:
