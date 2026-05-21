@@ -81,14 +81,6 @@ class BackEngineBase(StgGlobalsFunc):
         self.hoga_eidex      = None
         self.index_arry      = None
 
-        self.ms_analyzer     = None
-        self.rk_analyzer     = None
-        self.pt_analyzer     = None
-        self.vf_analyzer     = None
-        self.vs_analyzer     = None
-        self.vp_analyzer     = None
-        self.vt_analyzer     = None
-
         self.code_list       = []
         self.vars_list       = []
         self.vars_lists      = []

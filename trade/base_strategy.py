@@ -52,14 +52,6 @@ class BaseStrategy(StgGlobalsFunc):
         self.info_for_buy    = None
         self.info_for_sell   = None
 
-        self.ms_analyzer     = None
-        self.rk_analyzer     = None
-        self.pt_analyzer     = None
-        self.vf_analyzer     = None
-        self.vs_analyzer     = None
-        self.vp_analyzer     = None
-        self.vt_analyzer     = None
-
         self.dict_data: dict[str, list] = {}
         self.dict_gj: dict[str, dict[str, int | float]] = {}
         self.dict_jg: dict[str, dict[str, int | float]] = {}
@@ -86,8 +78,8 @@ class BaseStrategy(StgGlobalsFunc):
 
         self.jgrv_count      = 0
         self.betting         = 0
-        self.비중조절기준      = 0
         self.vitime_cnt      = 0
+        self.비중조절기준       = 0
 
         self.avg_list        = [self.dict_set['평균값계산틱수']]
         self.rolling_window  = self.dict_set['평균값계산틱수']
