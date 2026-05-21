@@ -369,8 +369,7 @@ class BackEngineBase(StgGlobalsFunc):
                 elif data == '백테중지':
                     self._back_stop(2)
             except Exception:
-                if self.gubun == 0:
-                    self.wq.put((UI_NUM['시스템로그'], format_exc()))
+                self.wq.put((UI_NUM['시스템로그'], format_exc()))
 
     def _data_load(self, data):
         """백테스트 데이터를 로드합니다.
