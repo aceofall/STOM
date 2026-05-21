@@ -1,5 +1,12 @@
 
 import datetime
+from zoneinfo import ZoneInfo
+
+_now_utc = datetime.datetime.now(datetime.timezone.utc)
+_now_cme = _now_utc.astimezone(ZoneInfo('America/Chicago'))
+# noinspection PyUnresolvedReferences
+CME_GAP = int(_now_cme.dst().total_seconds() - 3600 * 14)
+UTC_GAP = 3600 * 9
 
 
 def now():
@@ -9,12 +16,12 @@ def now():
 
 def now_utc():
     """UTC 현재 시간을 반환합니다."""
-    return timedelta_sec(-32400)
+    return timedelta_sec(-UTC_GAP)
 
 
 def now_cme():
     """CME 현재 시간을 반환합니다."""
-    return timedelta_sec(get_time_gap())
+    return timedelta_sec(CME_GAP)
 
 
 def str_ymdhmsf(std_time=None):
@@ -42,9 +49,9 @@ def str_ymd_ios(std_time=None):
     return strf_time('%Y-%m-%d', std_time)
 
 
-def str_ymdhms_utc(time_):
+def str_ymdhms_from_timestamp(time_):
     """UTC 연월일시분초 문자열을 반환합니다."""
-    return str_ymdhms(from_timestamp(int(time_ / 1000 - 32400)))
+    return str_ymdhms(from_timestamp(int(time_ / 1000 - UTC_GAP)))
 
 
 def str_ymd(std_time=None):
@@ -145,16 +152,6 @@ def get_str_ymdhmsf(market_gubun):
         return str_ymdhmsf(now_cme())
     else:
         return str_ymdhmsf(now_utc())
-
-
-def get_time_gap():
-    """시간 차이를 계산합니다."""
-    from zoneinfo import ZoneInfo
-    now_utc_ = datetime.datetime.now(datetime.timezone.utc)
-    now_cme_ = now_utc_.astimezone(ZoneInfo('America/Chicago'))
-    # noinspection PyUnresolvedReferences
-    summer_t = int(now_cme_.dst().total_seconds())
-    return int(summer_t - 50400)
 
 
 def cme_normal_open():
