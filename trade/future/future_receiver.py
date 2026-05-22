@@ -3,9 +3,9 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from trade.base_receiver import BaseReceiver
 from utility.settings.setting_base import UI_NUM
-from utility.static_method.static_datetime import now
 from utility.static_method.static_decorator import error_decorator
 from trade.restapi_ls import LsRestAPI, LsRestData, LsWebSocketReceiver
+from utility.static_method.static_datetime import now, dt_ymd, timedelta_day, str_ymd
 
 
 class FutureReceiver(BaseReceiver):
@@ -15,6 +15,8 @@ class FutureReceiver(BaseReceiver):
         app = QApplication(sys.argv)
 
         super().__init__(qlist, dict_set, market_infos)
+
+        self.update_today = False
 
         self.ls = LsRestAPI(self.windowQ, self.access_key, self.secret_key)
         self.token = self.ls.create_token()
@@ -49,6 +51,7 @@ class FutureReceiver(BaseReceiver):
 
         if tr_cd == self.tr_cd_hoga:
             int_hms = int(body['hotime'])
+            self._update_today(int_hms)
             if not (self.market_open <= int_hms or int_hms <= self.market_close):
                 return
 
@@ -78,6 +81,7 @@ class FutureReceiver(BaseReceiver):
 
         elif tr_cd == self.tr_cd_trade:
             int_hms = int(body['chetime'])
+            self._update_today(int_hms)
             if not (self.market_open <= int_hms or int_hms <= self.market_close):
                 return
 
@@ -103,3 +107,8 @@ class FutureReceiver(BaseReceiver):
                     text = LsRestData.장운영상태[operation]
                     self.windowQ.put((UI_NUM['기본로그'], f'장운영 정보 수신 알림 - {text}'))
                     self.soundQ.put(text)
+
+    def _update_today(self, int_hms):
+        if int_hms < 10 and not self.update_today:
+            self.str_today = str_ymd(timedelta_day(1, dt_ymd(self.str_today)))
+            self.update_today = True
