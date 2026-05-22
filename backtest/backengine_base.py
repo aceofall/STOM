@@ -378,7 +378,7 @@ class BackEngineBase(StgGlobalsFunc):
             """종목의 코드, 일자들, 시작시간, 종료시간으로 쿼리를 만들어서 데이터를 로딩 한 후에 롤링 데이터를 추가하고 2차원 어레이로 만든다.
             만든 2차원 어레이와 관련 정보를 all_data에 기록한다."""
             try:
-                df = pd.read_sql(get_back_load_code_query(self.is_tick, code, days, starttime, endtime), con)
+                df = pd.read_sql(get_back_load_code_query(self.is_tick, code, days, starttime, endtime, future_nt), con)
             except Exception:
                 pass
             else:
@@ -401,6 +401,7 @@ class BackEngineBase(StgGlobalsFunc):
 
         all_data = []
         divid_mode = data[-1]
+        future_nt = self.market_gubun == 7
 
         if divid_mode == '종목코드별 분류':
             _, startday, endday, starttime, endtime, code_list, avg_list, code_days, _, _, _ = data
@@ -1111,8 +1112,10 @@ class BackEngineBase(StgGlobalsFunc):
         _, 매수가, 매도가, 주문수량, _, _, _, 매수틱번호, 매수시간 = self.curr_trade_info.values()
         if self.is_tick:
             보유시간 = int((dt_ymdhms(str(self.index)) - 매수시간).total_seconds())
+            if 보유시간 < 0: 보유시간 += 86400
         else:
             보유시간 = int((dt_ymdhm(str(self.index)) - 매수시간).total_seconds() / 60)
+            if 보유시간 < 0: 보유시간 += 1440
         매수시간, 매도시간, 매입금액 = int(self.arry_code[매수틱번호, 0]), self.index, 주문수량 * 매수가
         시가총액또는포지션, 평가금액, 수익금, 수익률 = self._get_profit_info(매도가, 매수가, 주문수량)
         매도조건 = self.dict_sconds[self.sell_cond] if self.back_type != '조건최적화' else self.dict_sconds[vkey][self.sell_cond]
