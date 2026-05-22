@@ -505,7 +505,7 @@ class BackEngineBase(StgGlobalsFunc):
         if gubun in (1, 2):
             self.bq.put('백테중지완료')
         if gubun == 3:
-            if self.gubun == 0: self.wq.put((UI_NUM['백테스트'], '백테스트 엔진 전략연산 오류, 자동 중지 중 ...'))
+            self.wq.put((UI_NUM['백테스트'], '백테스트 엔진 전략연산 오류, 자동 중지 중 ...'))
 
     def _init_trade_info(self):
         """거래 정보를 초기화합니다.
@@ -659,7 +659,7 @@ class BackEngineBase(StgGlobalsFunc):
                         try:
                             self._strategy()
                         except Exception:
-                            if self.gubun == 0: self.wq.put((UI_NUM['시스템로그'], format_exc()))
+                            self.wq.put((UI_NUM['시스템로그'], format_exc()))
                             self._back_stop(3)
                             return
 

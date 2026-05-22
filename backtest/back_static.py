@@ -127,6 +127,7 @@ def get_buy_stg(buytxt, gubun, wq):
             indistg = compile(indistg, '<string>', 'exec')
         except Exception:
             indistg = None
+            if gubun == 0: wq.put((UI_NUM['시스템로그'], format_exc()))
     else:
         indistg = None
     return buystg, indistg
@@ -204,6 +205,7 @@ def get_buy_stg_future(buystg, gubun, wq):
             indistg = compile(indistg, '<string>', 'exec')
         except Exception:
             indistg = None
+            if gubun == 0: wq.put((UI_NUM['시스템로그'], format_exc()))
     else:
         indistg = None
     return buystg, indistg
