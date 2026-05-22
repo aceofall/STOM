@@ -60,7 +60,7 @@ class UpdateTextedit:
         else:
             time_ = str(now())[:-3]
             text  = data[1]
-            if '오류' in text or '주문실패' in text or 'Traceback' in text or 'Error' in text:
+            if '오류' in text or '주문실패' in text or 'Traceback' in text or 'Error' in text or 'error' in text:
                 self.ui.lgicon_alert = True
                 text = f'<font color=#ffffa0>{text}</font>'
 
