@@ -23,9 +23,9 @@ class SupertonicTTS(QThread):
                 if data in ('F1', 'F2', 'F3', 'F4', 'F5', 'M1', 'M2', 'M3', 'M4', 'M5'):
                     text = 'supertonic TTS의 목소리 테스트 중입니다.'
                     style = self.tts.get_voice_style(voice_name=data)
-                    wav, _ = self.tts.synthesize(text, voice_style=style, lang="ko")
+                    wav, _ = self.tts.synthesize(text, voice_style=style, total_steps=5, lang="ko")
                 else:
-                    wav, _ = self.tts.synthesize(data, voice_style=self.style, lang="ko")
+                    wav, _ = self.tts.synthesize(data, voice_style=self.style, total_steps=5, lang="ko")
                 self._play_sound(wav)
             elif data.__class__ == dict:
                 voice_name = data['보이스네임']
