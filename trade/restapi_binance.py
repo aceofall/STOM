@@ -59,16 +59,22 @@ class BinanceWebSocketReceiver(QThread):
         if self.async_client is None or self.sock_manager is None:
             self.async_client = await AsyncClient.create()
             self.sock_manager = BinanceSocketManager(self.async_client, max_queue_size=10000)
-        self.webs_cg = self.sock_manager.futures_multiplex_socket(self.cg_streams, category='market')
-        self.conn_cg = True
+        try:
+            self.webs_cg = self.sock_manager.futures_multiplex_socket(self.cg_streams, category='market')
+            self.conn_cg = True
+        except Exception:
+            self.conn_cg = False
 
     async def _connect_hg(self):
         """호가 웹소켓에 연결합니다."""
         if self.async_client is None or self.sock_manager is None:
             self.async_client = await AsyncClient.create()
             self.sock_manager = BinanceSocketManager(self.async_client, max_queue_size=10000)
-        self.webs_hg = self.sock_manager.futures_multiplex_socket(self.hg_streams, category='public')
-        self.conn_hg = True
+        try:
+            self.webs_hg = self.sock_manager.futures_multiplex_socket(self.hg_streams, category='public')
+            self.conn_hg = True
+        except Exception:
+            self.conn_hg = False
 
     async def _receive_msg_cg(self):
         """체결의 실시간시세를 등록합니다."""
@@ -151,8 +157,11 @@ class BinanceWebSocketTrader(QThread):
         if self.async_client is None:
             self.async_client = await AsyncClient.create(self.api_key, self.scret_key)
             self.sock_manager = BinanceSocketManager(self.async_client, max_queue_size=100000)
-        self.websocket = self.sock_manager.futures_user_socket()
-        self.connected = True
+        try:
+            self.websocket = self.sock_manager.futures_user_socket()
+            self.connected = True
+        except Exception:
+            self.connected = False
 
     async def _receive_msg(self):
         """주문체결 데이터를 수신합니다."""

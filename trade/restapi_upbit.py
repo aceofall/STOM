@@ -175,17 +175,23 @@ class UpbitWebSocketReceiver(QThread):
 
     async def _connect_cg(self):
         """체결 웹소켓에 연결합니다."""
-        self.webs_cg = await websockets.connect(self.url, ssl=ssl_context)
-        self.conn_cg = True
-        data = [{'ticket': str(uuid.uuid4())}, {'type': 'ticker', 'codes': self.codes, 'isOnlyRealtime': True}]
-        await self.webs_cg.send(json.dumps(data))
+        try:
+            self.webs_cg = await websockets.connect(self.url, ssl=ssl_context)
+            self.conn_cg = True
+            data = [{'ticket': str(uuid.uuid4())}, {'type': 'ticker', 'codes': self.codes, 'isOnlyRealtime': True}]
+            await self.webs_cg.send(json.dumps(data))
+        except Exception:
+            self.conn_cg = False
 
     async def _connect_hg(self):
         """호가 웹소켓에 연결합니다."""
-        self.webs_hg = await websockets.connect(self.url, ssl=ssl_context)
-        self.conn_hg = True
-        data = [{'ticket': str(uuid.uuid4())}, {'type': 'orderbook', 'codes': self.codes, 'isOnlyRealtime': True}]
-        await self.webs_hg.send(json.dumps(data))
+        try:
+            self.webs_hg = await websockets.connect(self.url, ssl=ssl_context)
+            self.conn_hg = True
+            data = [{'ticket': str(uuid.uuid4())}, {'type': 'orderbook', 'codes': self.codes, 'isOnlyRealtime': True}]
+            await self.webs_hg.send(json.dumps(data))
+        except Exception:
+            self.conn_hg = False
 
     async def _receive_cg_msg(self):
         """체결 데이터를 수신합니다."""
@@ -273,11 +279,13 @@ class UpbitWebSocketTrader(QThread):
 
     async def _connect(self):
         """주문체결 웹소켓에 연결하고 실시간시세를 등록합니다."""
-        headers = self._headers()
-        self.websocket = await websockets.connect(self.url, additional_headers=headers, ssl=ssl_context)
-        self.connected = True
-        data = [{'ticket': str(uuid.uuid4())}, {'type': 'myOrder'}]
-        await self.websocket.send(json.dumps(data))
+        try:
+            self.websocket = await websockets.connect(self.url, additional_headers=self._headers(), ssl=ssl_context)
+            self.connected = True
+            data = [{'ticket': str(uuid.uuid4())}, {'type': 'myOrder'}]
+            await self.websocket.send(json.dumps(data))
+        except Exception:
+            self.connected = False
 
     async def _receive_msg(self):
         """주문체결 데이터를 수신합니다."""
