@@ -579,7 +579,6 @@ class LsWebSocketReceiver(QThread):
                 await self._receive_cg_msg()
             except Exception:
                 self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
-
             await self._disconnect_cg()
 
     # noinspection PyUnresolvedReferences
@@ -596,7 +595,6 @@ class LsWebSocketReceiver(QThread):
                 await self._receive_hg_msg()
             except Exception:
                 self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
-
             await self._disconnect_hg()
 
     async def _connect_cg(self):
@@ -692,26 +690,28 @@ class LsWebSocketReceiver(QThread):
 
     async def _disconnect_cg(self):
         """체결 웹소켓을 종료합니다."""
-        self.conn_cg = False
-        if self.webs_cg is not None:
-            try:
+        try:
+            if self.webs_cg is not None:
                 await self.webs_cg.close()
-            except Exception:
-                pass
+        except Exception:
+            pass
+        self.conn_cg = False
         await asyncio.sleep(1)
 
     async def _disconnect_hg(self):
         """호가 웹소켓을 종료합니다."""
-        self.conn_hg = False
-        if self.webs_hg is not None:
-            try:
+        try:
+            if self.webs_hg is not None:
                 await self.webs_hg.close()
-            except Exception:
-                pass
+        except Exception:
+            pass
+        self.conn_hg = False
         await asyncio.sleep(1)
 
     def stop(self):
         """웹소켓 루프를 종료합니다."""
+        self.conn_cg = False
+        self.conn_hg = False
         if self.loop and self.loop.is_running():
             self.loop.call_soon_threadsafe(self.loop.stop)
 
@@ -746,7 +746,6 @@ class LsWebSocketTrader(QThread):
                 await self._receive_msg()
             except Exception:
                 self.windowQ.put((UI_NUM['시스템로그'], format_exc()))
-
             await self._disconnect()
 
     async def _connect(self):
@@ -783,15 +782,16 @@ class LsWebSocketTrader(QThread):
 
     async def _disconnect(self):
         """주문체결 웹소켓을 종료합니다."""
-        self.connected = False
-        if self.websocket is not None:
-            try:
+        try:
+            if self.websocket is not None:
                 await self.websocket.close()
-            except Exception:
-                pass
+        except Exception:
+            pass
+        self.connected = False
         await asyncio.sleep(1)
 
     def stop(self):
         """웹소켓 루프를 종료합니다."""
+        self.connected = False
         if self.loop and self.loop.is_running():
             self.loop.call_soon_threadsafe(self.loop.stop)
