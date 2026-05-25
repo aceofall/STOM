@@ -571,7 +571,6 @@ class BaseReceiver:
             self.market_open + 10 < inthms < self.market_open + 20
         if not self.dict_bool['프로세스종료'] and (A or B or C):
             self._receiver_process_kill()
-            self.dict_bool['프로세스종료'] = True
 
         if self.market_gubun not in (6, 7, 8):
             current_gsjm = tuple(self.list_gsjm)
@@ -629,6 +628,7 @@ class BaseReceiver:
 
     def _receiver_process_kill(self):
         """리시버 프로세스를 종료합니다."""
+        self.dict_bool['프로세스종료'] = True
         self._websocket_kill()
         if self.dict_set['알림소리']:
             self.soundQ.put(f"{self.market_info['마켓이름']} 시스템을 3분 후 종료합니다.")
