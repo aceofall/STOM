@@ -606,17 +606,9 @@ class BaseReceiver:
     def _receiver_process_kill(self):
         """리시버 프로세스를 종료합니다."""
         self.dict_bool['프로세스종료'] = True
-        self._websocket_kill()
         if self.dict_set['알림소리']:
             self.soundQ.put(f"{self.market_info['마켓이름']} 시스템을 3분 후 종료합니다.")
         QTimer.singleShot(180 * 1000, lambda: self.receivQ.put('프로세스종료'))
-
-    def _websocket_kill(self):
-        """웹소켓을 종료합니다."""
-        if self.ws_thread:
-            self.ws_thread.stop()
-            self.ws_thread.terminate()
-            self.ws_thread = None
 
     def _update_tuple(self, data):
         """튜플을 업데이트합니다."""
@@ -641,10 +633,8 @@ class BaseReceiver:
         '강제종료' : Alt + X 단축키로 인한 종료
         '전략연산 종료' : 전략연산 프로세스가 일반종료하면서 보낸 신호
         '전략연산 STOP' : 전략연산 프로세스가 프로그램종료 또는 강제종료하면서 보낸 신호"""
-        import sys
 
         if data not in ('전략연산 종료', '전략연산 STOP'):
-            self._websocket_kill()
             if data == '프로세스종료' and self.dict_set['데이터저장']:
                 self._save_moneytop()
             elif self.market_gubun in (1, 4):
@@ -661,9 +651,11 @@ class BaseReceiver:
             exit_text = '리시버 종료' if data == '전략연산 종료' else '리시버 STOP'
             self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} {exit_text}"))
             qtest_qwait(1)
+            self._websocket_kill()
             self.qtimer.stop()
             self.receivQ.put('큐스레드종료')
             self.updater.wait()
+            import sys
             sys.exit()
 
     def _save_moneytop(self):
@@ -688,3 +680,8 @@ class BaseReceiver:
             self.stgQs[0].put(('데이터저장', codes))
         else:
             self.stgQ.put(('데이터저장', codes))
+
+    def _websocket_kill(self):
+        """웹소켓을 종료합니다."""
+        if self.ws_thread is not None:
+            self.ws_thread.terminate()

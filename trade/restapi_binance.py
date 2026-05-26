@@ -110,13 +110,6 @@ class BinanceWebSocketReceiver(QThread):
         self.conn_hg = False
         await asyncio.sleep(1)
 
-    def stop(self):
-        """웹소켓 루프를 종료합니다."""
-        self.conn_cg = False
-        self.conn_hg = False
-        if self.loop and self.loop.is_running():
-            self.loop.call_soon_threadsafe(self.loop.stop)
-
 
 class BinanceWebSocketTrader(QThread):
     """바이낸스 웹소켓 트레이더 스레드 클래스입니다.
@@ -179,9 +172,3 @@ class BinanceWebSocketTrader(QThread):
             pass
         self.connected = False
         await asyncio.sleep(1)
-
-    def stop(self):
-        self.connected = False
-        """웹소켓 루프를 종료합니다."""
-        if self.loop and self.loop.is_running():
-            self.loop.call_soon_threadsafe(self.loop.stop)

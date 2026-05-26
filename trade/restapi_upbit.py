@@ -227,11 +227,6 @@ class UpbitWebSocketReceiver(QThread):
         self.conn_hg = False
         await asyncio.sleep(1)
 
-    def stop(self):
-        """웹소켓 루프를 종료합니다."""
-        if self.loop and self.loop.is_running():
-            self.loop.call_soon_threadsafe(self.loop.stop)
-
 
 class UpbitWebSocketTrader(QThread):
     """업비트 웹소켓 트레이더 스레드 클래스입니다.
@@ -302,8 +297,3 @@ class UpbitWebSocketTrader(QThread):
             pass
         self.connected = False
         await asyncio.sleep(1)
-
-    def stop(self):
-        """웹소켓 루프를 종료합니다."""
-        if self.loop and self.loop.is_running():
-            self.loop.call_soon_threadsafe(self.loop.stop)
