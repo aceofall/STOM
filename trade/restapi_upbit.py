@@ -176,7 +176,7 @@ class UpbitWebSocketReceiver(QThread):
     async def _connect_cg(self):
         """체결 웹소켓에 연결합니다."""
         try:
-            self.webs_cg = await websockets.connect(self.url, ssl=ssl_context)
+            self.webs_cg = await websockets.connect(self.url, ping_interval=60, ping_timeout=60, ssl=ssl_context)
             self.conn_cg = True
             data = [{'ticket': str(uuid.uuid4())}, {'type': 'ticker', 'codes': self.codes, 'isOnlyRealtime': True}]
             await self.webs_cg.send(json.dumps(data))
@@ -186,7 +186,7 @@ class UpbitWebSocketReceiver(QThread):
     async def _connect_hg(self):
         """호가 웹소켓에 연결합니다."""
         try:
-            self.webs_hg = await websockets.connect(self.url, ssl=ssl_context)
+            self.webs_hg = await websockets.connect(self.url, ping_interval=60, ping_timeout=60, ssl=ssl_context)
             self.conn_hg = True
             data = [{'ticket': str(uuid.uuid4())}, {'type': 'orderbook', 'codes': self.codes, 'isOnlyRealtime': True}]
             await self.webs_hg.send(json.dumps(data))
@@ -229,8 +229,6 @@ class UpbitWebSocketReceiver(QThread):
 
     def stop(self):
         """웹소켓 루프를 종료합니다."""
-        self.conn_cg = False
-        self.conn_hg = False
         if self.loop and self.loop.is_running():
             self.loop.call_soon_threadsafe(self.loop.stop)
 
@@ -280,7 +278,8 @@ class UpbitWebSocketTrader(QThread):
     async def _connect(self):
         """주문체결 웹소켓에 연결하고 실시간시세를 등록합니다."""
         try:
-            self.websocket = await websockets.connect(self.url, additional_headers=self._headers(), ssl=ssl_context)
+            self.websocket = await websockets.connect(self.url, ping_interval=60, ping_timeout=60,
+                                                      additional_headers=self._headers(), ssl=ssl_context)
             self.connected = True
             data = [{'ticket': str(uuid.uuid4())}, {'type': 'myOrder'}]
             await self.websocket.send(json.dumps(data))
@@ -306,6 +305,5 @@ class UpbitWebSocketTrader(QThread):
 
     def stop(self):
         """웹소켓 루프를 종료합니다."""
-        self.connected = False
         if self.loop and self.loop.is_running():
             self.loop.call_soon_threadsafe(self.loop.stop)
