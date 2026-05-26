@@ -97,7 +97,7 @@ class BinanceWebSocketReceiver(QThread):
                 await self.webs_cg.__aexit__(None, None, None)
         except Exception:
             pass
-        self.conn_hg = False
+        self.conn_cg = False
         await asyncio.sleep(1)
 
     async def _disconnect_hg(self):
@@ -109,6 +109,13 @@ class BinanceWebSocketReceiver(QThread):
             pass
         self.conn_hg = False
         await asyncio.sleep(1)
+
+    def stop(self):
+        """웹소켓 루프를 종료합니다."""
+        self.conn_cg = False
+        self.conn_hg = False
+        if self.loop and self.loop.is_running():
+            self.loop.call_soon_threadsafe(self.loop.stop)
 
 
 class BinanceWebSocketTrader(QThread):
@@ -172,3 +179,9 @@ class BinanceWebSocketTrader(QThread):
             pass
         self.connected = False
         await asyncio.sleep(1)
+
+    def stop(self):
+        """웹소켓 루프를 종료합니다."""
+        self.connected = False
+        if self.loop and self.loop.is_running():
+            self.loop.call_soon_threadsafe(self.loop.stop)
