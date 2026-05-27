@@ -111,6 +111,6 @@ class FutureReceiver(BaseReceiver):
                     self.soundQ.put(text)
 
     def _update_today(self, inthms):
-        if inthms < 10 and not self.update_today:
+        if inthms < 100 and not self.update_today:
             self.str_today = str_ymd(timedelta_day(1, dt_ymd(self.str_today)))
             self.update_today = True
