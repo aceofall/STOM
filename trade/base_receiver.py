@@ -345,8 +345,8 @@ class BaseReceiver:
             buy_dict   = self.dict_bmbyp[code]
             sell_dict  = self.dict_smbyp[code]
 
-            buy_val  = buy_dict.get(c, 0.0) + buy_money
-            sell_val = sell_dict.get(c, 0.0) + sell_money
+            buy_val  = buy_dict.get(c, 0) + buy_money
+            sell_val = sell_dict.get(c, 0) + sell_money
             buy_dict[c]  = buy_val
             sell_dict[c] = sell_val
 
@@ -578,9 +578,8 @@ class BaseReceiver:
             if self.market_gubun in (1, 4):
                 sorted_daym = [(x, y) for x, y in sorted_daym if self.dict_data[x][4] > 0]
 
-        list_mtop  = [x for x, y in sorted_daym]
         gsjm_set   = set(self.list_gsjm)
-        mtop_set   = set(list_mtop)
+        mtop_set   = set((x for x, y in sorted_daym))
         insert_set = mtop_set - gsjm_set
         delete_set = gsjm_set - mtop_set
 
