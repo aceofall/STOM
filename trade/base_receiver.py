@@ -577,7 +577,7 @@ class BaseReceiver:
             sorted_daym = heapq.nlargest(self.mtop_rank, self.dict_daym.items(), key=lambda x: x[1])
             if self.market_gubun in (1, 4):
                 sorted_daym = [(x, y) for x, y in sorted_daym if self.dict_data[x][4] > 0]
-        
+
         list_mtop  = [x for x, y in sorted_daym]
         gsjm_set   = set(self.list_gsjm)
         mtop_set   = set(list_mtop)
@@ -650,7 +650,9 @@ class BaseReceiver:
 
             exit_text = '리시버 종료' if data == '전략연산 종료' else '리시버 STOP'
             self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} {exit_text}"))
-            self._websocket_kill()
+
+            if self.ws_thread is not None:
+                self.ws_thread.terminate()
 
             qtest_qwait(1)
             self.qtimer.stop()
@@ -681,8 +683,3 @@ class BaseReceiver:
             self.stgQs[0].put(('데이터저장', codes))
         else:
             self.stgQ.put(('데이터저장', codes))
-
-    def _websocket_kill(self):
-        """웹소켓을 종료합니다."""
-        if self.ws_thread is not None:
-            self.ws_thread.terminate()
