@@ -684,5 +684,4 @@ class BaseReceiver:
     def _websocket_kill(self):
         """웹소켓을 종료합니다."""
         if self.ws_thread is not None:
-            self.ws_thread.stop()
             self.ws_thread.terminate()
