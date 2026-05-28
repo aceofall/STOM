@@ -52,9 +52,14 @@ class FutureReceiver(BaseReceiver):
         if tr_cd == self.tr_cd_hoga:
             strhms = body['hotime']
             inthms = int(strhms)
-            self._update_today(inthms)
-            if not (self.market_open <= inthms or inthms <= self.market_close):
-                return
+
+            if self.market_gubun == 6:
+                if inthms < self.market_open:
+                    return
+            else:
+                self._update_today(inthms)
+                if not (self.market_open <= inthms or inthms <= self.market_close):
+                    return
 
             dt = int(f"{self.str_today}{strhms}")
             code = body['futcode']
@@ -83,9 +88,14 @@ class FutureReceiver(BaseReceiver):
         elif tr_cd == self.tr_cd_trade:
             strhms = body['chetime']
             inthms = int(strhms)
-            self._update_today(inthms)
-            if not (self.market_open <= inthms or inthms <= self.market_close):
-                return
+
+            if self.market_gubun == 6:
+                if inthms < self.market_open:
+                    return
+            else:
+                self._update_today(inthms)
+                if not (self.market_open <= inthms or inthms <= self.market_close):
+                    return
 
             dt    = int(f"{self.str_today}{strhms}")
             code  = body['futcode']
