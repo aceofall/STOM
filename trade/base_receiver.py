@@ -64,7 +64,6 @@ class BaseReceiver:
         self.dict_info = {}
         self.dict_expc = {}
         self.dict_sgbn = {}
-        self.dict_sncd = {}
         self.dict_daym = {}
         self.dict_mtop = {}
         self.dict_jgdt = {}
@@ -79,7 +78,6 @@ class BaseReceiver:
         self.codes        = []
         self.tuple_jango  = ()
         self.tuple_order  = ()
-        self.tuple_kosd   = ()
 
         self.lvhp_time    = now()
         self.int_logt     = 0
