@@ -3,7 +3,7 @@ import pyqtgraph as pg
 from PyQt5.QtGui import QFont, QPen, QColor
 from PyQt5.QtCore import Qt, QPropertyAnimation, QRect
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QHBoxLayout
-from ui.create_widget.set_style import color_fg_bc, color_bg_ct, style_ht_gb, style_ht_pb, color_bg_dk
+from ui.create_widget.set_style import color_fg_bc, color_bg_ct, style_ht_pb, color_bg_dk
 
 qfont16 = QFont()
 qfont16.setFamily('나눔고딕')
@@ -233,24 +233,6 @@ class SetHomeTap:
         self.ui.home_gbox_center_list = [
             self.ui.kospi200_boxxx, self.ui.oilgsl_boxxxxx, self.ui.ethusdt_boxxxx, self.ui.solusdt_boxxxx
         ]
-
-        self.ui.kospi_boxxxxxx.setStyleSheet(style_ht_gb)
-        self.ui.kosdaq_boxxxxx.setStyleSheet(style_ht_gb)
-        self.ui.kospi100_boxxx.setStyleSheet(style_ht_gb)
-        self.ui.kospi200_boxxx.setStyleSheet(style_ht_gb)
-        self.ui.future_boxxxxx.setStyleSheet(style_ht_gb)
-        self.ui.usdkrw_boxxxxx.setStyleSheet(style_ht_gb)
-        self.ui.oilgsl_boxxxxx.setStyleSheet(style_ht_gb)
-        self.ui.gold_boxxxxxxx.setStyleSheet(style_ht_gb)
-
-        self.ui.btcusdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.ethusdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.bnbusdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.xrpusdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.solusdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.dogeusdt_boxxx.setStyleSheet(style_ht_gb)
-        self.ui.adausdt_boxxxx.setStyleSheet(style_ht_gb)
-        self.ui.linkusdt_boxxx.setStyleSheet(style_ht_gb)
 
         self.ui.kospi_boxxxxxx.setGeometry(7, 10, 331, 181)
         self.ui.kosdaq_boxxxxx.setGeometry(343, 10, 331, 181)
