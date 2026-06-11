@@ -268,7 +268,7 @@ def change_title_bar_color(window):
     import ctypes
     from ui.create_widget.set_style import color_bf_dk, color_fg_bc
 
-    hwnd = int(window.winId())
+    hwnd = ctypes.c_void_p(int(window.winId()))
     bg_color = (color_bf_dk.blue() << 16) | (color_bf_dk.green() << 8) | color_bf_dk.red()
     fg_color = (color_fg_bc.blue() << 16) | (color_fg_bc.green() << 8) | color_fg_bc.red()
 
