@@ -179,7 +179,7 @@ def chart_screenshot(ui):
     """차트 스크린샷을 찍습니다."""
     import random
     from PyQt5.QtWidgets import QMessageBox
-    from ui.create_widget.set_text import famous_saying
+    from ui.create_widget.famous_saying import famous_saying
 
     if ui.dialog_chart.isVisible():
         send_chart_screenshot(ui)
@@ -190,7 +190,7 @@ def chart_screenshot2(ui):
     """차트 스크린샷을 찍습니다 (다이얼로그 기준)."""
     import random
     from PyQt5.QtWidgets import QMessageBox
-    from ui.create_widget.set_text import famous_saying
+    from ui.create_widget.famous_saying import famous_saying
 
     if ui.dialog_chart.isVisible():
         send_chart_screenshot(ui)

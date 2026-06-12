@@ -460,7 +460,7 @@ def sdbutton_clicked_05(ui):
     """백테스트 스케줄러 저장 버튼 클릭 이벤트를 처리합니다."""
     import random
     from PyQt5.QtWidgets import QMessageBox
-    from ui.create_widget.set_text import famous_saying
+    from ui.create_widget.famous_saying import famous_saying
     from utility.static_method.static_etcetera import send_query_data
 
     schedule_name = ui.sd_dlineEditttt_01.text()
