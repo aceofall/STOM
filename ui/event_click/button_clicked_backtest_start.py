@@ -121,10 +121,10 @@ def sdbutton_clicked_02(ui):
     from PyQt5.QtWidgets import QMessageBox, QApplication
     from backtest.optimiz_conditions import OptimizeConditions
     from ui.etcetera.process_alive import backtest_process_alive
-    from ui.event_click.button_clicked_stg_editer import backtest_init
     from backtest.rolling_walk_forward_test import RollingWalkForwardTest
     from backtest.optimiz_genetic_algorithm import OptimizeGeneticAlgorithm
     from ui.event_click.button_clicked_shortcut import mnbutton_c_clicked_01
+    from ui.event_click.button_clicked_stg_editer_bstart import _backtest_init
     from ui.event_click.button_clicked_backtest_engine import clear_backtestQ, backengine_show
 
     if backtest_process_alive(ui):
@@ -184,8 +184,6 @@ def sdbutton_clicked_02(ui):
                 )
                 ui.proc_backtester_bs.start()
 
-                backtest_init(ui)
-
             elif '조건' in back_name:
                 starttime   = ui.list_slineEdittttt[ui.back_scount].text()
                 endtime     = ui.list_elineEdittttt[ui.back_scount].text()
@@ -227,8 +225,6 @@ def sdbutton_clicked_02(ui):
                 elif back_name == '교차검증 조건 최적화':
                     ui.proc_backtester_ocvc = proc
                     ui.proc_backtester_ocvc.start()
-
-                backtest_init(ui)
 
             elif 'GA' in back_name:
                 starttime   = ui.list_slineEdittttt[ui.back_scount].text()
@@ -273,8 +269,6 @@ def sdbutton_clicked_02(ui):
                 elif back_name == '교차검증 GA 최적화':
                     ui.proc_backtester_ogvc = proc
                     ui.proc_backtester_ogvc.start()
-
-                backtest_init(ui)
 
             elif '전진분석' in back_name:
                 startday    = ui.list_sdateEdittttt[ui.back_scount].date().toString('yyyyMMdd')
@@ -337,8 +331,6 @@ def sdbutton_clicked_02(ui):
                 elif back_name == '베이지안 교차검증 최적화 전진분석':
                     ui.proc_backtester_brvc = proc
                     ui.proc_backtester_brvc.start()
-
-                backtest_init(ui)
 
             elif '최적화' in back_name:
                 starttime   = ui.list_slineEdittttt[ui.back_scount].text()
@@ -418,8 +410,7 @@ def sdbutton_clicked_02(ui):
                     ui.proc_backtester_bvct = proc
                     ui.proc_backtester_bvct.start()
 
-                backtest_init(ui)
-
+            _backtest_init(ui)
             ui.list_progressBarrr[ui.back_scount].setValue(0)
             ui.back_schedul = True
         else:
