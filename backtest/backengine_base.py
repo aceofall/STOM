@@ -10,7 +10,6 @@ from strategy.manager_formula import get_formula_data
 from strategy.analyzer_volume_spike import AnalyzerVolumeSpike
 from utility.static_method.static_numba import add_rolling_data
 from utility.static_method.static_indicator import get_indicator
-from utility.static_method.builtin_print import set_builtin_print
 from strategy.analyzer_candle_pattern import AnalyzerCandlePattern
 from strategy.analyzer_volume_profile import AnalyzerVolumeProfile
 from strategy.analyzer_microstructure import AnalyzerMicrostructure
@@ -103,7 +102,6 @@ class BackEngineBase(StgGlobalsFunc):
         self.sell_count      = 0
         self.비중조절기준       = 0
 
-        set_builtin_print(self.wq)
         self._main_loop()
 
     def _update_sub_vars(self):
