@@ -375,8 +375,8 @@ class BackEngineBase(StgGlobalsFunc):
         """백테스트 데이터를 로드합니다.
         데이터베이스에서 종목 데이터를 읽어 공유 메모리 또는 파일에 저장합니다."""
         def load_and_add_data():
-            """종목의 코드, 일자들, 시작시간, 종료시간으로 쿼리를 만들어서 데이터를 로딩 한 후에 롤링 데이터를 추가하고 2차원 어레이로 만든다.
-            만든 2차원 어레이와 관련 정보를 all_data에 기록한다."""
+            """종목의 코드, 일자들, 시작시간, 종료시간으로 쿼리를 만들어서 데이터를 로딩 한 후에
+            롤링 데이터를 추가하고 2차원 어레이로 만든다. 만든 2차원 어레이와 관련 정보를 all_data에 기록한다."""
             try:
                 df = pd.read_sql(get_back_load_code_query(self.is_tick, code, days, starttime, endtime, future_nt), con)
             except Exception:
@@ -411,11 +411,11 @@ class BackEngineBase(StgGlobalsFunc):
 
         elif divid_mode == '일자별 분류':
             _, startday, endday, starttime, endtime, day_list, avg_list, _, day_codes, _, _ = data
+            days = day_list
             code_list = set()
             for day in day_list:
                 code_list.update(day_codes[day])
             for code in code_list:
-                days = day_list
                 load_and_add_data()
 
         else:

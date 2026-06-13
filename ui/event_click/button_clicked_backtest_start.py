@@ -179,7 +179,7 @@ def sdbutton_clicked_02(ui):
                 ui.proc_backtester_bs = Process(
                     target=BackTest,
                     args=(ui.shared_cnt, ui.windowQ, ui.soundQ, ui.totalQ, ui.liveQ, ui.teleQ, ui.back_eques,
-                          ui.back_sques, back_name, ui.dict_set, ui.market_infos, betting, avgtime, startday,
+                          ui.back_sques, ui.dict_set, ui.market_infos, betting, avgtime, startday,
                           endday, starttime, endtime, buystg, sellstg, ui.back_count, bl, True, False)
                 )
                 ui.proc_backtester_bs.start()
