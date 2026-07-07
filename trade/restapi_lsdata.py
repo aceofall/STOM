@@ -217,8 +217,8 @@ class LsRestData:
             'body_key': 'CSPAT00601InBlock1',
             'element_keys': ['IsuNo', 'OrdQty', 'OrdPrc', 'BnsTpCode', 'OrdprcPtnCode', 'MgntrnCode', 'LoanDt',
                              'OrdCndiTpCode', 'MbrNo'],
-            'element_values': ['종목코드', '주문수량', '주문가격', '주문구분코드', '호가유형코드', '신용거래코드', '대출일', '주문조건코드',
-                               '회원사번호'],
+            'element_values': ['종목코드', '주문수량', '주문가격', '주문구분코드', '호가유형코드', '신용거래코드', '대출일',
+                               '주문조건코드', '회원사번호'],
             'out_block': 'CSPAT00601OutBlock2'
         },
         '국내주식정정주문': {
