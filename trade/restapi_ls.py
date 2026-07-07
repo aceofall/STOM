@@ -364,6 +364,7 @@ class LsRestAPI:
             주문구분코드 = LsRestData.국내주식주문구분코드[주문구분]
             호가유형코드 = LsRestData.국내주식호가유형코드[호가유형]
             주문조건코드 = LsRestData.국내주식주문조건코드[호가유형]
+            if '시장가' in 호가유형: 주문가격 = 0
             data = self._post(tr_name, 종목코드=종목코드, 주문수량=주문수량, 주문가격=주문가격, 주문구분코드=주문구분코드,
                               호가유형코드=호가유형코드, 신용거래코드='000', 대출일='', 주문조건코드=주문조건코드, 회원사번호='')
             if out_block in data:
@@ -410,6 +411,7 @@ class LsRestAPI:
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.해외주식주문구분코드[주문구분]
             호가유형코드 = LsRestData.해외주식호가유형코드[호가유형]
+            if '시장가' in 호가유형: 주문가격 = 0
             if 주문구분 in ('매수', '매도'):
                 data = self._post(tr_name, 레코드갯수=1, 주문구분코드=주문구분코드, 주문시장코드=주문시장코드, 종목코드=종목코드,
                                   주문수량=주문수량, 주문가격=주문가격, 호가유형코드=호가유형코드, 중개인구분코드='')
@@ -447,6 +449,7 @@ class LsRestAPI:
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
+            if '시장가' in 호가유형: 주문가격 = 0
             data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드,
                               주문가격=주문가격, 주문수량=주문수량)
             if out_block in data:
@@ -491,6 +494,7 @@ class LsRestAPI:
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
             호가유형코드 = LsRestData.지수선물호가유형코드[호가유형]
+            if '시장가' in 호가유형: 주문가격 = 0
             data = self._post(tr_name, 종목코드=종목코드, 주문구분코드=주문구분코드, 호가유형코드=호가유형코드,
                               주문가격=주문가격, 주문수량=주문수량)
             if out_block in data:
@@ -528,7 +532,7 @@ class LsRestAPI:
         except Exception:
             return 0, format_exc()
 
-    def order_future_oversea(self, 종목코드, 주문구분, 주문가격, 주문수량, 주문유형, 조건주문가격=0):
+    def order_future_oversea(self, 종목코드, 주문구분, 주문가격, 주문수량, 호가유형, 조건주문가격=0):
         """해외선물일반주문
         ['주문일자', '종목코드', '주문구분', '주문구분코드', '호가유형코드', '통화코드', '주문가격', '조건주문가격', '주문수량',
         '상품코드', '만기년월', '거래소코드']"""
@@ -536,7 +540,8 @@ class LsRestAPI:
             tr_name = '해외선물일반주문'
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
-            호가유형코드 = LsRestData.해외선물호가유형코드[주문유형]
+            호가유형코드 = LsRestData.해외선물호가유형코드[호가유형]
+            if '시장가' in 호가유형: 주문가격 = 0
             data = self._post(tr_name, 주문일자=LsRestData.당일일자, 종목코드=종목코드, 주문구분='1', 주문구분코드=주문구분코드,
                               호가유형코드=호가유형코드, 통화코드=' ',  주문가격=주문가격, 조건주문가격=조건주문가격,
                               주문수량=주문수량, 상품코드='000000', 만기년월='000001', 거래소코드=' ')
@@ -547,7 +552,7 @@ class LsRestAPI:
         except Exception:
             return 0, format_exc()
 
-    def order_modify_future_oversea(self, 종목코드, 원주문번호, 주문구분, 주문가격, 주문수량, 주문유형, 조건주문가격=0):
+    def order_modify_future_oversea(self, 종목코드, 원주문번호, 주문구분, 주문가격, 주문수량, 호가유형, 조건주문가격=0):
         """해외선물정정주문
         ['주문일자', '원주문번호', '종목코드', '주문구분', '주문구분코드', '호가유형코드', '통화코드', '주문가격', '조건주문가격',
         '주문수량', '상품코드', '만기년월', '거래소코드']"""
@@ -555,7 +560,7 @@ class LsRestAPI:
             tr_name = '해외선물정정주문'
             out_block = LsRestData.tr_data[tr_name]['out_block']
             주문구분코드 = LsRestData.선물주문구분코드[주문구분]
-            호가유형코드 = LsRestData.해외선물호가유형코드[주문유형]
+            호가유형코드 = LsRestData.해외선물호가유형코드[호가유형]
             data = self._post(tr_name, 주문일자=LsRestData.당일일자, 원주문번호=원주문번호, 종목코드=종목코드, 주문구분='2',
                               주문구분코드=주문구분코드, 호가유형코드=호가유형코드, 통화코드=' ', 주문가격=주문가격,
                               조건주문가격=조건주문가격, 주문수량=주문수량, 상품코드='', 만기년월='', 거래소코드=' ')
