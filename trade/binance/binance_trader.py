@@ -17,6 +17,12 @@ class BinanceTrader(BaseTrader):
 
         super().__init__(qlist, dict_set, market_infos)
 
+        self.지정가코드 = {
+            '지정가': 'GTC',
+            '지정가IOC': 'IOC',
+            '지정가FOK': 'FOK'
+        }
+
         if not self.dict_set['모의투자']:
             import binance
             from trade.restapi_binance import BinanceWebSocketTrader
@@ -53,21 +59,22 @@ class BinanceTrader(BaseTrader):
 
         ret = {}
         if 주문구분 in ('BUY_LONG', 'SELL_SHORT', 'SELL_LONG', 'BUY_SHORT'):
-            if 수동주문유형 == '시장가' or (수동주문유형 is None and self.dict_set['매수주문유형'] == '시장가') or 잔고청산:
+            if 잔고청산:
+                주문유형 = '시장가'
+            else:
+                if 수동주문유형 is None:
+                    주문유형 = self.dict_set['매수주문유형' if 주문구분 in ('BUY_LONG', 'SELL_SHORT') else '매도주문유형']
+                else:
+                    주문유형 = 수동주문유형
+
+            if '시장가' in 주문유형:
                 ret = self.binance.futures_create_order(
                     symbol=종목코드, side=매도수구분, type='MARKET', quantity=주문수량
                 )
-            elif 수동주문유형 == '지정가' or (수동주문유형 is None and self.dict_set['매수주문유형'] == '지정가'):
+            else:
+                지정가코드 = self.지정가코드[주문유형]
                 ret = self.binance.futures_create_order(
-                    symbol=종목코드, side=매도수구분, type='LIMIT', price=주문가격, timeInForce='GTC', quantity=주문수량
-                )
-            elif 수동주문유형 == '지정가IOC' or (수동주문유형 is None and self.dict_set['매수주문유형'] == '지정가IOC'):
-                ret = self.binance.futures_create_order(
-                    symbol=종목코드, side=매도수구분, type='LIMIT', price=주문가격, timeInForce='IOC', quantity=주문수량
-                )
-            elif 수동주문유형 == '지정가FOK' or (수동주문유형 is None and self.dict_set['매수주문유형'] == '지정가FOK'):
-                ret = self.binance.futures_create_order(
-                    symbol=종목코드, side=매도수구분, type='LIMIT', price=주문가격, timeInForce='FOK', quantity=주문수량
+                    symbol=종목코드, side=매도수구분, type='LIMIT', price=주문가격, timeInForce=지정가코드, quantity=주문수량
                 )
 
             if 'orderId' in ret:
