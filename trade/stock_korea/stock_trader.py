@@ -99,6 +99,9 @@ class StockTrader(BaseTrader):
         if body is None:
             return
 
+        if 'ordxctptncode' not in body:
+            return
+
         체결유형 = body['ordxctptncode']
         if 체결유형 in ('11', '12', '13'):
             매매구분 = body['bnstp']
