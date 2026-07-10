@@ -115,8 +115,8 @@ class FutureTrader(BaseTrader):
     @error_decorator
     def _convert_order_data(self, data):
         """주문체결 데이터를 변환합니다."""
-        body = data['body']
-        if body is None:
+        body = data.get('body')
+        if body is None or 'tr_cd' not in body:
             return
 
         tr_cd = body['tr_cd']
