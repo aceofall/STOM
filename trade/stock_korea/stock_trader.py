@@ -95,11 +95,11 @@ class StockTrader(BaseTrader):
     @error_decorator
     def _convert_order_data(self, data):
         """주문체결 데이터를 변환합니다."""
-        body = data.get('body')
-        if body is None or 'ordxctptncode' not in body:
+        body = data.get('body', {})
+        체결유형 = body.get('ordxctptncode')
+        if 체결유형 is None:
             return
 
-        체결유형 = body['ordxctptncode']
         if 체결유형 in ('11', '12', '13'):
             매매구분 = body['bnstp']
             주문구분 = LsRestData.국내주식주문체결코드[매매구분]

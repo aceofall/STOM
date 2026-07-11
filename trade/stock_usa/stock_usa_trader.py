@@ -97,8 +97,9 @@ class StockUsaTrader(BaseTrader):
     @error_decorator
     def _convert_order_data(self, data):
         """주문체결 데이터를 변환합니다."""
-        body = data.get('body')
-        if body is None or 'sOrdxctPtnCode' not in body:
+        body = data.get('body', {})
+        체결유형 = body.get('sOrdxctPtnCode')
+        if 체결유형 is None:
             return
 
         체결유형 = body['sOrdxctPtnCode']

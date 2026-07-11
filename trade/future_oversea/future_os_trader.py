@@ -97,12 +97,12 @@ class FutureOsTrader(BaseTrader):
     @error_decorator
     def _convert_order_data(self, data):
         """주문체결 데이터를 변환합니다."""
-        body = data.get('body')
-        if body is None or 'tr_cd' not in body or 'ordr_ccd' not in body:
+        body = data.get('body', {})
+        tr_cd = body.get('tr_cd')
+        체결유형 = body.get('ordr_ccd')
+        if tr_cd is None or 체결유형 is None:
             return
 
-        tr_cd = body['tr_cd']
-        체결유형 = body['ordr_ccd']
         if tr_cd == 'T03':
             if 체결유형 == '1':
                 체결구분 = LsRestData.선물주문체결코드[체결유형]
