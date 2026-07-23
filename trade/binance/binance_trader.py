@@ -22,6 +22,11 @@ class BinanceTrader(BaseTrader):
             '지정가IOC': 'IOC',
             '지정가FOK': 'FOK'
         }
+        self.체결구분코드 = {
+            'TRADE': '체결',
+            'REPLACED': '정정',
+            'CANCELED': '취소'
+        }
 
         if not self.dict_set['모의투자']:
             import binance
@@ -174,19 +179,19 @@ class BinanceTrader(BaseTrader):
 
         elif data['e'] == 'ORDER_TRADE_UPDATE':
             data = data['o']
-            code = data['s']
-            p = f"{data['S']}_{self.dict_pos[code]}"
-            if data['X'] == 'CANCELED':
-                p = f'{p}_CANCEL'
-            oc = float(data['q'])
-            cc = float(data['l'])
-            mc = round(oc - float(data['z']), self.dict_info[code]['수량소숫점자리수'])
-            cp = float(data['L'])
-            op = float(data['p'])
-            on = int(data['i'])
-            ct = str_ymdhms_from_timestamp(data['T'])
-            if cc > 0 or 'CANCEL' in p:
-                self._update_chejan_data_coin_future(p, code, oc, cc, mc, cp, op, ct, on)
+            체결구분 = self.체결구분코드.get(data['x'])
+            if 체결구분 is None:
+                return
+            종목코드 = data['s']
+            주문구분 = f"{data['S']}_{self.dict_pos[종목코드]}"
+            주문수량 = float(data['q'])
+            체결수량 = float(data['l'])
+            미체결수량 = round(주문수량 - float(data['z']), self.dict_info[종목코드]['수량소숫점자리수'])
+            체결가격 = float(data['L'])
+            주문가격 = float(data['p'])
+            주문번호 = int(data['i'])
+            체결시간 = str_ymdhms_from_timestamp(data['T'])
+            self._update_chejan_data_coin_future(주문구분, 체결구분, 종목코드, 주문수량, 체결수량, 미체결수량, 체결가격, 주문가격, 체결시간, 주문번호)
 
     def _get_modify_price(self, 현재가, 정정호가, 종목코드):
         """매수 정정 가격을 반환합니다."""
