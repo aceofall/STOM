@@ -965,11 +965,18 @@ class BaseStrategy(StgGlobalsFunc):
             if jg_data:
                 if 종목코드 not in self.dict_buy_num:
                     self.dict_buy_num[종목코드] = self.indexn
-                _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+
+                if self.market_gubun == 9:
+                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+                else:
+                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                    레버리지 = 1
+
                 if 포지션 == 'LONG':
                     _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유수량 * 현재가)
                 else:
                     _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유수량 * 현재가)
+
                 profit_data = self.dict_profit.get(종목코드)
                 if profit_data:
                     if 수익률 > profit_data[0]:
@@ -980,6 +987,7 @@ class BaseStrategy(StgGlobalsFunc):
                 else:
                     self.dict_profit[종목코드] = [수익률, 수익률]
                     최고수익률 = 최저수익률 = 수익률
+
                 보유시간 = self._get_hold_time(매수시간)
                 매수틱번호 = self.dict_buy_num[종목코드]
             else:
@@ -1241,11 +1249,18 @@ class BaseStrategy(StgGlobalsFunc):
                 if jg_data:
                     if 종목코드 not in self.dict_buy_num:
                         self.dict_buy_num[종목코드] = self.indexn
-                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+
+                    if self.market_gubun == 9:
+                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+                    else:
+                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                        레버리지 = 1
+
                     if 포지션 == 'LONG':
                         _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유수량 * 현재가)
                     else:
                         _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유수량 * 현재가)
+
                     profit_data = self.dict_profit.get(종목코드)
                     if profit_data:
                         if 수익률 > profit_data[0]:
@@ -1256,6 +1271,7 @@ class BaseStrategy(StgGlobalsFunc):
                     else:
                         self.dict_profit[종목코드] = [수익률, 수익률]
                         최고수익률 = 최저수익률 = 수익률
+
                     보유시간 = self._get_hold_time_min(매수시간)
                     매수틱번호 = self.dict_buy_num[종목코드]
                 else:
