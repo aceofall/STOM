@@ -432,11 +432,11 @@ class BaseStrategy(StgGlobalsFunc):
                         self.arry_code[self.indexn, col_idx] = price
 
         if 데이터길이 >= self.rolling_window:
-            jg_data = self.dict_jg.get(종목코드)
-            if jg_data:
+            code_jg = self.dict_jg.get(종목코드)
+            if code_jg:
                 if 종목코드 not in self.dict_buy_num:
                     self.dict_buy_num[종목코드] = self.indexn
-                _, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                _, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
                 _, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 현재가)
                 profit_data = self.dict_profit.get(종목코드)
                 if profit_data:
@@ -682,11 +682,11 @@ class BaseStrategy(StgGlobalsFunc):
                             self.arry_code[self.indexn, col_idx] = price
 
             if 데이터길이 >= self.rolling_window:
-                jg_data = self.dict_jg.get(종목코드)
-                if jg_data:
+                code_jg = self.dict_jg.get(종목코드)
+                if code_jg:
                     if 종목코드 not in self.dict_buy_num:
                         self.dict_buy_num[종목코드] = self.indexn
-                    _, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                    _, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
                     _, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 현재가)
                     profit_data = self.dict_profit.get(종목코드)
                     if profit_data:
@@ -961,21 +961,23 @@ class BaseStrategy(StgGlobalsFunc):
                         self.arry_code[self.indexn, col_idx] = price
 
         if 데이터길이 >= self.rolling_window:
-            jg_data = self.dict_jg.get(종목코드)
-            if jg_data:
+            code_jg = self.dict_jg.get(종목코드)
+            if code_jg:
                 if 종목코드 not in self.dict_buy_num:
                     self.dict_buy_num[종목코드] = self.indexn
 
                 if self.market_gubun == 9:
-                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = code_jg.values()
+                    보유금액 = 보유수량 * 현재가
                 else:
-                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                    _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
+                    보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
                     레버리지 = 1
 
                 if 포지션 == 'LONG':
-                    _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유수량 * 현재가)
+                    _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                 else:
-                    _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유수량 * 현재가)
+                    _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
 
                 profit_data = self.dict_profit.get(종목코드)
                 if profit_data:
@@ -1245,21 +1247,23 @@ class BaseStrategy(StgGlobalsFunc):
                             self.arry_code[self.indexn, col_idx] = price
 
             if 데이터길이 >= self.rolling_window:
-                jg_data = self.dict_jg.get(종목코드)
-                if jg_data:
+                code_jg = self.dict_jg.get(종목코드)
+                if code_jg:
                     if 종목코드 not in self.dict_buy_num:
                         self.dict_buy_num[종목코드] = self.indexn
 
                     if self.market_gubun == 9:
-                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = jg_data.values()
+                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간, 레버리지 = code_jg.values()
+                        보유금액 = 보유수량 * 현재가
                     else:
-                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = jg_data.values()
+                        _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
+                        보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
                         레버리지 = 1
 
                     if 포지션 == 'LONG':
-                        _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유수량 * 현재가)
+                        _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
                     else:
-                        _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유수량 * 현재가)
+                        _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
 
                     profit_data = self.dict_profit.get(종목코드)
                     if profit_data:

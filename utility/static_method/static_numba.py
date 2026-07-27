@@ -31,8 +31,9 @@ def get_profit_stock_os(bg, cg):
 @njit(cache=True, fastmath=True)
 def get_profit_future_long(bg, cg):
     """선물 롱 수익을 계산합니다."""
-    fee = 0.00002
-    pg = round(cg - fee * 2, 1)
+    bfee = int(bg * 0.00002)
+    sfee = int(cg * 0.00002)
+    pg = round(cg - bfee - sfee, 1)
     sg = round(pg - bg, 1)
     sp = round(sg / bg * 100, 2)
     return pg, sg, sp
@@ -41,8 +42,9 @@ def get_profit_future_long(bg, cg):
 @njit(cache=True, fastmath=True)
 def get_profit_future_short(bg, cg):
     """선물 숏 수익을 계산합니다."""
-    fee = 0.00002
-    pg = round(bg + bg - cg - fee * 2, 1)
+    bfee = int(bg * 0.00002)
+    sfee = int(cg * 0.00002)
+    pg = round(bg + bg - cg - bfee - sfee, 1)
     sg = round(pg - bg, 1)
     sp = round(sg / bg * 100, 2)
     return pg, sg, sp
