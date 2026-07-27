@@ -10,13 +10,13 @@ class BackEngineStockUsaOms(BackEngineBaseOms):
         """호가 단위를 반환합니다."""
         return 0.01
 
-    def _set_buy_count(self, betting, 현재가, 매수가, oc_ratio):
+    def _set_buy_count(self, 배팅금액, 현재가, 매수가, 분할비율):
         """매수 수량을 설정합니다."""
-        return int(betting / (현재가 if 매수가 == 0 else 매수가) * oc_ratio / 100)
+        return int(배팅금액 / (현재가 if 매수가 == 0 else 매수가) * 분할비율 / 100)
 
-    def _set_sell_count(self, 보유수량, 보유비율, oc_ratio):
+    def _set_sell_count(self, 보유수량, 보유비율, 분할비율):
         """매도 수량을 설정합니다."""
-        return int(보유수량 / 보유비율 * oc_ratio)
+        return int(보유수량 / 보유비율 * 분할비율)
 
     def _get_order_price(self, 거래금액, 주문수량):
         """주문 가격을 계산합니다."""

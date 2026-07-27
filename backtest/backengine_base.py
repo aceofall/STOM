@@ -1128,7 +1128,7 @@ class BackEngineBase(StgGlobalsFunc):
         """호가 단위를 반환합니다. (오버라이드용)"""
         return 0
 
-    def _set_buy_count(self, betting, 현재가, 매수가, oc_ratio):
+    def _set_buy_count(self, 배팅금액또는계약수, 현재가, 매수가, 분할비율):
         """매수 수량을 설정합니다. (오버라이드용)"""
         return 0
 

@@ -10,9 +10,9 @@ class BackEngineFuture(BackEngineBase):
         """호가 단위를 반환합니다."""
         return self.dict_info[self.code]['호가단위']
 
-    def _set_buy_count(self, betting, 현재가, 매수가, oc_ratio):
+    def _set_buy_count(self, 계약수, 현재가, 매수가, 분할비율):
         """매수 수량을 설정합니다."""
-        return int(betting)
+        return int(계약수)
 
     def _get_order_price(self, 거래금액, 주문수량):
         """주문 가격을 계산합니다."""
@@ -20,12 +20,16 @@ class BackEngineFuture(BackEngineBase):
 
     def _get_profit_info(self, 현재가, 매수가, 보유수량):
         """수익 정보를 계산합니다."""
-        매입금액 = self.dict_info[self.code]['위탁증거금'] * 보유수량
-        보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[self.code]['틱가치'] * 보유수량
+        code_dict_info = self.dict_info[self.code]
+        틱가치 = code_dict_info['틱가치']
+        위탁증거금율 = code_dict_info['위탁증거금율']
+        매입금액 = 보유수량 * 매수가 * 틱가치
+        보유금액 = 보유수량 * 현재가 * 틱가치
+        위탁증거금 = 매입금액 * 위탁증거금율
         if self.curr_trade_info['보유중'] == 1:
             포지션 = 'LONG'
-            평가금액, 수익금, 수익률 = get_profit_future_long(매입금액, 보유금액)
+            평가금액, 수익금, 수익률 = get_profit_future_long(매입금액, 보유금액, 위탁증거금)
         else:
             포지션 = 'SHORT'
-            평가금액, 수익금, 수익률 = get_profit_future_short(매입금액, 보유금액)
+            평가금액, 수익금, 수익률 = get_profit_future_short(매입금액, 보유금액, 위탁증거금)
         return 포지션, 평가금액, 수익금, 수익률

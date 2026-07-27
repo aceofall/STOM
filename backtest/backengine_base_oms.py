@@ -829,6 +829,6 @@ class BackEngineBaseOms(BackEngineBase):
         else:
             self.trade_info[vturn][vkey] = get_trade_info(2)
 
-    def _set_sell_count(self, 보유수량, 보유비율, oc_ratio):
+    def _set_sell_count(self, 보유수량, 보유비율, 분할비율):
         """매도 수량을 설정합니다 (오버라이드용)"""
         return 0

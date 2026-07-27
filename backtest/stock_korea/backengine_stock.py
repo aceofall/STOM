@@ -13,9 +13,9 @@ class BackEngineStock(BackEngineBase):
         """호가 단위를 반환합니다."""
         return get_hogaunit_stock(주문가격)
 
-    def _set_buy_count(self, betting, 현재가, 매수가, oc_ratio):
+    def _set_buy_count(self, 배팅금액, 현재가, 매수가, 분할비율):
         """매수 수량을 설정합니다."""
-        return int(betting / 현재가)
+        return int(배팅금액 / 현재가)
 
     def _get_order_price(self, 거래금액, 주문수량):
         """주문 가격을 계산합니다."""
