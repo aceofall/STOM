@@ -435,6 +435,13 @@ class BaseTrader:
         elif 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
             거래횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명]))
             손절횟수 = len(set([v['체결시간'] for v in self.dict_td.values() if v['종목명'] == 종목명 and v['수익률'] < 0]))
+            if self.market_gubun in (6, 7):
+                필요예수금 = 주문수량 * 주문가격 * self.dict_info[종목코드]['틱가치'] * self.dict_info[종목코드]['위탁증거금율']
+            elif self.market_gubun == 8:
+                필요예수금 = 주문수량 * self.dict_info[종목코드]['위탁증거금']
+            else:
+                필요예수금 = 주문수량 * 주문가격
+
             if self.dict_set['매수금지거래횟수'] and self.dict_set['매수금지거래횟수값'] <= 거래횟수:
                 주문취소 = True
             elif self.dict_set['매수금지손절횟수'] and self.dict_set['매수금지손절횟수값'] <= 손절횟수:
@@ -447,7 +454,7 @@ class BaseTrader:
                 주문취소 = True
             elif not 잔고없음 and self.dict_jg[종목코드]['분할매수횟수'] >= self.dict_set['매수분할횟수']:
                 주문취소 = True
-            elif self.dict_intg['추정예수금'] < 주문수량 * 주문가격:
+            elif self.dict_intg['추정예수금'] < 필요예수금:
                 if 현재시간 > self.dict_info[종목코드]['시드부족시간']:
                     self._create_order('시드부족', 종목코드, 종목코드, 주문가격, 주문수량, '', 시그널시간, 잔고청산, 0, None)
                     self.dict_info[종목코드]['시드부족시간'] = timedelta_sec(180)
@@ -626,21 +633,19 @@ class BaseTrader:
         if code_jg and 현재가 != code_jg['현재가']:
             매입금액 = code_jg['매입금액']
             보유수량 = code_jg['보유수량']
-
-            if self.market_gubun < 6 or self.market_gubun == 9:
-                보유금액 = 보유수량 * 현재가
-            else:
-                매수가 = code_jg['매수가']
-                보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+            보유금액 = 보유수량 * 현재가
 
             if self.market_gubun < 6:
                 평가금액, 평가손익, 수익률 = self._get_profit(매입금액, 보유금액)
             else:
                 포지션 = code_jg['포지션']
+                if self.market_gubun != 9:
+                    보유금액 *= self.dict_info[종목코드]['틱가치']
+
                 if 포지션 == 'LONG':
-                    평가금액, 평가손익, 수익률 = self._get_profit_long(매입금액, 보유금액)
+                    평가금액, 평가손익, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
                 else:
-                    평가금액, 평가손익, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    평가금액, 평가손익, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
 
             code_jg.update({
                 '현재가': 현재가,
@@ -725,15 +730,15 @@ class BaseTrader:
                     보유수량 = self.dict_jg[종목코드]['보유수량'] + 체결수량
                     매입금액 = self.dict_jg[종목코드]['매입금액'] + 체결수량 * 체결가격
                     매수가 = int(매입금액 / 보유수량 + 0.5)
-                    평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
                     분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
                     보유수량 = 체결수량
                     매입금액 = 체결수량 * 체결가격
                     매수가 = 체결가격
-                    평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
                     분할매수횟수, 분할매도횟수 = 1, 0
+
+                평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
 
                 self.dict_jg[종목코드] = {
                     '종목명': 종목명,
@@ -756,7 +761,7 @@ class BaseTrader:
                 매수가 = self.dict_jg[종목코드]['매수가']
 
                 if 보유수량 > 0:
-                    매입금액 = 매수가 * 보유수량
+                    매입금액 = 보유수량 * 매수가
                     평가금액, 수익금, 수익률 = self._get_profit(매입금액, 보유수량 * 체결가격)
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
@@ -771,11 +776,10 @@ class BaseTrader:
                 else:
                     del self.dict_jg[종목코드]
 
-                매입금액 = 매수가 * 체결수량
+                매입금액 = 체결수량 * 매수가
                 평가금액, 수익금, 수익률 = self._get_profit(매입금액, 체결수량 * 체결가격)
 
-                if -100 < 수익률 < 100:
-                    self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간)
+                self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간)
 
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
@@ -832,31 +836,28 @@ class BaseTrader:
 
         if 체결구분 == '체결' and 주문구분 != '시드부족':
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
+                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
                 if 종목코드 in self.dict_jg:
                     직전매수가 = self.dict_jg[종목코드]['매수가']
                     직전보유수량 = self.dict_jg[종목코드]['보유수량']
                     직전매입금액 = self.dict_jg[종목코드]['매입금액']
                     보유수량 = 직전보유수량 + 체결수량
-                    매입금액 = 직전매입금액 + self.dict_info[종목코드]['위탁증거금'] * 체결수량
+                    매입금액 = 직전매입금액 + int(체결수량 * 체결가격 * self.dict_info[종목코드]['틱가치'])
                     매수가 = round((직전매수가 * 직전보유수량 + 체결가격 * 체결수량) / 보유수량, self.dict_info[종목코드]['소숫점자리수'])
-                    보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
-                    if 'LONG' in 주문구분:
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
-                    else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
+                    보유금액 = int(보유수량 * 체결가격 * self.dict_info[종목코드]['틱가치'])
                     분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
                     매수가 = 체결가격
                     보유수량 = 체결수량
-                    매입금액 = 보유금액 = self.dict_info[종목코드]['위탁증거금'] * 체결수량
-                    if 'LONG' in 주문구분:
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
-                    else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
+                    매입금액 = 보유금액 = int(보유수량 * 체결가격 * self.dict_info[종목코드]['틱가치'])
                     분할매수횟수, 분할매도횟수 = 1, 0
 
-                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
+                if 'LONG' in 주문구분:
+                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
+                else:
+                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
+
                 self.dict_jg[종목코드] = {
                     '종목명': 종목명,
                     '포지션': 포지션,
@@ -880,12 +881,12 @@ class BaseTrader:
                 보유수량 = self.dict_jg[종목코드]['보유수량'] - 체결수량
 
                 if 보유수량 > 0:
-                    매입금액 = self.dict_info[종목코드]['위탁증거금'] * 보유수량
-                    보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+                    매입금액 = 보유수량 * 매수가 * self.dict_info[종목코드]['틱가치']
+                    보유금액 = 보유수량 * 체결가격 * self.dict_info[종목코드]['틱가치']
                     if 'LONG' in 주문구분:
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
+                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
                     else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
+                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
                         '현재가': 체결가격,
@@ -899,16 +900,15 @@ class BaseTrader:
                 else:
                     del self.dict_jg[종목코드]
 
-                매입금액 = self.dict_info[종목코드]['위탁증거금'] * 체결수량
-                보유금액 = 매입금액 + (체결가격 - 매수가) * self.dict_info[종목코드]['틱가치'] * 체결수량
+                매입금액 = 체결수량 * 매수가 * self.dict_info[종목코드]['틱가치']
+                보유금액 = 체결수량 * 체결가격 * self.dict_info[종목코드]['틱가치']
 
                 if 'LONG' in 주문구분:
-                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 종목코드)
+                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 체결수량, 종목코드)
                 else:
-                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 종목코드)
+                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 체결수량, 종목코드)
 
-                if -100 < 수익률 < 100:
-                    self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간, 포지션)
+                self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간, 포지션)
 
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
@@ -924,7 +924,7 @@ class BaseTrader:
 
             self._update_chegeollist(index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호)
 
-            위탁증거금 = 체결수량 * self.dict_info[종목코드]['위탁증거금']
+            위탁증거금 = 체결수량 * 체결가격 * self.dict_info[종목코드]['틱가치'] * self.dict_info[종목코드]['위탁증거금율']
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
                 self.dict_intg['예수금'] -= 위탁증거금
                 if self.dict_set['모의투자']:
@@ -952,7 +952,8 @@ class BaseTrader:
                 self.dict_order[주문구분][종목코드] = [취소시간, 정정횟수, 주문가격, 주문수량, self._get_hogaunit(종목코드)]
             else:
                 if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
-                    self.dict_intg['추정예수금'] += 주문수량 * self.dict_info[종목코드]['위탁증거금']
+                    위탁증거금 = 주문수량 * 주문가격 * self.dict_info[종목코드]['틱가치'] * self.dict_info[종목코드]['위탁증거금율']
+                    self.dict_intg['추정예수금'] += 위탁증거금
 
                 del self.dict_order[주문구분][종목코드]
                 del self.dict_signal[종목코드]
@@ -988,29 +989,26 @@ class BaseTrader:
 
         if 체결구분 == '체결' and 주문구분 != '시드부족':
             if 주문구분 in ('BUY_LONG', 'SELL_SHORT'):
+                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
+                레버리지 = self.dict_order[주문구분][종목코드][-1]
                 if 종목코드 in self.dict_jg:
                     보유수량 = round(self.dict_jg[종목코드]['보유수량'] + 체결수량, self.dict_info[종목코드]['수량소숫점자리수'])
                     매입금액 = round(self.dict_jg[종목코드]['매입금액'] + 체결수량 * 체결가격, 4)
                     매수가 = round(매입금액 / 보유수량, 8)
-                    보유금액 = round(체결가격 * 보유수량, 4)
-                    if 주문구분 == 'BUY_LONG':
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
-                    else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    보유금액 = round(보유수량 * 체결가격, 4)
                     분할매수횟수 = self.dict_jg[종목코드]['분할매수횟수'] + 1
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수']
                 else:
                     보유수량 = 체결수량
                     매수가 = 체결가격
-                    매입금액 = 보유금액 = round(체결가격 * 체결수량, 4)
-                    if 주문구분 == 'BUY_LONG':
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
-                    else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    매입금액 = 보유금액 = round(보유수량 * 체결가격, 4)
                     분할매수횟수, 분할매도횟수 = 1, 0
 
-                포지션 = 'LONG' if 'LONG' in 주문구분 else 'SHORT'
-                레버리지 = self.dict_order[주문구분][종목코드][-1]
+                if 주문구분 == 'BUY_LONG':
+                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
+                else:
+                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
+
                 self.dict_jg[종목코드] = {
                     '종목명': 종목명,
                     '포지션': 포지션,
@@ -1038,9 +1036,9 @@ class BaseTrader:
                     매입금액 = round(매수가 * 보유수량, 4)
                     보유금액 = round(체결가격 * 보유수량, 4)
                     if 주문구분 == 'SELL_LONG':
-                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
+                        평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
                     else:
-                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                        평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
                     분할매도횟수 = self.dict_jg[종목코드]['분할매도횟수'] + 1
                     self.dict_jg[종목코드].update({
                         '현재가': 체결가격,
@@ -1058,12 +1056,11 @@ class BaseTrader:
                 보유금액 = round(체결가격 * 체결수량, 4)
 
                 if 주문구분 == 'SELL_LONG':
-                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
+                    평가금액, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 체결수량, 종목코드)
                 else:
-                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    평가금액, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 체결수량, 종목코드)
 
-                if -100 < 수익률 < 100:
-                    self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간, 포지션)
+                self._update_tradelist(index, 종목명, 매입금액, 평가금액, 체결수량, 수익률, 수익금, 체결시간, 포지션)
 
                 if 수익률 < 0:
                     self.dict_info[종목코드]['손절거래시간'] = timedelta_sec(self.dict_set['매수금지손절간격초'])
@@ -1294,11 +1291,11 @@ class BaseTrader:
         """수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
-    def _get_profit_long(self, 매입금액, 보유금액, 종목코드=None):
+    def _get_profit_long(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """롱 수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
-    def _get_profit_short(self, 매입금액, 보유금액, 종목코드=None):
+    def _get_profit_short(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """숏 수익을 계산합니다. (오버라이드용)"""
         return 0, 0, 0
 
