@@ -201,21 +201,21 @@ class LsRestAPI:
                 name = data['ShtnHanglIsuNm']
                 if name == 'KOSPI200':
                     dict_data[코스피200_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.05,
                         '틱가치': 250_000,
                         '소숫점자리수': 2
                     })
                 elif name == '미니KOSPI200':
                     dict_data[미니코스피200_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.02,
                         '틱가치': 50_000,
                         '소숫점자리수': 2
                     })
                 elif name == '코스닥150':
                     dict_data[코스닥150_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.1,
                         '틱가치': 100_000,
                         '소숫점자리수': 1
@@ -262,21 +262,21 @@ class LsRestAPI:
                 name = data['ShtnHanglIsuNm']
                 if name == 'KOSPI200':
                     dict_data[코스피200_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.05,
                         '틱가치': 250_000,
                         '소숫점자리수': 2
                     })
                 elif name == '미니KOSPI200':
                     dict_data[미니코스피200_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.02,
                         '틱가치': 50_000,
                         '소숫점자리수': 2
                     })
                 elif name == '코스닥150':
                     dict_data[코스닥150_종목코드].update({
-                        '위탁증거금': int(data['OnePrcntrOrdMgn']),
+                        '위탁증거금율': round(float(data['CsgnMgnrt']) / 100, 4),
                         '호가단위': 0.1,
                         '틱가치': 100_000,
                         '소숫점자리수': 1
