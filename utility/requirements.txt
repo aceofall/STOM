@@ -1,21 +1,21 @@
 numpy==2.4.6
-pandas==3.0.3
-numba==0.65.1
+pandas==3.0.5
+numba==0.66.0
 
 PyQt5==5.15.11
 PyQtWebEngine==5.15.7
 
-scipy==1.17.1
+scipy==1.18.0
 squarify==0.4.4
 pyqtgraph==0.14.0
-matplotlib==3.10.9
+matplotlib==3.11.1
 
-yfinance==1.4.1
+yfinance==1.5.2
 python-binance==1.0.37
-python-telegram-bot==22.7
+python-telegram-bot==22.8
 
 requests==2.34.2
-websockets==16.0
+websockets==16.1.1
 beautifulsoup4==4.15.0
 exchange_calendars==4.13.2
 
@@ -25,11 +25,11 @@ optuna-dashboard==0.20.0
 
 pywin32==312
 psutil==7.2.2
-Cython==3.2.5
+Cython==3.2.9
 ntplib==0.4.0
 pyjwt==2.13.0
-pillow==12.2.0
+pillow==12.3.0
 
 pyzmq==27.1.0
-cryptography==48.0.1
+cryptography==49.0.0
 fake-useragent==2.2.0
