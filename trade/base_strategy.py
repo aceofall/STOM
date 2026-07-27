@@ -975,9 +975,9 @@ class BaseStrategy(StgGlobalsFunc):
                     레버리지 = 1
 
                 if 포지션 == 'LONG':
-                    _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
+                    _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
                 else:
-                    _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                    _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
 
                 profit_data = self.dict_profit.get(종목코드)
                 if profit_data:
@@ -1261,9 +1261,9 @@ class BaseStrategy(StgGlobalsFunc):
                         레버리지 = 1
 
                     if 포지션 == 'LONG':
-                        _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액)
+                        _, 수익금, 수익률 = self._get_profit_long(매입금액, 보유금액, 보유수량, 종목코드)
                     else:
-                        _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액)
+                        _, 수익금, 수익률 = self._get_profit_short(매입금액, 보유금액, 보유수량, 종목코드)
 
                     profit_data = self.dict_profit.get(종목코드)
                     if profit_data:
@@ -1712,11 +1712,11 @@ class BaseStrategy(StgGlobalsFunc):
         """수익을 계산합니다. (오버라이드용)"""
         return 0
 
-    def _get_profit_long(self, 매입금액, 보유금액):
+    def _get_profit_long(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """롱 수익을 계산합니다. (오버라이드용)"""
         return 0
 
-    def _get_profit_short(self, 매입금액, 보유금액):
+    def _get_profit_short(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """숏 수익을 계산합니다. (오버라이드용)"""
         return 0
 

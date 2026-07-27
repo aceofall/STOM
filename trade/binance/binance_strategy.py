@@ -14,13 +14,13 @@ class BinanceStrategy(BaseStrategy):
         """호가 단위를 반환합니다."""
         return self.dict_info[종목코드]['호가단위']
 
-    def _get_profit_long(self, 매입금액, 보유금액):
+    def _get_profit_long(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """롱 수익을 계산합니다."""
         return get_profit_coin_future_long(
             매입금액, 보유금액, '시장가' in self.dict_set['매수주문유형'], '시장가' in self.dict_set['매도주문유형']
         )
 
-    def _get_profit_short(self, 매입금액, 보유금액):
+    def _get_profit_short(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """숏 수익을 계산합니다."""
         return get_profit_coin_future_short(
             매입금액, 보유금액, '시장가' in self.dict_set['매수주문유형'], '시장가' in self.dict_set['매도주문유형']

@@ -14,13 +14,15 @@ class FutureStrategy(BaseStrategy):
         """호가 단위를 반환합니다."""
         return self.dict_info[종목코드]['호가단위']
 
-    def _get_profit_long(self, 매입금액, 보유금액):
+    def _get_profit_long(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """롱 수익을 계산합니다."""
-        return get_profit_future_long(매입금액, 보유금액)
+        위탁증거금 = int(매입금액 * self.dict_info['위탁증거금율'])
+        return get_profit_future_long(매입금액, 보유금액, 위탁증거금)
 
-    def _get_profit_short(self, 매입금액, 보유금액):
+    def _get_profit_short(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """숏 수익을 계산합니다."""
-        return get_profit_future_short(매입금액, 보유금액)
+        위탁증거금 = int(매입금액 * self.dict_info['위탁증거금율'])
+        return get_profit_future_short(매입금액, 보유금액, 위탁증거금)
 
     def _get_hold_time(self, 매수시간):
         """보유 시간을 계산합니다."""

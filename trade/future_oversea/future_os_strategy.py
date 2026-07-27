@@ -14,15 +14,17 @@ class FutureOsStrategy(BaseStrategy):
         """호가 단위를 반환합니다."""
         return self.dict_info[종목코드]['호가단위']
 
-    def _get_profit_long(self, 매입금액, 보유금액, 종목코드=None):
+    def _get_profit_long(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """롱 수익을 계산합니다."""
-        mini = 종목코드.startswith('M') or 종목코드.startswith('SIL')
-        return get_profit_future_os_long(mini, 매입금액, 보유금액)
+        마이크로 = 종목코드.startswith('M') or 종목코드.startswith('SIL')
+        위탁증거금 = 보유수량 * self.dict_info[종목코드]['위탁증거금']
+        return get_profit_future_os_long(마이크로, 매입금액, 보유금액, 위탁증거금)
 
-    def _get_profit_short(self, 매입금액, 보유금액, 종목코드=None):
+    def _get_profit_short(self, 매입금액, 보유금액, 보유수량, 종목코드):
         """숏 수익을 계산합니다."""
-        mini = 종목코드.startswith('M') or 종목코드.startswith('SIL')
-        return get_profit_future_os_short(mini, 매입금액, 보유금액)
+        마이크로 = 종목코드.startswith('M') or 종목코드.startswith('SIL')
+        위탁증거금 = 보유수량 * self.dict_info[종목코드]['위탁증거금']
+        return get_profit_future_os_short(마이크로, 매입금액, 보유금액, 위탁증거금)
 
     def _get_hold_time(self, 매수시간):
         """보유 시간을 계산합니다."""
