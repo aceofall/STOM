@@ -971,7 +971,7 @@ class BaseStrategy(StgGlobalsFunc):
                     보유금액 = 보유수량 * 현재가
                 else:
                     _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
-                    보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+                    보유금액 = 보유수량 * 현재가 * self.dict_info[종목코드]['틱가치']
                     레버리지 = 1
 
                 if 포지션 == 'LONG':
@@ -1257,7 +1257,7 @@ class BaseStrategy(StgGlobalsFunc):
                         보유금액 = 보유수량 * 현재가
                     else:
                         _, 포지션, 매수가, _, _, _, 매입금액, _, 보유수량, 분할매수횟수, 분할매도횟수, 매수시간 = code_jg.values()
-                        보유금액 = 매입금액 + (현재가 - 매수가) * self.dict_info[종목코드]['틱가치'] * 보유수량
+                        보유금액 = 보유수량 * 현재가 * self.dict_info[종목코드]['틱가치']
                         레버리지 = 1
 
                     if 포지션 == 'LONG':
