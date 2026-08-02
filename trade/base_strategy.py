@@ -14,7 +14,7 @@ from utility.static_method.static_indicator import get_indicator
 from strategy.analyzer_candle_pattern import AnalyzerCandlePattern
 from strategy.analyzer_volume_profile import AnalyzerVolumeProfile
 from strategy.analyzer_microstructure import AnalyzerMicrostructure
-from utility.settings.setting_base import DICT_INDICATOR, DB_SETTING
+from utility.settings.setting_base import DICT_INDICATOR_BASE, DB_SETTING
 from strategy.analyzer_volatility_pattern import AnalyzerVolatilityPattern
 from strategy.analyzer_volatility_stop_take import AnalyzerVolatilityStopTake
 from utility.settings.setting_base import DB_STRATEGY, UI_NUM, DICT_ORDER_RATIO
@@ -39,7 +39,7 @@ class BaseStrategy(StgGlobalsFunc):
         self.stgQs           = qlist[10]
         self.stgQ            = qlist[10][self.gubun]
         self.dict_set        = dict_set
-        self.indicator       = DICT_INDICATOR
+        self.indicator       = DICT_INDICATOR_BASE
         self.market_gubun    = market_info[0]
         self.market_info     = market_info[1]
         self.is_etfn         = self.market_gubun in (2, 3)

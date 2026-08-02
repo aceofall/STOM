@@ -120,7 +120,7 @@ def indicator_setting_save(ui):
 
 def get_indicator_detail(ui):
     """보조지표 상세 설정을 가져옵니다."""
-    from utility.settings.setting_base import DICT_INDICATOR
+    from utility.settings.setting_base import DICT_INDICATOR_BASE
 
     k_list = None
     if not ui.dict_set['타임프레임']:
@@ -148,7 +148,7 @@ def get_indicator_detail(ui):
                         if 'self.indicator' in line and line[0] != '#':
                             indistg += f"{line.replace('self.indicator', 'indicator_')}\n"
                 if indistg:
-                    indicator_ = DICT_INDICATOR
+                    indicator_ = DICT_INDICATOR_BASE
                     if vars_ is not None:
                         indistg = indistg.replace('self.vars', 'vars_')
                     exec(compile(indistg, '<string>', 'exec'))

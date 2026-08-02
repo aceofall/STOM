@@ -2,8 +2,8 @@
 import re
 from traceback import format_exc
 from PyQt5.QtCore import QThread
-from utility.settings.setting_base import DICT_INDICATOR, UI_NUM
 from strategy.analyzer_microstructure import AnalyzerMicrostructure
+from utility.settings.setting_base import DICT_INDICATOR_BASE, UI_NUM
 # noinspection PyUnresolvedReferences
 from utility.static_method.static_datetime import timedelta_sec, now
 
@@ -22,7 +22,7 @@ class BackCodeTest(QThread):
         self.var         = var
         self.ga          = ga
         self.ms_analyzer = AnalyzerMicrostructure('stock', {})
-        self.indicator   = DICT_INDICATOR
+        self.indicator   = DICT_INDICATOR_BASE
 
     def run(self):
         """테스트를 실행합니다. 전략 코드의 문법을 검증합니다."""
