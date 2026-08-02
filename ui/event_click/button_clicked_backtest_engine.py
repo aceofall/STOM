@@ -174,6 +174,8 @@ def backengine_start(ui):
 
     for q in ui.back_eques:
         q.put(('종목명', dict_info))
+    for q in ui.back_sques:
+        q.put(('종목명', dict_info))
     ui.windowQ.put((UI_NUM['백테엔진'], '거래대금순위 및 종목코드 추출 완료'))
 
     log_gubun = divid_mode.split()[0]

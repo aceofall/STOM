@@ -18,6 +18,7 @@ class BackSubTotal:
 
         self.opti_kind    = 0
         self.concat_cnt   = 0
+        self.dict_info    = {}
         self.dummy_tsg    = {}
         self.ddict_tsg    = {}
         self.ddict_bct    = {}
@@ -78,6 +79,9 @@ class BackSubTotal:
                     else:
                         self.in_out_cnt = data[2]
 
+                elif data[0] == '종목명':
+                    self.dict_info = data[1]
+
                 if self.complete1 and self.bstq.empty():
                     if self.separation == '일괄집계':
                         self.tq.put('수집완료')
@@ -107,6 +111,11 @@ class BackSubTotal:
         else:
             data = [index, 종목명, 시가총액또는포지션, 매수시간, 매도시간, 보유시간, 매수가, 매도가, 매수금액, 매도금액, 수익률, 수익금, 매도조건, 추가매수시간]
         self.ddict_tsg[vturn][vkey].append(data)
+
+        if self.market_gubun in (6, 7):
+            매수금액 = int(매수금액 * self.dict_info[종목명]['위탁증거금율'])
+        elif self.market_gubun == 8:
+            매수금액 = int(매수금액 / 매수가 / self.dict_info[종목명]['틱가치'] * self.dict_info[종목명]['위탁증거금'])
 
         arry_bct = self.ddict_bct[vturn][vkey]
         mask = (매수시간 <= arry_bct[:, 0]) & (arry_bct[:, 0] <= 매도시간)
