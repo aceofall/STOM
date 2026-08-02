@@ -403,11 +403,13 @@ class DrawChartBase:
             for j, price in buy_arrow_list:
                 arrow = pg.ArrowItem(angle=180, tipAngle=60, headLen=10, pen='w', brush='r')
                 arrow.setPos(self.ui.ctpg_xticks[j], price)
+                arrow.setZValue(30)
                 self.ui.ctpg[i].addItem(arrow)
         if sell_arrow_list:
             for j, price in sell_arrow_list:
                 arrow = pg.ArrowItem(angle=0, tipAngle=60, headLen=10, pen='w', brush='b')
                 arrow.setPos(self.ui.ctpg_xticks[j], price)
+                arrow.setZValue(30)
                 self.ui.ctpg[i].addItem(arrow)
 
         if self.ui.market_gubun > 5:
@@ -417,11 +419,13 @@ class DrawChartBase:
                 for j, price in buy_arrow_list:
                     arrow = pg.ArrowItem(angle=180, tipAngle=60, headLen=10, pen='w', brush='m')
                     arrow.setPos(self.ui.ctpg_xticks[j], price)
+                    arrow.setZValue(30)
                     self.ui.ctpg[i].addItem(arrow)
             if sell_arrow_list:
                 for j, price in sell_arrow_list:
                     arrow = pg.ArrowItem(angle=0, tipAngle=60, headLen=10, pen='w', brush='b')
                     arrow.setPos(self.ui.ctpg_xticks[j], price)
+                    arrow.setZValue(30)
                     self.ui.ctpg[i].addItem(arrow)
 
     def draw_line(self, i, fidx1, color):
