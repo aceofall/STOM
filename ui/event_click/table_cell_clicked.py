@@ -141,7 +141,7 @@ def cell_clicked_05(ui, row, col):
     sellprice  = comma2float(tableWidget.item(row, 6).text())
     detail     = [buytime, buyprice, selltime, sellprice]
     buytimes   = tableWidget.item(row, 13).text()
-    code = ui.dict_code.get(name, name)
+    code = ui.dict_code.get(name, name) if ui.market_gubun not in (6, 7, 8) else name
     ui.ct_lineEdittttt_04.setText(code)
     ui.ct_lineEdittttt_05.setText(name)
     ui.ct_dateEdittttt_01.setDate(QDate.fromString(searchdate, 'yyyyMMdd'))
