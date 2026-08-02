@@ -201,13 +201,13 @@ class UpdateTablewidget:
                 value = arry[i, j]
 
                 if column in self.columns_time:
-                    cgtime = str(value)
+                    ct = str(value)
                     if gubun == UI_NUM['상세기록']:
-                        cgtime = \
-                            f'{cgtime[:4]}-{cgtime[4:6]}-{cgtime[6:8]} {cgtime[8:10]}:{cgtime[10:12]}:{cgtime[12:14]}'
+                        ct_time = f'{ct[:4]}-{ct[4:6]}-{ct[6:8]} {ct[8:10]}:{ct[10:12]}'
+                        if len(ct) > 12: ct_time = f'{ct_time}:{ct[12:14]}'
                     else:
-                        cgtime = f'{cgtime[8:10]}:{cgtime[10:12]}:{cgtime[12:14]}'
-                    item = QTableWidgetItem(cgtime)
+                        ct_time = f'{ct[8:10]}:{ct[10:12]}:{ct[12:14]}'
+                    item = QTableWidgetItem(ct_time)
 
                 elif column in self.columns_day:
                     day = value
