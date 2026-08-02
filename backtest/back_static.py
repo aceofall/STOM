@@ -632,7 +632,7 @@ def plot_show(gubun, is_tick, teleQ, df_tsg, df_bct, market_gubun, seed, mdd, st
     min_mdd = min(mdd_list)
     # noinspection PyUnresolvedReferences
     avg_mdd = round(sum(mdd_list) / len(mdd_list), 2)
-    ax1.set_title(f'Max MDD [{max_mdd}%] | Min MDD [{min_mdd}%] | Avg MDD [{avg_mdd}%]')
+    ax1.set_title(f'Max MDD [{max_mdd:.2f}%] | Min MDD [{min_mdd:.2f}%] | Avg MDD [{avg_mdd:.2f}%]')
     step = max(1, len(df_tsg) // 15)
     xticks = df_tsg.index[::step]
     xticklabels = [str(x)[:10] for x in xticks]
