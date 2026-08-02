@@ -44,7 +44,7 @@ class BaseTrader:
     """주문 실행 및 관리를 담당하는 기본 클래스입니다.
     체결 목록, 잔고 목록, 거래 목록을 관리하며,
     주문 생성, 취소, 정정 기능을 제공합니다."""
-    def __init__(self, qlist, dict_set, market_infos):
+    def __init__(self, qlist, dict_set, market_infos, stom_public):
         """
         windowQ, soundQ, queryQ, teleQ, chartQ, hogaQ, webcQ, backQ, receivQ, traderQ, stgQs, liveQ, testQ
            0        1       2      3       4      5      6      7       8        9       10     11    12
@@ -61,6 +61,7 @@ class BaseTrader:
         self.dict_set     = dict_set
         self.market_gubun = market_infos[0]
         self.market_info  = market_infos[1]
+        self.stom_public  = stom_public
         self.is_etfn      = self.market_gubun in (2, 3)
 
         self.dict_cj: dict[str, dict[str, int | float]] = {}  # 체결목록
@@ -515,6 +516,9 @@ class BaseTrader:
             self.dict_signal[종목코드] = [주문구분, 주문가격, 주문수량, 0]
 
         if self.dict_set['모의투자'] or 주문구분 == '시드부족':
+            self._paper_trade(주문구분, 종목코드, 주문가격, 주문수량, 시그널시간, 잔고청산, 수동주문유형)
+        elif self.stom_public:
+            self.windowQ.put((UI_NUM['기본로그'], f'주문 관리 시스템 알림 - 무료 라이선스는 실매매를 지원하지 않습니다.'))
             self._paper_trade(주문구분, 종목코드, 주문가격, 주문수량, 시그널시간, 잔고청산, 수동주문유형)
         else:
             data = (주문구분, 종목코드, 종목명, 주문가격, 주문수량, 원주문번호, 시그널시간, 잔고청산, 정정횟수, 수동주문유형)
