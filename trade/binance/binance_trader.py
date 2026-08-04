@@ -12,11 +12,10 @@ from utility.static_method.static_numba import get_profit_coin_future_short, get
 class BinanceTrader(BaseTrader):
     """바이낸스 트레이더 클래스입니다.
     BaseTrader를 상속받아 바이낸스 시장 주문을 실행합니다."""
-    def __init__(self, qlist, dict_set, market_infos):
+    def __init__(self, qlist, dict_set, market_infos, stom_public):
         app = QApplication(sys.argv)
 
-        super().__init__(qlist, dict_set, market_infos)
-
+        super().__init__(qlist, dict_set, market_infos, stom_public)
 
         self.지정가코드 = {
             '지정가': 'GTC',

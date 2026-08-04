@@ -44,7 +44,7 @@ class BaseTrader:
     """주문 실행 및 관리를 담당하는 기본 클래스입니다.
     체결 목록, 잔고 목록, 거래 목록을 관리하며,
     주문 생성, 취소, 정정 기능을 제공합니다."""
-    def __init__(self, qlist, dict_set, market_infos):
+    def __init__(self, qlist, dict_set, market_infos, stom_public):
         """
         windowQ, soundQ, queryQ, teleQ, chartQ, hogaQ, webcQ, backQ, receivQ, traderQ, stgQs, liveQ, testQ
            0        1       2      3       4      5      6      7       8        9       10     11    12
@@ -61,7 +61,7 @@ class BaseTrader:
         self.dict_set     = dict_set
         self.market_gubun = market_infos[0]
         self.market_info  = market_infos[1]
-        self.stom_public  = False
+        self.stom_public  = stom_public
         self.is_etfn      = self.market_gubun in (2, 3)
 
         self.dict_cj: dict[str, dict[str, int | float]] = {}  # 체결목록
@@ -627,8 +627,6 @@ class BaseTrader:
             self._update_dict_info()
             if self.market_gubun == 9:
                 self._set_position()
-        elif gubun == 'STOM_PUBLIC':
-            self.stom_public = data
 
     def _update_jango(self, data):
         """잔고를 업데이트합니다."""

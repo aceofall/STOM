@@ -198,6 +198,8 @@ def trade_process_start(ui):
         while not q.empty():
             q.get()
 
+    stom_public = ui.check_stom_public()
+
     def receiver_start():
         target = ui.market_info['프로세스'][0]
         ui.proc_receiver = Process(target=target, args=(ui.qlist, ui.dict_set, ui.market_infos))
@@ -205,7 +207,7 @@ def trade_process_start(ui):
 
     def trader_start():
         target = ui.market_info['프로세스'][1]
-        ui.proc_trader = Process(target=target, args=(ui.qlist, ui.dict_set, ui.market_infos))
+        ui.proc_trader = Process(target=target, args=(ui.qlist, ui.dict_set, ui.market_infos, stom_public))
         ui.proc_trader.start()
 
     def strategy_start(idx):
@@ -233,7 +235,6 @@ def trade_process_start(ui):
         # noinspection HttpUrlsUsage
         ui.teleQ.put(f'http://{get_ip()}:{port}')
 
-    ui.check_stom_public()
     ui.trading = True
 
 

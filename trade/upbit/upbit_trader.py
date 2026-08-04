@@ -13,10 +13,10 @@ from utility.static_method.static_datetime import now, timedelta_sec, str_ymdhms
 class UpbitTrader(BaseTrader):
     """업비트 트레이더 클래스입니다.
     BaseTrader를 상속받아 업비트 시장 주문을 실행합니다."""
-    def __init__(self, qlist, dict_set, market_infos):
+    def __init__(self, qlist, dict_set, market_infos, stom_public):
         app = QApplication(sys.argv)
 
-        super().__init__(qlist, dict_set, market_infos)
+        super().__init__(qlist, dict_set, market_infos, stom_public)
 
         self.업비트체결코드 = {
             'BID': '매수',
