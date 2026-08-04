@@ -4,6 +4,9 @@ from utility.static_method.static_decorator import thread_decorator
 
 def process_starter(ui):
     """프로세스 스타터를 실행합니다."""
+    if not ui.subprocess_start:
+        return
+
     from utility.static_method.static_datetime import now, str_hms
     from ui.event_click.button_clicked_shortcut import mnbutton_c_clicked_03
 

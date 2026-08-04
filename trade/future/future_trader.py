@@ -13,10 +13,10 @@ from utility.static_method.static_numba import get_profit_future_long, get_profi
 class FutureTrader(BaseTrader):
     """선물 트레이더 클래스입니다.
     BaseTrader를 상속받아 선물 시장 주문을 실행합니다."""
-    def __init__(self, qlist, dict_set, market_infos, stom_public):
+    def __init__(self, qlist, dict_set, market_infos):
         app = QApplication(sys.argv)
 
-        super().__init__(qlist, dict_set, market_infos, stom_public)
+        super().__init__(qlist, dict_set, market_infos)
 
         if not self.dict_set['모의투자']:
             from trade.restapi_ls import LsRestAPI, LsWebSocketTrader
