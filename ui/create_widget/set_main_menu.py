@@ -100,7 +100,7 @@ class SetMainMenu:
         self.ui.zz_pushButton = self.wc.setPushbutton('E', color=6, click=lambda: extend_window(self.ui),         animated=True, tip='전략탭확장')
         self.ui.cl_pushButton = self.wc.setPushbutton('Ctrl', color=6, animated=True)
         self.ui.bd_pushButton = self.wc.setPushbutton('B', color=6, click=lambda: mnbutton_c_clicked_05(self.ui), animated=True, tip='백테기록삭제')
-        self.ui.ad_pushButton = self.wc.setPushbutton('A', color=6, click=lambda: mnbutton_c_clicked_06(self.ui), animated=True, tip='계정삭제')
+        self.ui.ad_pushButton = self.wc.setPushbutton('L', color=6, click=lambda: mnbutton_c_clicked_06(self.ui), animated=True, tip='계정삭제')
 
         self.ui.image_label1 = QLabel(self.ui)
         self.ui.image_label2 = QLabel(self.ui)

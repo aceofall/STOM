@@ -275,7 +275,7 @@ def event_filter(ui, widget, event):
             return True
 
     elif QApplication.keyboardModifiers() & Qt.ControlModifier:
-        if event.key() in (Qt.Key_1, Qt.Key_2, Qt.Key_3, Qt.Key_4, Qt.Key_5, Qt.Key_6, Qt.Key_B, Qt.Key_A):
+        if event.key() in (Qt.Key_1, Qt.Key_2, Qt.Key_3, Qt.Key_4, Qt.Key_5, Qt.Key_6, Qt.Key_B, Qt.Key_L):
             if event.key() == Qt.Key_1:
                 mnbutton_c_clicked_01(ui, 0)
             elif event.key() == Qt.Key_2:
@@ -290,7 +290,7 @@ def event_filter(ui, widget, event):
                 mnbutton_c_clicked_01(ui, 5)
             elif event.key() == Qt.Key_B:
                 mnbutton_c_clicked_05(ui)
-            elif event.key() == Qt.Key_A:
+            elif event.key() == Qt.Key_L:
                 mnbutton_c_clicked_06(ui)
             return True
 
