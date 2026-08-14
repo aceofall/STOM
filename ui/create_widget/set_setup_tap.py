@@ -153,9 +153,9 @@ class SetSetupTap:
                    "RSI, 변동성, 모멘텀, 체결강도, 수량불균형, 가격위치,\n"\
                    "각도추세, 거래량추세를 분석하여 리스크점수(0~100)를 리턴합니다."
         self.ui.sj_back_cheBox_18 = self.wc.setCheckBox('전략에 리스크분석 적용하기 (1초스냅샷, 1분봉 공용)', self.ui.sj_bs_groupBox_05, tip=tip_text)
-        tip_text = "거래량분석(volume_spike_analyzer)은 거래량 데이터를 기반으로\n"\
-                   "단위 분할한 거래량평균대비거래량별로 이후의 가격 움직임을 분석하여\n"\
-                   "거래량점수(+100~-100) 및 거래량신뢰도(0~1)를 리턴합니다."
+        tip_text = "거래량분석(volume_spike_analyzer)은 순매수금액 데이터를 기반으로\n"\
+                   "단위 분할한 순매수금액평균 대비 순매수금액 레벨별로 이후의 가격 움직임을\n"\
+                   "분석하여 거래량점수(+100~-100) 및 거래량신뢰도(0~1)를 리턴합니다."
         self.ui.sj_back_cheBox_19 = self.wc.setCheckBox('전략에 거래량분석 적용하기 (1초스냅샷, 1분봉 공용)', self.ui.sj_bs_groupBox_05, tip=tip_text)
         tip_text = "가격대분석(volume_profile_analyzer)은 가격 데이터를 기반으로\n"\
                    "단위 분할한 가격대에서 기준 등락율 이상의 돌파 및 반등 이벤트를 분석하여\n"\

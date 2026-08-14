@@ -76,7 +76,7 @@ class AnalyzerVolumeSpike:
         self.is_tick     = is_tick
         self.min_samples = min_samples
         self.idx_close   = self.factor_list.index('현재가')
-        self.idx_volume  = self.factor_list.index('초당거래대금') if is_tick else self.factor_list.index('분당거래대금')
+        self.idx_volume  = self.factor_list.index('초당매수금액') if is_tick else self.factor_list.index('분당매수금액')
         self.spike_scores: dict[str, dict[float, dict[str, float]]] = {}
 
         if realtime:
@@ -99,7 +99,7 @@ class AnalyzerVolumeSpike:
 
         spike_scores = self.spike_scores.get(code)
         if spike_scores and len(code_data) >= self.analysis_period:
-            volume_data = code_data[:, self.idx_volume]
+            volume_data = code_data[:, self.idx_volume] - code_data[:, self.idx_volume + 1]
             current_ma_volume = np.mean(volume_data[-self.analysis_period:])
             current_volume = volume_data[-1]
 
@@ -230,7 +230,7 @@ class AnalyzerVolumeSpike:
 
                     dates          = date_data[:, 0] // 1000000 if is_tick else date_data[:, 0] // 10000
                     close_price    = date_data[:, idx_close]
-                    volume_data    = date_data[:, idx_volume]
+                    volume_data    = date_data[:, idx_volume] - date_data[:, idx_volume + 1]
                     ma_volume_data = _calculate_ma_volume(volume_data, analysis_period)
 
                     groups = {}
