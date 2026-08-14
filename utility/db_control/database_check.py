@@ -458,7 +458,7 @@ def database_check():
                     df = pd.read_sql(f"SELECT * FROM '{table_list[0]}'", con)
                     if '당일매수금액' not in df.columns:
                         con.close()
-                        return False, f'백테DB의 칼럼이 일치하지 않습니다.\n업데이트 된 일자DB로 백테DB를 새로 생성하십시오.'
+                        return False, '백테DB의 칼럼이 일치하지 않습니다.\n업데이트 된 일자DB로 백테DB를 새로 생성하십시오.'
                 con.close()
 
         return True, None
