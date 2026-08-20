@@ -117,6 +117,8 @@ class TelegramBot(QThread):
                     q.put('매수전략중지')
             else:
                 self.stgQ.put('매수전략중지')
+        elif cmd == '잔고청산':
+            self.traderQ.put(cmd)
         else:
             self.windowQ.put(cmd)
 

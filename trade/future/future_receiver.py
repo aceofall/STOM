@@ -110,7 +110,8 @@ class FutureReceiver(BaseReceiver):
             tbids = int(body['msvolume'])
             tasks = int(body['mdvolume'])
             ch    = float(body['cpower'])
-            self._update_tick_data(dt, code, c, o, h, low, per, dm, v, cg, tbids, tasks, ch)
+            # oy    = int(body['openyak'])
+            self._update_tick_data(dt, code, c, o, h, low, per, dm, v, cg, tbids, tasks, ch, oy)
 
         elif tr_cd == self.tr_cd_oper:
             if body['jangubun'] == self.oper_gubun:
