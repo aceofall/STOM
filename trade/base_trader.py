@@ -149,7 +149,7 @@ class BaseTrader:
         self.dict_intg['추정예탁자산'] = yesugm
 
         if self.dict_td:
-            self._update_totaltradelist()
+            self._update_totaltradelist(first=True)
 
         self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 예수금 조회 완료"))
         self.windowQ.put((UI_NUM['기본로그'], f"시스템 명령 실행 알림 - {self.market_info['마켓이름']} 트레이더 시작"))
@@ -1187,13 +1187,13 @@ class BaseTrader:
         values = (self.str_today, 거래횟수, 총매수금액, 총매도금액, 총수익금액, 총손실금액, 수익률, 수익금합계)
         send_query_data(self.queryQ, '거래디비', self.market_info['손익디비'], values)
 
-        if not first:
+        if not first and (not self.dict_set['잔고청산'] or len(self.dict_jg) == 0):
             QTimer.singleShot(1 * 1000, lambda: self.windowQ.put('매도완료'))
 
-        if self.dict_set['스톰라이브']:
-            수익률 = round(수익금합계 / 총매수금액 * 100, 2)
-            data_list = [거래횟수, 총매수금액, 총매도금액, 총수익금액, 총손실금액, 수익률, 수익금합계]
-            self.liveQ.put((self.market_info['마켓구분'], data_list))
+            if self.dict_set['스톰라이브']:
+                수익률 = round(수익금합계 / 총매수금액 * 100, 2)
+                data_list = [거래횟수, 총매수금액, 총매도금액, 총수익금액, 총손실금액, 수익률, 수익금합계]
+                self.liveQ.put((self.market_info['마켓구분'], data_list))
 
     def _update_chegeollist(self, index, 종목코드, 종목명, 주문구분, 주문수량, 체결수량, 미체결수량, 체결가격, 체결시간, 주문가격, 주문번호):
         """체결 리스트를 업데이트합니다."""
