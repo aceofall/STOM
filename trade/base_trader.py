@@ -1187,7 +1187,7 @@ class BaseTrader:
         values = (self.str_today, 거래횟수, 총매수금액, 총매도금액, 총수익금액, 총손실금액, 수익률, 수익금합계)
         send_query_data(self.queryQ, '거래디비', self.market_info['손익디비'], values)
 
-        if not first and (not self.dict_set['잔고청산'] or len(self.dict_jg) == 0):
+        if not first and (not self.dict_bool['잔고청산'] or len(self.dict_jg) == 0):
             QTimer.singleShot(1 * 1000, lambda: self.windowQ.put('매도완료'))
 
             if self.dict_set['스톰라이브']:
